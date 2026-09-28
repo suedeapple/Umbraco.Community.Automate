@@ -30,10 +30,27 @@ jobs:
 
       - run: dotnet test Mastodon/Umbraco.Community.Automate.Mastodon.Tests --no-build --configuration Release
 
+      - run: dotnet test DevTo/Umbraco.Community.Automate.DevTo.Tests --no-build --configuration Release
+
       - name: Verify the packages still pack
         run: |
           dotnet pack GoogleSheets/Umbraco.Community.Automate.GoogleSheets --no-build --configuration Release --output ./pack-check
           dotnet pack Mastodon/Umbraco.Community.Automate.Mastodon --no-build --configuration Release --output ./pack-check
+          dotnet pack DevTo/Umbraco.Community.Automate.DevTo --no-build --configuration Release --output ./pack-check
+
+  devto-umbraco-compat:
+    name: DEV package on Umbraco 17 and 18
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # The DEV package ships one build for Umbraco 17 and 18. This tests it on both, runs the
+      # 17 build against 18, and checks every Umbraco API it calls still exists in 18.
+      - run: ./DevTo/test-umbraco-compat.sh
 
   frontend-unit-tests:
     name: Frontend unit tests
