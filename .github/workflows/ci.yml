@@ -59,9 +59,10 @@ jobs:
               exit 1
             fi
 
-            # Optional frontend. Only packages with a Client folder get frontend jobs, and
-            # only one with Playwright specs owns the E2E suite.
-            if [ -d "$PROJECT_DIR/Client" ]; then
+            # Optional frontend. Only packages with a Client folder containing a package.json
+            # get frontend jobs (a Client folder alone isn't enough: DevTo's is its C# API
+            # client), and only one with Playwright specs owns the E2E suite.
+            if [ -f "$PROJECT_DIR/Client/package.json" ]; then
               CLIENT_DIR="$PROJECT_DIR/Client"
               if compgen -G "$CLIENT_DIR/tests/e2e/*.spec.ts" > /dev/null; then
                 RUN_E2E=true
