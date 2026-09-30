@@ -13,7 +13,7 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <StaticWebAssetBasePath>App_Plugins/UmbracoCommunityAutomateDevTo</StaticWebAssetBasePath>
     <PackageIcon>community-automate-128.png</PackageIcon>
-    <Authors>ScottishCoder, Umbraco Community</Authors>
+    <Authors>ScottishCoder, Umbraco-Community</Authors>
   </PropertyGroup>
 
   <ItemGroup>
