@@ -11,6 +11,7 @@ using Umbraco.Cms.Core.Security.Authorization;
 using Umbraco.Cms.Web.Common.Authorization;
 using Umbraco.Community.Automate.DevTo.Articles;
 using Umbraco.Community.Automate.DevTo.Content;
+using Umbraco.Community.Automate.DevTo.Settings;
 
 namespace Umbraco.Community.Automate.DevTo.Controllers;
 
@@ -29,7 +30,7 @@ public sealed record DevToPreviewResponse(string? Name, string? Culture, string 
 public sealed class DevToController : ManagementApiControllerBase
 {
     // Only variables: a preview must never echo secrets or arbitrary configuration back to the browser.
-    private const string VariablesPrefix = "Umbraco:Automate:Variables:";
+    private const string VariablesPrefix = DevToConfiguration.VariablesPath + ":";
 
     private readonly IAuthorizationService _authorizationService;
     private readonly IPublishedContentCache _publishedContentCache;
