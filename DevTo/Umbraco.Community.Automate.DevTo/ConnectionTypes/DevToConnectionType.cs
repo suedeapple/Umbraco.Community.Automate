@@ -6,7 +6,7 @@ using Umbraco.Community.Automate.DevTo.Settings;
 namespace Umbraco.Community.Automate.DevTo.ConnectionTypes;
 
 [ConnectionType(ConnectionTypeAlias, "DEV Community",
-    Description = "Publish articles to DEV (dev.to) or another Forem community.",
+    Description = "Publish articles to DEV (dev.to).",
     Group = "Social Networks",
     Icon = "icon-automate-devto")]
 public sealed class DevToConnectionType : ConnectionTypeBase<DevToConnectionSettings>
