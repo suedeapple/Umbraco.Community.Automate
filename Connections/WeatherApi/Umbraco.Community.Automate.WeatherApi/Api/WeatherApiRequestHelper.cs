@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
+using Umbraco.Community.Automate.WeatherApi.Configuration;
 using Umbraco.Community.Automate.WeatherApi.Models;
 
 namespace Umbraco.Community.Automate.WeatherApi.Api;
@@ -13,8 +14,6 @@ namespace Umbraco.Community.Automate.WeatherApi.Api;
 /// </summary>
 internal static class WeatherApiRequestHelper
 {
-    private const string BaseUrl = "https://api.weatherapi.com/v1";
-
     /// <summary>
     /// A well-known location used to verify an API key without requiring the caller to supply one.
     /// </summary>
@@ -33,7 +32,7 @@ internal static class WeatherApiRequestHelper
         string? languageCode,
         CancellationToken cancellationToken)
     {
-        var url = $"{BaseUrl}/current.json?key={Uri.EscapeDataString(apiKey)}&q={Uri.EscapeDataString(location)}";
+        var url = $"{WeatherApiConfiguration.BaseUrl}/current.json?key={Uri.EscapeDataString(apiKey)}&q={Uri.EscapeDataString(location)}";
 
         if (!string.IsNullOrWhiteSpace(languageCode))
         {
@@ -65,7 +64,7 @@ internal static class WeatherApiRequestHelper
         string? languageCode,
         CancellationToken cancellationToken)
     {
-        var url = $"{BaseUrl}/forecast.json?key={Uri.EscapeDataString(apiKey)}&q={Uri.EscapeDataString(location)}&days=1";
+        var url = $"{WeatherApiConfiguration.BaseUrl}/forecast.json?key={Uri.EscapeDataString(apiKey)}&q={Uri.EscapeDataString(location)}&days=1";
 
         if (!string.IsNullOrWhiteSpace(languageCode))
         {

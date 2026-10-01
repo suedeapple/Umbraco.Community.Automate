@@ -23,7 +23,7 @@ It talks to [httpbin.org](https://httpbin.org), a free service that echoes reque
 | `Composers/` | One composer registering the client, connection type, actions and trigger. |
 | `Api/` | [`ExampleClient`](Api/ExampleClient.cs), the only class that talks HTTP: it sends requests and maps every failure to a `StepRunErrorCategory`, which decides whether Automate retries. |
 | `Models/` | Request and response models for the service. |
-| `Configuration/` | `ExampleConfiguration`: the one place the configuration path and default reference are defined. |
+| `Configuration/` | `ExampleConfiguration`: the one place the configuration path, default reference and the service's base URL are defined. |
 | `Client/` | The backoffice front end (Vite + Lit): a message editor with a character count, with a unit test. `public/` holds the hand-written `umbraco-package.json` and `icons/`, the same files every package uses for its icons. `npm run build` writes all of it to `wwwroot/`. |
 | `wwwroot/` | Build output from `Client/` (not committed), served at `/App_Plugins/UmbracoCommunityAutomateExample/`. |
 

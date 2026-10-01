@@ -24,15 +24,15 @@ public sealed class GoogleSheetsComposer : IComposer
         // is skipped by the guard below.
         builder.Services
             .AddOptions<GoogleSheetsOAuthOptions>()
-            .BindConfiguration(GoogleSheetsOAuthOptions.SectionPath)
+            .BindConfiguration(GoogleSheetsConfiguration.ProviderPath)
             .ValidateOnStart();
 
         builder.Services.AddSingleton<IValidateOptions<GoogleSheetsOAuthOptions>, GoogleSheetsOAuthOptionsValidator>();
 
         // Read credentials at composition time — same path the Core's PostConfigure reads from,
         // so appsettings structure stays consistent for users installing multiple Google packages.
-        var clientId = builder.Config[$"{GoogleSheetsOAuthOptions.SectionPath}:ClientId"] ?? string.Empty;
-        var clientSecret = builder.Config[$"{GoogleSheetsOAuthOptions.SectionPath}:ClientSecret"] ?? string.Empty;
+        var clientId = builder.Config[$"{GoogleSheetsConfiguration.ProviderPath}:ClientId"] ?? string.Empty;
+        var clientSecret = builder.Config[$"{GoogleSheetsConfiguration.ProviderPath}:ClientSecret"] ?? string.Empty;
 
         // Skip the OpenIddict registration when credentials are absent. SetClientId throws
         // ArgumentException on an empty string during service resolution — before ValidateOnStart
@@ -63,7 +63,7 @@ public sealed class GoogleSheetsComposer : IComposer
                     .SetRegistrationId("google-sheets")
                     .SetClientId(clientId)
                     .SetClientSecret(clientSecret)
-                    .AddScopes("https://www.googleapis.com/auth/spreadsheets")
+                    .AddScopes(GoogleSheetsConfiguration.Scope)
                     .SetAccessType("offline")
                     .SetPrompt("consent"));
             });

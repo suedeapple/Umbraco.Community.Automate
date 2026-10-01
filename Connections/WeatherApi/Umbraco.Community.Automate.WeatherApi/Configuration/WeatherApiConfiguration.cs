@@ -13,4 +13,8 @@ public static class WeatherApiConfiguration
 
     /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
+
+    // Fixed values: they're the same for every site, so they're constants here, not configuration.
+    /// <summary>The WeatherAPI.com REST API.</summary>
+    public const string BaseUrl = "https://api.weatherapi.com/v1";
 }

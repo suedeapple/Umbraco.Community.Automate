@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Umbraco.Automate.Core.Actions;
+using Umbraco.Community.Automate.Example.Configuration;
 using Umbraco.Community.Automate.Example.Models;
 
 namespace Umbraco.Community.Automate.Example.Api;
@@ -13,9 +14,6 @@ namespace Umbraco.Community.Automate.Example.Api;
 /// </summary>
 public sealed class ExampleClient(IHttpClientFactory httpClientFactory)
 {
-    // A fixed value, so a constant rather than configuration: only things that vary per site
-    // (credentials) belong in appsettings. httpbin.org echoes requests and accepts any bearer token.
-    private const string BaseUrl = "https://httpbin.org/";
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(15);
 
     /// <summary>Checks the API key. httpbin.org accepts any bearer token, so this always succeeds with one.</summary>
@@ -57,7 +55,7 @@ public sealed class ExampleClient(IHttpClientFactory httpClientFactory)
     private async Task<HttpResponseMessage> SendRawAsync(string apiKey, HttpRequestMessage request, CancellationToken cancellationToken)
     {
         using var client = httpClientFactory.CreateClient();
-        client.BaseAddress = new Uri(BaseUrl);
+        client.BaseAddress = new Uri(ExampleConfiguration.BaseUrl);
         client.Timeout = RequestTimeout;
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 

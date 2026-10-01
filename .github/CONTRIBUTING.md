@@ -82,7 +82,7 @@ Every package uses the same folder names, so you always know where to look. The 
 | `Composers/` | The `IComposer` that registers everything, plus any `IUmbracoBuilder` extensions |
 | `Api/` | The C# client for the external service: HTTP client, error mapping, exceptions |
 | `Models/` | Request and response models for the external API, at the package root (not inside `Api/`) |
-| `Configuration/` | `<Area>Configuration` with the configuration paths and default references (one place to change them), plus any options classes bound from `appsettings.json` and their validators |
+| `Configuration/` | `<Area>Configuration` with the configuration paths, default references and fixed service values such as the API base URL (one place to change them), plus any options classes bound from `appsettings.json` and their validators |
 | `Client/` | The backoffice front end source (Vite + Lit, built by npm into `wwwroot/`). Only for connections that need custom UI. Its `public/` folder holds what would otherwise be in `wwwroot/` and is copied there unchanged. |
 | `wwwroot/` | Static backoffice files served under `App_Plugins/`: `umbraco-package.json`, which Umbraco discovers by itself and which registers the icons and any other backoffice extensions, and `icons/` (`icons.js` plus one `<area>.icon.js` per icon). Every package with a custom icon uses this same pattern. |
 

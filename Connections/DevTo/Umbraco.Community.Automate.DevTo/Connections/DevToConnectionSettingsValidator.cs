@@ -19,7 +19,7 @@ public static class DevToConnectionSettingsValidator
             return $"The API key reference '{settings.ApiKey}' could not be resolved. Check the key exists under {DevToConfiguration.SecretsPath}.";
 
         if (!HttpUrl.IsValid(settings.InstanceUrl))
-            return $"'{settings.InstanceUrl}' is not a valid instance URL. Use a full URL such as {DevToConnectionSettings.DefaultInstanceUrl}.";
+            return $"'{settings.InstanceUrl}' is not a valid instance URL. Use a full URL such as {DevToConfiguration.DefaultInstanceUrl}.";
 
         return null;
     }

@@ -124,7 +124,7 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
 
 ## Configuration
 
-`Configuration/ExampleConfiguration.cs`. Where the package's values live (nested in Automate's shared sections, which need no registration), plus the default reference for each credential field.
+`Configuration/ExampleConfiguration.cs`. Where the package's values live (nested in Automate's shared sections, which need no registration), the default reference for each credential field, and the service's fixed values.
 
 ```csharp
 namespace Umbraco.Community.Automate.Example.Configuration;
@@ -136,6 +136,11 @@ public static class ExampleConfiguration
 
     /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
+
+    // Fixed values: they're the same for every site, so they're constants here, not configuration.
+
+    /// <summary>The service's API.</summary>
+    public const string BaseUrl = "https://api.example.com/";
 }
 ```
 
@@ -227,6 +232,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Umbraco.Automate.Core.Actions;
+using Umbraco.Community.Automate.Example.Configuration;
 using Umbraco.Community.Automate.Example.Connections;
 using Umbraco.Community.Automate.Example.Models;
 
@@ -234,7 +240,6 @@ namespace Umbraco.Community.Automate.Example.Api;
 
 public sealed class ExampleClient(IHttpClientFactory httpClientFactory)
 {
-    private const string BaseUrl = "https://api.example.com/";
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(15);
 
     public Task<ExampleUser> GetCurrentUserAsync(ExampleConnectionSettings settings, CancellationToken cancellationToken)
@@ -243,7 +248,7 @@ public sealed class ExampleClient(IHttpClientFactory httpClientFactory)
     public async Task<T> SendAsync<T>(ExampleConnectionSettings settings, HttpRequestMessage request, CancellationToken cancellationToken)
     {
         using var client = httpClientFactory.CreateClient();
-        client.BaseAddress = new Uri(BaseUrl);
+        client.BaseAddress = new Uri(ExampleConfiguration.BaseUrl);
         client.Timeout = RequestTimeout;
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
 

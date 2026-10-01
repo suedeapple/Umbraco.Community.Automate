@@ -16,4 +16,10 @@ public static class ExampleConfiguration
     /// (appsettings, environment variables, user secrets) is used without typing anything.
     /// </summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
+
+    // Fixed values: they're the same for every site, so they're constants here rather than
+    // settings in appsettings. Keeping them in this class still gives one place to change them.
+
+    /// <summary>The service's API. httpbin.org echoes requests and accepts any bearer token.</summary>
+    public const string BaseUrl = "https://httpbin.org/";
 }

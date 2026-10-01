@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.OpenIddict.Credentials;
 using Umbraco.Community.Automate.GoogleSheets.Api;
+using Umbraco.Community.Automate.GoogleSheets.Configuration;
 
 namespace Umbraco.Community.Automate.GoogleSheets.Actions;
 
@@ -62,7 +63,7 @@ public sealed class CreateSpreadsheetAction : ActionBase<CreateSpreadsheetSettin
                 properties = new { title = settings.Title },
             };
 
-        var url = "https://sheets.googleapis.com/v4/spreadsheets";
+        var url = GoogleSheetsConfiguration.ApiBaseUrl;
 
         try
         {
