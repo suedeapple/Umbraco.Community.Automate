@@ -134,7 +134,7 @@ public sealed class ExampleConnectionSettings
 {
     [Field(
         Label = "API key",
-        Description = "Generate a key under Settings → API in Example. Defaults to the key in configuration at Umbraco:Automate:Secrets:Example:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
+        Description = "Generate a key under Settings → API in Example.",
         IsSensitive = true,
         SortOrder = 0)]
     public string ApiKey { get; set; } = "$Umbraco:Automate:Secrets:Example:ApiKey";

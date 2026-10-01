@@ -14,7 +14,7 @@ public sealed class WeatherApiConnectionSettings
     /// </summary>
     [Field(
         Label = "API Key",
-        Description = "The WeatherAPI.com API key. Defaults to the key in configuration at Umbraco:Automate:Secrets:WeatherApi:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
+        Description = "The WeatherAPI.com API key.",
         IsSensitive = true,
         SortOrder = 1)]
     public string ApiKey { get; set; } = "$Umbraco:Automate:Secrets:WeatherApi:ApiKey";
