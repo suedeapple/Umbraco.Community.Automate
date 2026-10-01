@@ -648,7 +648,7 @@ public class ExampleIconTests
 
 ## Wiring into the repo
 
-`Demo.slnx`, alongside the other connections:
+`Umbraco.Community.Automate.Demo.slnx`, alongside the other connections:
 
 ```xml
   <Folder Name="/Packages/Example/">
@@ -657,7 +657,7 @@ public class ExampleIconTests
   </Folder>
 ```
 
-`Demo/Umbraco.Community.Automate.Demo.csproj`:
+`Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`:
 
 ```xml
     <ProjectReference Include="..\Packages\Example\Umbraco.Community.Automate.Example\Umbraco.Community.Automate.Example.csproj" />

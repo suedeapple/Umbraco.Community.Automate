@@ -1,7 +1,5 @@
 <Solution>
-  <Folder Name="/Demo/">
-    <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
-  </Folder>
+  <Project Path="Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj" />
   <Folder Name="/Packages/DevTo/">
     <Project Path="Packages/DevTo/Umbraco.Community.Automate.DevTo.Tests/Umbraco.Community.Automate.DevTo.Tests.csproj" />
     <Project Path="Packages/DevTo/Umbraco.Community.Automate.DevTo/Umbraco.Community.Automate.DevTo.csproj" />

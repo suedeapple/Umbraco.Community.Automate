@@ -57,11 +57,11 @@ Work through these in order and tick them off. For a package with no connection,
 6. **Composer** in `Composers/`: register the connection type, actions, triggers and any services. Icons and configuration references references need no registration.
 7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from the templates.
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
-9. **Wire it in**: add both projects to `Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Demo/Umbraco.Community.Automate.Demo.csproj`.
-10. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Demo/appsettings.Development.json`. Real credentials go in user secrets only.
+9. **Wire it in**: add both projects to `Umbraco.Community.Automate.Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`.
+10. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Umbraco.Community.Automate.Demo/appsettings.Development.json`. Real credentials go in user secrets only.
 11. **Tests** for every action and the connection validation (see Testing).
 12. **README.md** in the package (see README), and a row in the root `README.md` connections table.
-13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Demo/appsettings.Development.json` or user secrets).
+13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Umbraco.Community.Automate.Demo/appsettings.Development.json` or user secrets).
 
 You don't need to edit any CI workflow: `ci.yml` discovers packages from the layout, and `release.yml` finds a package from its tag prefix.
 

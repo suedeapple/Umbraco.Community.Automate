@@ -91,7 +91,7 @@ For Google Sheets, build its backoffice front end first (`npm ci && npm run buil
 
 ## Trying everything in the Demo site
 
-`Demo/` is a disposable Umbraco site that references every package. It installs itself into a local SQLite database the first time it runs, so you don't need a database server or any setup screens.
+`Umbraco.Community.Automate.Demo/` is a disposable Umbraco site that references every package. It installs itself into a local SQLite database the first time it runs, so you don't need a database server or any setup screens.
 
 ```bash
 # Backoffice front ends are generated, not committed: build them once
@@ -102,7 +102,7 @@ cd Examples/Example/Umbraco.Community.Automate.Example/Client
 npm ci && npm run build
 cd ../../../..
 
-dotnet run --project Demo
+dotnet run --project Umbraco.Community.Automate.Demo
 ```
 
 Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. The **Automation** section is in the top navigation.

@@ -25,7 +25,7 @@ You can contribute in several ways: report a bug, improve a README, add an actio
 | A trusted HTTPS dev certificate | The Demo site. Run `dotnet dev-certs https --trust` once per machine. |
 | [Node.js 22.x](https://nodejs.org/) | Only for connections with a backoffice front end (a `Client/` folder), currently Google Sheets |
 
-Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Demo.slnx` at the repo root. The Demo site is the only runnable project, so starting the solution (F5) runs it.
+Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.Demo.slnx` at the repo root. The Demo site is the only runnable project, so starting the solution (F5) runs it.
 
 ## Getting the code
 
@@ -61,11 +61,11 @@ Packages/                                     one folder per package
     Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
     Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
 Examples/Example/                             reference package to copy (built and tested, never published)
-Demo/                                         throwaway Umbraco site referencing every package
+Umbraco.Community.Automate.Demo/              the Demo site: a throwaway Umbraco site referencing every package
 .github/                                      CI and release workflows, this guide, design notes
 .githooks/                                    gitleaks pre-commit and pre-push hooks
 Directory.Packages.props                      central NuGet versions for every project
-Demo.slnx                                     the solution: every package, the example and the Demo site
+Umbraco.Community.Automate.Demo.slnx          the solution: every package, the example and the Demo site
 ```
 
 Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Examples/Example/` is a reference package that uses every folder below, including a trigger and a front end; it has no release tag prefix and isn't packable, so it's never published.
@@ -92,7 +92,7 @@ CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/`
 
 ## Running the Demo site
 
-`Demo/` references every package, so it's where you check a change in the real backoffice. On first run it installs itself into a local SQLite database without any prompts.
+`Umbraco.Community.Automate.Demo/` references every package, so it's where you check a change in the real backoffice. On first run it installs itself into a local SQLite database without any prompts.
 
 ### First run
 
@@ -107,7 +107,7 @@ cd Examples/Example/Umbraco.Community.Automate.Example/Client
 npm ci && npm run build
 cd ../../../..
 
-dotnet run --project Demo
+dotnet run --project Umbraco.Community.Automate.Demo
 ```
 
 Then open <https://localhost:44343/umbraco> and log in:
@@ -135,12 +135,12 @@ npm run watch
 The Demo site's `appsettings.Development.json` contains placeholder credentials (`e2e-test`) so that everything boots. To test against the real services, override those values with user secrets. **Never edit the tracked config files with real values.**
 
 ```bash
-dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<client-id>" --project Demo
-dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<client-secret>" --project Demo
-dotnet user-secrets set "Umbraco:Automate:Secrets:Mastodon:AccessToken" "<token>" --project Demo
-dotnet user-secrets set "Umbraco:Automate:Secrets:DevTo:ApiKey" "<api-key>" --project Demo
-dotnet user-secrets set "Umbraco:Automate:Secrets:Skoda:ApiKey" "<api-key>" --project Demo
-dotnet user-secrets set "Umbraco:Automate:Secrets:WeatherApi:ApiKey" "<api-key>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<client-id>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<client-secret>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:Mastodon:AccessToken" "<token>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:DevTo:ApiKey" "<api-key>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:Skoda:ApiKey" "<api-key>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:WeatherApi:ApiKey" "<api-key>" --project Umbraco.Community.Automate.Demo
 ```
 
 New connections are pre-filled with references to exactly these keys, so once they're set you can create a connection without typing any credentials.
@@ -149,7 +149,7 @@ For Google Sheets, also add `https://localhost:44343/umbraco/automate/oauth/call
 
 ### Resetting the site
 
-Stop the site and delete `Demo/umbraco/Data/`. On the next run it reinstalls from scratch, with no content, connections or automations.
+Stop the site and delete `Umbraco.Community.Automate.Demo/umbraco/Data/`. On the next run it reinstalls from scratch, with no content, connections or automations.
 
 ## Building and testing
 
@@ -224,10 +224,10 @@ If you use [Claude Code](https://claude.com/claude-code), the repo includes an `
 1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a package](#inside-a-package): `Composers/`, plus `Actions/`, `Triggers/` and `Connections/` for whichever of those the package adds, and `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
-4. **Wire it in.** Add both projects to `Demo.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.
+4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`.
 5. **Add package versions to `Directory.Packages.props`.** Projects don't specify versions themselves.
 6. **Write the package `README.md`**: installation, setup, every setting, outcomes and outputs, troubleshooting and compatibility. Add a row for it to the table in the root `README.md`.
-7. **Use placeholder settings only.** If the Demo site needs settings to boot, put obviously fake values in `Demo/appsettings.Development.json`.
+7. **Use placeholder settings only.** If the Demo site needs settings to boot, put obviously fake values in `Umbraco.Community.Automate.Demo/appsettings.Development.json`.
 
 Before the first release, follow [Adding a new package to this scheme](#adding-a-new-package-to-this-scheme) below.
 

@@ -21,8 +21,8 @@ tags = ["google", "oauth", "client-id"]
 # file, and rule so it does not mask any other/new finding. See
 # .github/design-notes/specs/2026-07-12-secret-scanning-prevention-design.md
 # ("Post-implementation notes") for context. The path below is where the file
-# lived in that commit; the Demo site has since moved to Demo/, but the
-# allowlisted commit itself still has the old path, so it must not change.
+# lived in that commit, which is where the Demo site is again now. It is
+# tied to the allowlisted commit, so it must not change.
 [[allowlists]]
 description = "Accepted: Demo project's non-deployed Imaging:HMACSecretKey (commit be847121)"
 targetRules = ["generic-api-key"]
