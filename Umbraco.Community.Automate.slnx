@@ -19,5 +19,9 @@
     <Project Path="Connections/WeatherApi/Umbraco.Community.Automate.WeatherApi.Tests/Umbraco.Community.Automate.WeatherApi.Tests.csproj" />
     <Project Path="Connections/WeatherApi/Umbraco.Community.Automate.WeatherApi/Umbraco.Community.Automate.WeatherApi.csproj" />
   </Folder>
+  <Folder Name="/Examples/Example/">
+    <Project Path="Examples/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj" />
+    <Project Path="Examples/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj" />
+  </Folder>
   <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
 </Solution>

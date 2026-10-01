@@ -1,0 +1,14 @@
+{
+    "id": "Umbraco.Community.Automate.Example",
+    "name": "Umbraco Community Automate Example",
+    "version": "0.0.0",
+    "allowTelemetry": true,
+    "extensions": [
+        {
+            "name": "Umbraco Community Automate Example",
+            "alias": "UmbracoCommunityAutomateExample.Bundle",
+            "type": "bundle",
+            "js": "/App_Plugins/UmbracoCommunityAutomateExample/umbraco-community-automate-example-manifests.js"
+        }
+    ]
+}

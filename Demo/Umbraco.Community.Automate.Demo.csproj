@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Connections\Mastodon\Umbraco.Community.Automate.Mastodon\Umbraco.Community.Automate.Mastodon.csproj" />
     <ProjectReference Include="..\Connections\Skoda\Umbraco.Community.Automate.Skoda\Umbraco.Community.Automate.Skoda.csproj" />
     <ProjectReference Include="..\Connections\WeatherApi\Umbraco.Community.Automate.WeatherApi\Umbraco.Community.Automate.WeatherApi.csproj" />
+    <ProjectReference Include="..\Examples\Example\Umbraco.Community.Automate.Example\Umbraco.Community.Automate.Example.csproj" />
   </ItemGroup>
 
   <ItemGroup>

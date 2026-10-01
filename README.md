@@ -16,6 +16,10 @@ Umbraco Automate adds an **Automation** section to the Umbraco backoffice where 
 
 Each package's README has the full setup guide, all its settings, and troubleshooting.
 
+### Example connection
+
+[`Examples/Example`](Examples/Example/Umbraco.Community.Automate.Example/README.md) is a small, working reference connection that shows every convention in one place: a connection, two actions, a trigger, an API client, configuration references, a backoffice front end and tests. It talks to [httpbin.org](https://httpbin.org), so it works in the Demo site with no signup. It's built and tested by CI but never published; copy it when you start a new connection.
+
 ## Requirements
 
 - Umbraco CMS 17 (DevTo, Mastodon and WeatherApi also support 18; see each package's *Compatibility* section)
@@ -90,8 +94,11 @@ For Google Sheets, build its backoffice front end first (`npm ci && npm run buil
 `Demo/` is a disposable Umbraco site that references every package. It installs itself into a local SQLite database the first time it runs, so you don't need a database server or any setup screens.
 
 ```bash
-# Google Sheets' backoffice UI is generated, not committed: build it once
+# Backoffice front ends are generated, not committed: build them once
 cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+npm ci && npm run build
+cd ../../../..
+cd Examples/Example/Umbraco.Community.Automate.Example/Client
 npm ci && npm run build
 cd ../../../..
 

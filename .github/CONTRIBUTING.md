@@ -60,6 +60,7 @@ Connections/                                  one folder per connection
   <Area>/                                     e.g. Mastodon
     Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
     Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
+Examples/Example/                             reference connection to copy (built and tested, never published)
 Demo/                                         throwaway Umbraco site referencing every package
 .github/                                      CI and release workflows, this guide, design notes
 .githooks/                                    gitleaks pre-commit and pre-push hooks
@@ -67,7 +68,7 @@ Directory.Packages.props                      central NuGet versions for every p
 Umbraco.Community.Automate.slnx               the solution
 ```
 
-Connections live under `Connections/`, the name Umbraco Automate's backoffice uses for them.
+Connections live under `Connections/`, the name Umbraco Automate's backoffice uses for them. `Examples/Example/` is a reference connection that uses every folder below, including a trigger and a front end; it has no release tag prefix and isn't packable, so it's never published.
 
 ### Inside a connection
 
@@ -96,11 +97,14 @@ CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/`
 ### First run
 
 ```bash
-# Build the Google Sheets backoffice front end. Its output (wwwroot/) is gitignored,
-# so without this step the column-list editor won't appear.
+# Build the backoffice front ends. Their output (wwwroot/) is gitignored, so without
+# this step the Google Sheets column-list editor and the Example icon won't appear.
 cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci
 npm run build
+cd ../../../..
+cd Examples/Example/Umbraco.Community.Automate.Example/Client
+npm ci && npm run build
 cd ../../../..
 
 dotnet run --project Demo --launch-profile Umbraco.Web.UI
@@ -217,7 +221,7 @@ git push --force-with-lease
 
 If you use [Claude Code](https://claude.com/claude-code), the repo includes an `automate-connection` skill ([`.claude/skills/automate-connection/`](../.claude/skills/automate-connection/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>" and it scaffolds the package in this layout with these conventions. The checklist below is the same process by hand.
 
-1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. WeatherApi is the best one to copy: an API-key connection, two actions, no front end, and it follows every convention, including tests. Mastodon shows custom icons; Google Sheets shows OAuth and a custom backoffice editor.
+1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a connection](#inside-a-connection): at least `Actions/`, `Composers/` and `Connections/`, plus `Triggers/`, `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.

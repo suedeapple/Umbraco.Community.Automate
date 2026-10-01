@@ -7,7 +7,7 @@ description: Scaffold and build Umbraco Automate connection packages in the Umbr
 
 This repo is a monorepo of community connections for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate). Each connection is one NuGet package that adds a **connection type** (credentials for an external service) and **actions** (and later **triggers**) that automations can use.
 
-Every connection follows the same shape on purpose: contributors and reviewers should be able to open any package and know where everything is, and CI discovers packages purely from the folder layout. Follow this skill so a new connection looks like the existing ones. When in doubt, copy **WeatherApi** (`Connections/WeatherApi/`): one API-key connection, two actions with typed outputs, no front end, and it follows every convention here, including pre-filled references, error categories and xUnit-only tests. **Mastodon** shows custom icons; **Google Sheets** shows OAuth and a custom backoffice editor; **DevTo** shows outcomes and content conversion in depth.
+Every connection follows the same shape on purpose: contributors and reviewers should be able to open any package and know where everything is, and CI discovers packages purely from the folder layout. Follow this skill so a new connection looks like the existing ones. When in doubt, copy **`Examples/Example/`**: a small reference connection (talking to httpbin.org) that uses every folder here, including a trigger, outcomes, a custom field editor in `Client/`, and xUnit-only tests. It's built and tested by CI but never published. Among the real connections, **WeatherApi** is the simplest; **Google Sheets** shows OAuth; **DevTo** shows content conversion in depth.
 
 Code templates for every file below are in [references/templates.md](references/templates.md). Read it before writing code.
 
@@ -95,6 +95,13 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 - Treat `TaskCanceledException` when the caller didn't cancel as a timeout, and `HttpRequestException` as the service being unreachable.
 - Log with structured placeholders, never secrets.
 
+### Triggers
+- The simplest trigger is a **notification trigger**: derive from `NotificationTriggerBase<TSettings, TOutput, TNotification>` (note the order: settings, output, then the Umbraco notification) and put `[Trigger("<area>.<name>", "Display Name", Group = ..., Icon = ...)]` on it. See `Examples/Example/Triggers/`.
+- Override `MapEvent(notification)` to return one `TriggerEvent<TOutput>` per affected item, with `TriggerAlias = Alias`, the output, and `IdempotencyKey = GenerateIdempotencyKey(item.Key, 0, item.UpdateDate)` so a duplicate notification doesn't run the automation twice.
+- Override `CanHandle(output, settings)` (it's `protected`, and `settings` can be null) to apply each automation's own filters, such as a key prefix.
+- Automate subscribes to the notification for you; just register the trigger with `TriggerCollectionBuilder` in the composer. Output properties reach steps in camelCase as `${ trigger.<property> }`.
+- Other kinds exist (`ScheduledTriggerBase` for CRON, `WebhookTriggerBase`, or raising events yourself with `ITriggerDispatcher`), but Automate supplies their output itself; reach for them only when a notification trigger can't do the job.
+
 ### Connection validation
 - `ValidateAsync` should check required fields, then make one cheap authenticated call and return `Success("Connected as @name")`-style feedback.
 - If each check costs the user API quota, make the live check opt-in (see Skoda's `ValidateConnection`).
@@ -134,7 +141,8 @@ To bring in a connection that already lives in its own repo (as WeatherApi did f
 
 This skill is a living document. Add new conventions and lessons learned here (or in the sections above) as the team agrees on them.
 
-- Packages use either an `IPackageManifestReader` (Mastodon, DevTo) or a static `wwwroot/umbraco-package.json` (Skoda) to register icons. New connections should use the manifest reader; see the template.
+- Front-end packages pin Playwright to the version Google Sheets uses (`"overrides": { "playwright": "1.61.0", "playwright-core": "1.61.0" }` in `Client/package.json`), so every `Client/` shares one downloaded browser.
+- Registering icons and editors: a package with a `Client/` lists them in `Client/src/manifests.ts`, loaded by `Client/public/umbraco-package.json` (Example, Google Sheets); one with only hand-written icons uses an `IPackageManifestReader` (Mastodon, DevTo; see the template). Skoda's static `wwwroot/umbraco-package.json` also works but isn't the pattern to copy.
 - Automate also discovers `[ConnectionType]` and `[Action]` classes on its own: Skoda's composer registers neither, and both still appear. Register them explicitly in the composer anyway, so a reader can see everything the package adds in one place.
 - Config references went through a few designs before settling: per-package `Umbraco:Community:Automate:<Area>` sections needed allow-list registration in every composer, so they moved under Automate's shared sections (nested by area, no registration); and the paths live in one `<Area>Configuration` class rather than being hard-coded, so there's one place to change them.
 - .NET accepts any well-formed culture name (e.g. `xx-YY`), so `CultureInfo.GetCultureInfo` only throws for malformed input. Don't rely on it to reject unknown cultures.
