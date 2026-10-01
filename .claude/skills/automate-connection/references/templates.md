@@ -1,6 +1,6 @@
 # Connection templates
 
-Starting points for every file in a new connection, based on the working Mastodon package. Replace `Example` / `example` with the connection's area name (PascalCase / camelCase / lowercase as shown) and adjust to the service. Compare with `Connections/Mastodon/` if anything here is unclear; the real code wins if they disagree.
+Starting points for every file in a new connection, based on the working Mastodon and WeatherApi packages. Replace `Example` / `example` with the connection's area name (PascalCase / camelCase / lowercase as shown) and adjust to the service. Compare with `Connections/WeatherApi/` (or `Connections/Mastodon/` for custom icons) if anything here is unclear; the real code wins if they disagree.
 
 ## Contents
 
@@ -19,7 +19,7 @@ Starting points for every file in a new connection, based on the working Mastodo
 
 ## Package project
 
-`Connections/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj`
+`Connections/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj`. This version serves custom icons from `wwwroot/`. Without a `wwwroot/`, use `Microsoft.NET.Sdk` and drop `AddRazorSupportForMvc` and `StaticWebAssetBasePath`.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Razor">
@@ -111,6 +111,8 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- Umbraco's own harness for running actions in tests (ActionTestHarness). -->
+    <PackageReference Include="Umbraco.Automate.Testing" />
   </ItemGroup>
 
   <ItemGroup>
@@ -122,7 +124,7 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
 
 ## Configuration
 
-`Configuration/ExampleConfiguration.cs`. Only needed if users can reference config values from connection fields.
+`Configuration/ExampleConfiguration.cs`. Section paths for the allow-list, plus the default reference for each credential field.
 
 ```csharp
 namespace Umbraco.Community.Automate.Example.Configuration;
@@ -132,15 +134,19 @@ public static class ExampleConfiguration
     public const string SectionPath = "Umbraco:Community:Automate:Example";
     public const string VariablesPath = SectionPath + ":Variables";
     public const string SecretsPath = SectionPath + ":Secrets";
+
+    /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
+    public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
 }
 ```
 
 ## Connection settings, validator and type
 
-`Connections/ExampleConnectionSettings.cs`
+`Connections/ExampleConnectionSettings.cs`. The credential defaults to its configuration reference, so a new connection opens pre-filled.
 
 ```csharp
 using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.Example.Configuration;
 
 namespace Umbraco.Community.Automate.Example.Connections;
 
@@ -148,10 +154,10 @@ public sealed class ExampleConnectionSettings
 {
     [Field(
         Label = "API key",
-        Description = "Generate a key under Settings → API in Example. Or reference configuration, e.g. $Umbraco:Community:Automate:Example:Secrets:ApiKey",
+        Description = "Generate a key under Settings → API in Example. Defaults to the key in configuration at Umbraco:Community:Automate:Example:Secrets:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
         IsSensitive = true,
         SortOrder = 0)]
-    public string ApiKey { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = ExampleConfiguration.ApiKeyReference;
 }
 ```
 
@@ -169,7 +175,7 @@ public static class ExampleConnectionSettingsValidator
             return "An API key is required.";
 
         if (settings.ApiKey.TrimStart().StartsWith('$'))
-            return $"The API key reference '{settings.ApiKey}' could not be resolved. Check the key exists under Umbraco:Community:Automate:Example:Secrets.";
+            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Community:Automate:Example:Secrets:ApiKey, or enter the key itself on the connection.";
 
         return null;
     }
@@ -490,8 +496,12 @@ namespace Umbraco.Community.Automate.Example.Tests.Connections;
 public class ExampleConnectionSettingsValidatorTests
 {
     [Fact]
+    public void New_connections_default_to_the_configuration_reference()
+        => Assert.Equal("$Umbraco:Community:Automate:Example:Secrets:ApiKey", new ExampleConnectionSettings().ApiKey);
+
+    [Fact]
     public void Missing_api_key_fails()
-        => Assert.Equal("An API key is required.", ExampleConnectionSettingsValidator.Validate(new ExampleConnectionSettings()));
+        => Assert.Equal("An API key is required.", ExampleConnectionSettingsValidator.Validate(new ExampleConnectionSettings { ApiKey = "" }));
 
     [Fact]
     public void Unresolved_reference_fails_with_a_hint()
@@ -546,6 +556,37 @@ public async Task Rate_limited_response_is_classified_as_rate_limiting()
 
     Assert.Equal(StepRunErrorCategory.RateLimiting, ex.Category);
 }
+```
+
+`Actions/CreatePostActionTests.cs`. Run an action end to end with Umbraco's `ActionTestHarness`. Give it every service the action's constructor asks for, built on the stub HTTP fakes (here the action takes an `ExampleClient`; one that takes `IHttpClientFactory` directly gets `.WithService<IHttpClientFactory>(...)`):
+
+```csharp
+[Fact]
+public async Task Missing_text_is_a_validation_error()
+{
+    var handler = new StubHttpMessageHandler();
+
+    var result = await ActionTestHarness.For<CreatePostAction>()
+        .WithService(new ExampleClient(new StubHttpClientFactory(handler)))
+        .WithSettings(new CreatePostSettings { Text = "" })
+        .WithConnection("example", new ExampleConnectionSettings { ApiKey = "key" })
+        .ExecuteAsync();
+
+    Assert.Equal(StepRunErrorCategory.Validation, result.ErrorCategory);
+    Assert.Empty(handler.Requests);
+}
+```
+
+To test a connection type's `ValidateAsync`, construct it with a fake model resolver; see `WeatherApiConnectionTypeTests` for a complete example:
+
+```csharp
+private sealed class UnusedModelResolver : IEditableModelResolver
+{
+    object IEditableModelResolver.ResolveModel(string alias, Type modelType, object? source, EditableModelSchema? schema) => throw new NotSupportedException();
+    TModel IEditableModelResolver.ResolveModel<TModel>(string alias, object? source, EditableModelSchema? schema) => throw new NotSupportedException();
+}
+
+var connectionType = new ExampleConnectionType(new ConnectionTypeInfrastructure(new UnusedModelResolver()), client);
 ```
 
 ## Wiring into the repo
