@@ -143,7 +143,7 @@ jobs:
       # playwright.config.ts's `webServer` block starts the Demo site itself (with
       # AUTOMATE_E2E_MODE=1) and waits for /umbraco/api/health/ready, so this step doesn't
       # need to boot it separately. Credentials match the Demo site's fixed unattended-install
-      # admin account (Umbraco.Community.Automate.Demo/appsettings.Development.json) — not a
+      # admin account (Demo/appsettings.Development.json) — not a
       # secret, since it only ever exists in this throwaway, freshly-seeded SQLite instance.
       - working-directory: ${{ inputs.client-dir }}
         env:
