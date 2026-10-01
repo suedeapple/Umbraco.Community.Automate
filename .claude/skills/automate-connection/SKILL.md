@@ -21,7 +21,7 @@ Connections/<Area>/                               <Area> = PascalCase service na
     Connections/    the connection type + its connection settings (+ validator)
     Composers/      IComposer, package manifest reader, IUmbracoBuilder extensions
     Api/            C# client for the external service: client, request/response models, exceptions
-    Configuration/  appsettings-bound classes (section paths, options) + validators
+    Configuration/  options classes bound from appsettings (e.g. a base URL override) + validators
     Client/         backoffice front end (Vite + Lit, npm). Only if custom UI is needed
     wwwroot/        static backoffice files served under App_Plugins/ (icons)
     Directory.Build.props
@@ -76,8 +76,8 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 
 ### Configuration and secrets
 - Never commit real credentials, not even temporarily. The repo's gitleaks hooks (`.githooks/`) block commits and pushes that contain them.
-- Credentials live in configuration, not the database, under Umbraco Automate's **shared** sections, nested under the area name: `Umbraco:Automate:Secrets:<Area>:<Key>` for sensitive values and `Umbraco:Automate:Variables:<Area>:<Key>` for the rest, referenced from fields as `$Umbraco:Automate:Secrets:<Area>:ApiKey`. Automate resolves references from these two sections by default (its allow-list is default-deny for everything else), so **don't register anything** in the composer. Nesting under `<Area>` keeps a package's keys together and avoids clashes. Secrets can only be referenced from `IsSensitive` fields. Keep the paths, and each default reference, as constants in `Configuration/<Area>Configuration.cs`.
-- **Pre-fill each credential field with its reference as the default value** (`public string ApiKey { get; set; } = <Area>Configuration.ApiKeyReference;`). A new connection then opens with the reference already filled in, so users who store the key in configuration don't type anything, and anyone who prefers can overwrite it with the value. Don't ask users to copy and paste references from help text. Leave per-connection values (like a vehicle VIN) blank.
+- Credentials live in configuration, not the database, under Umbraco Automate's **shared** sections, nested under the area name: `Umbraco:Automate:Secrets:<Area>:<Key>` for sensitive values and `Umbraco:Automate:Variables:<Area>:<Key>` for the rest, referenced from fields as `$Umbraco:Automate:Secrets:<Area>:ApiKey`. Automate resolves references from these two sections by default (its allow-list is default-deny for everything else), so **don't register anything** in the composer. Nesting under `<Area>` keeps a package's keys together and avoids clashes. Secrets can only be referenced from `IsSensitive` fields.
+- **Pre-fill each credential field with its reference as the default value** (`public string ApiKey { get; set; } = "$Umbraco:Automate:Secrets:<Area>:ApiKey";`). Hard-code the string on the property: it's only used there, so a constants class just adds a file to look in. A new connection then opens with the reference already filled in, so users who store the key in configuration don't type anything, and anyone who prefers can overwrite it with the value. Don't ask users to copy and paste references from help text. Leave per-connection values (like a vehicle VIN) blank.
 - Automate resolves references before settings reach your code. If the key is missing it fails the step or the **Test connection** itself, with *Configuration key '...' not found*, so you don't need to handle that. As a cheap safety net, the shared validator can still reject a value that starts with `$` (one that arrived unresolved) with a message naming the key, before any API call.
 - OAuth providers use `Umbraco:Automate:Providers:<Area>` (see Google Sheets).
 
