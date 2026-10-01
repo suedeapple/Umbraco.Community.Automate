@@ -12,6 +12,7 @@ Umbraco Automate adds an **Automation** section to the Umbraco backoffice where 
 | [GoogleSheets](Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/README.md) | Connects to Google Sheets with OAuth. Appends, finds, updates, deletes and upserts rows; reads and clears ranges; creates spreadsheets and tabs. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
 | [Mastodon](Connections/Mastodon/Umbraco.Community.Automate.Mastodon/README.md) | Posts statuses to any Mastodon instance, with visibility, content warnings and an appended URL. Replaces `OC.Automate.Mastodon`. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
 | [Skoda](Connections/Skoda/Umbraco.Community.Automate.Skoda/README.md) | Reads a Škoda vehicle's status and controls charging, air conditioning, auxiliary heating and ventilation through the MyŠkoda Public API. | In development, not yet on NuGet |
+| [WeatherApi](Connections/WeatherApi/Umbraco.Community.Automate.WeatherApi/README.md) | Gets the current weather or today's forecast for a location from [WeatherAPI.com](https://www.weatherapi.com/). Replaces `SA.Automate.WeatherApi`. | Not yet on NuGet under this name: [build from source](#using-a-package-before-its-on-nuget) |
 
 Each package's README has the full setup guide, all its settings, and troubleshooting.
 
@@ -56,7 +57,7 @@ Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/securi
 
 ### 3. Create a connection
 
-In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. For DevTo and Mastodon, sensitive fields accept a reference to configuration instead of the value itself, e.g. `$Umbraco:Community:Automate:Mastodon:Secrets:AccessToken`. Click **Test connection** to check it.
+In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. Credential fields come pre-filled with a reference to configuration, e.g. `$Umbraco:Community:Automate:Mastodon:Secrets:AccessToken`, so values you stored in step 2 are used without typing anything. Replace a reference with the value itself if you'd rather store it on the connection. Click **Test connection** to check it.
 
 ### 4. Build an automation
 

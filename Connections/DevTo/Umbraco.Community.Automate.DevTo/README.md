@@ -57,7 +57,7 @@ Reference these values from the backoffice with a `$` prefix, e.g. `$Umbraco:Com
 ### 3. Create the connection
 
 1. Go to **Automation → Settings → Connections** and create a new **DEV Community** connection.
-2. **API Key**: `$Umbraco:Community:Automate:DevTo:Secrets:ApiKey`
+2. **API Key** is already filled in with `$Umbraco:Community:Automate:DevTo:Secrets:ApiKey`, a reference to the key you stored in step 2. Leave it, or replace it with the key itself to store it on the connection.
 3. Click **Test connection**. You should see "Connected as @yourname".
 
 Posting to a different [Forem](https://forem.com) community? Change **Instance URL** under *Advanced*.

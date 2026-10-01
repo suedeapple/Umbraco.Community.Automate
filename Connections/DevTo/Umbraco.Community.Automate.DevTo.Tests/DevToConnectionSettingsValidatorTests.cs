@@ -22,4 +22,8 @@ public class DevToConnectionSettingsValidatorTests
     [Fact]
     public void Null_settings_fail()
         => DevToConnectionSettingsValidator.Validate(null).ShouldNotBeNull();
+
+    [Fact]
+    public void New_connections_default_to_the_configuration_reference()
+        => Assert.Equal("$Umbraco:Community:Automate:DevTo:Secrets:ApiKey", new DevToConnectionSettings().ApiKey);
 }

@@ -20,10 +20,32 @@ No further setup required. The composer registers itself automatically via Umbra
 
 Generate an API key in the **MyŠkoda** app. You'll also need the vehicle's VIN (Vehicle Identification Number).
 
-### 2. Create the connection
+### 2. Store the key in configuration
+
+Add the key to the package's `Umbraco:Community:Automate:Skoda:Secrets` section (locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)):
+
+```json
+{
+  "Umbraco": {
+    "Community": {
+      "Automate": {
+        "Skoda": {
+          "Secrets": {
+            "ApiKey": "your-api-key"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+In production, use an environment variable instead: `Umbraco__Community__Automate__Skoda__Secrets__ApiKey=your-api-key`. The package registers this section with Umbraco Automate's configuration allow-list.
+
+### 3. Create the connection
 
 1. Go to **Automation → Settings → Connections** and create a new **Škoda** connection.
-2. **API key**: the key from the MyŠkoda app.
+2. **API key** is already filled in with `$Umbraco:Community:Automate:Skoda:Secrets:ApiKey`, a reference to the key you stored in step 2. Leave it, or replace it with the key itself to store it on the connection.
 3. **VIN**: the vehicle you want to control. Create one connection per vehicle.
 4. **Validate connection**: when on, saving or testing the connection checks the API key and VIN against the Škoda API. Each check uses one request from your API quota, so it's off by default.
 

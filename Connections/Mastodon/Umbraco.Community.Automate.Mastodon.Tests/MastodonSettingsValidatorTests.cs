@@ -73,4 +73,33 @@ public class MastodonSettingsValidatorTests
 
         Assert.Null(error);
     }
+
+    [Fact]
+    public void New_connections_default_to_the_configuration_references()
+    {
+        var settings = new MastodonSettings();
+
+        Assert.Equal("$Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl", settings.InstanceUrl);
+        Assert.Equal("$Umbraco:Community:Automate:Mastodon:Secrets:AccessToken", settings.AccessToken);
+    }
+
+    [Fact]
+    public void Unresolved_instance_url_reference_explains_where_to_put_the_url()
+    {
+        // Automate leaves a reference as-is when the value isn't in configuration.
+        var error = MastodonSettingsValidator.Validate(new MastodonSettings { AccessToken = "token" });
+
+        Assert.NotNull(error);
+        Assert.Contains("could not be resolved", error);
+        Assert.Contains("Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl", error);
+    }
+
+    [Fact]
+    public void Unresolved_access_token_reference_explains_where_to_put_the_token()
+    {
+        var error = MastodonSettingsValidator.Validate(new MastodonSettings { InstanceUrl = "https://mastodon.social" });
+
+        Assert.NotNull(error);
+        Assert.Contains("Umbraco:Community:Automate:Mastodon:Secrets:AccessToken", error);
+    }
 }

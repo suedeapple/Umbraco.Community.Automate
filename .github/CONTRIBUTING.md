@@ -134,9 +134,13 @@ dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<cli
 dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<client-secret>" --project Demo
 dotnet user-secrets set "Umbraco:Community:Automate:Mastodon:Secrets:AccessToken" "<token>" --project Demo
 dotnet user-secrets set "Umbraco:Community:Automate:DevTo:Secrets:ApiKey" "<api-key>" --project Demo
+dotnet user-secrets set "Umbraco:Community:Automate:Skoda:Secrets:ApiKey" "<api-key>" --project Demo
+dotnet user-secrets set "Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey" "<api-key>" --project Demo
 ```
 
-For Google Sheets, also add `https://localhost:44343/umbraco/automate/oauth/callback/googlesheets` as an authorised redirect URI on your OAuth client. Skoda's API key and VIN are entered directly on the connection. Each package's README explains where to get its credentials.
+New connections are pre-filled with references to exactly these keys, so once they're set you can create a connection without typing any credentials.
+
+For Google Sheets, also add `https://localhost:44343/umbraco/automate/oauth/callback/googlesheets` as an authorised redirect URI on your OAuth client. Skoda's VIN is entered on the connection. Each package's README explains where to get its credentials.
 
 ### Resetting the site
 
@@ -212,7 +216,7 @@ git push --force-with-lease
 
 If you use [Claude Code](https://claude.com/claude-code), the repo includes an `automate-connection` skill ([`.claude/skills/automate-connection/`](../.claude/skills/automate-connection/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>" and it scaffolds the package in this layout with these conventions. The checklist below is the same process by hand.
 
-1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Mastodon is the simplest one to copy: a connection, one action and no front end. Google Sheets shows OAuth and a custom backoffice editor.
+1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. WeatherApi is the best one to copy: an API-key connection, two actions, no front end, and it follows every convention, including tests. Mastodon shows custom icons; Google Sheets shows OAuth and a custom backoffice editor.
 2. **Use the standard folders** from [Inside a connection](#inside-a-connection): at least `Actions/`, `Composers/` and `Connections/`, plus `Triggers/`, `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.

@@ -1,4 +1,5 @@
 using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.DevTo.Configuration;
 
 namespace Umbraco.Community.Automate.DevTo.Connections;
 
@@ -8,10 +9,10 @@ public sealed class DevToConnectionSettings
 
     [Field(Label = "API Key",
         Description = "Your DEV API key, from [Settings → Extensions](https://dev.to/settings/extensions) on DEV. " +
-                      "Recommended: reference a secret instead of pasting it, e.g. $Umbraco:Community:Automate:DevTo:Secrets:ApiKey",
+                      "Defaults to the key in configuration at Umbraco:Community:Automate:DevTo:Secrets:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
         SortOrder = 0,
         IsSensitive = true)]
-    public string ApiKey { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = DevToConfiguration.ApiKeyReference;
 
     [Field(Label = "Instance URL",
         Description = "Base URL of the Forem instance. Leave as https://dev.to unless you post to another Forem community.",
