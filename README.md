@@ -18,7 +18,7 @@ Each package's README has the full setup guide, all its settings, and troublesho
 
 ## Requirements
 
-- Umbraco CMS 17 (DevTo and Mastodon also support 18; see each package's *Compatibility* section)
+- Umbraco CMS 17 (DevTo, Mastodon and WeatherApi also support 18; see each package's *Compatibility* section)
 - [Umbraco Automate](https://www.nuget.org/packages/Umbraco.Automate) 17 installed in the site
 - .NET 10
 
@@ -49,13 +49,13 @@ Each package reads its settings from configuration, so secrets stay out of the d
 }
 ```
 
-Every connection keeps its values under its own name inside Umbraco Automate's shared `Variables` and `Secrets` sections, which Automate reads references from out of the box.
+Every connection keeps its values under its own name inside Umbraco Automate's shared `Variables` (non-sensitive) and `Secrets` (sensitive) sections, which Automate reads references from out of the box, so there's nothing to register. Each package's README lists its keys.
 
 Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) rather than `appsettings.json`. In production, use environment variables (`Umbraco__Automate__Secrets__Mastodon__AccessToken=...`) or a key vault. Google Sheets uses OAuth instead: you supply a Client ID and Secret under `Umbraco:Automate:Providers:GoogleSheets`, then sign in from the backoffice.
 
 ### 3. Create a connection
 
-In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. Credential fields come pre-filled with a reference to configuration, e.g. `$Umbraco:Automate:Secrets:Mastodon:AccessToken`, so values you stored in step 2 are used without typing anything. Replace a reference with the value itself if you'd rather store it on the connection. Click **Test connection** to check it.
+In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. Credential fields come pre-filled with a reference to configuration, e.g. `$Umbraco:Automate:Secrets:Mastodon:AccessToken`, so values you stored in step 2 are used without typing anything. Replace a reference with the value itself if you'd rather store it on the connection. Click **Test connection** to check it; if a key is missing from configuration, Umbraco Automate tells you which one (*Configuration key '...' not found*).
 
 ### 4. Build an automation
 

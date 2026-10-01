@@ -80,7 +80,7 @@ Every package uses the same folder names, so you always know where to look. The 
 | `Connections/` | The connection type and its connection settings (and their validator) |
 | `Composers/` | The `IComposer` that registers everything, plus any package manifest reader or `IUmbracoBuilder` extensions |
 | `Api/` | The C# client for the external service: HTTP client, request and response models, exceptions |
-| `Configuration/` | Classes bound from `appsettings.json` (options, config section paths) and their validators |
+| `Configuration/` | `<Area>Configuration` with the configuration paths and default references (one place to change them), plus any options classes bound from `appsettings.json` and their validators |
 | `Client/` | The backoffice front end source (Vite + Lit, built by npm into `wwwroot/`). Only for connections that need custom UI. |
 | `wwwroot/` | Static backoffice files served under `App_Plugins/` (icons, `umbraco-package.json`) |
 
