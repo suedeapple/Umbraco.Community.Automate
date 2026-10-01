@@ -15,5 +15,9 @@
     <Project Path="Connections/Skoda/Umbraco.Community.Automate.Skoda.Tests/Umbraco.Community.Automate.Skoda.Tests.csproj" />
     <Project Path="Connections/Skoda/Umbraco.Community.Automate.Skoda/Umbraco.Community.Automate.Skoda.csproj" />
   </Folder>
+  <Folder Name="/Connections/WeatherApi/">
+    <Project Path="Connections/WeatherApi/Umbraco.Community.Automate.WeatherApi.Tests/Umbraco.Community.Automate.WeatherApi.Tests.csproj" />
+    <Project Path="Connections/WeatherApi/Umbraco.Community.Automate.WeatherApi/Umbraco.Community.Automate.WeatherApi.csproj" />
+  </Folder>
   <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
 </Solution>
