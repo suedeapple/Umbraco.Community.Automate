@@ -81,26 +81,6 @@ Settings support `${ binding }` expressions, so values can come from the trigger
 
 The command actions output the `vin` they acted on.
 
-## Configuration
-
-The API base URL defaults to `https://public.api.connect.skoda-auto.cz/`. Override it if needed:
-
-```json
-{
-  "Umbraco": {
-    "Automate": {
-      "Variables": {
-        "Skoda": {
-          "BaseUrl": "https://public.api.connect.skoda-auto.cz/"
-        }
-      }
-    }
-  }
-}
-```
-
-Or as an environment variable: `Umbraco__Automate__Variables__Skoda__BaseUrl=...`. It sits alongside the package's other settings in Umbraco Automate's shared Variables section.
-
 ## Links
 
 - [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/Skoda/Umbraco.Community.Automate.Skoda)
