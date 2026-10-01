@@ -210,6 +210,8 @@ git push --force-with-lease
 
 ## Adding a new connection
 
+If you use [Claude Code](https://claude.com/claude-code), the repo includes an `automate-connection` skill ([`.claude/skills/automate-connection/`](../.claude/skills/automate-connection/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>" and it scaffolds the package in this layout with these conventions. The checklist below is the same process by hand.
+
 1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Mastodon is the simplest one to copy: a connection, one action and no front end. Google Sheets shows OAuth and a custom backoffice editor.
 2. **Use the standard folders** from [Inside a connection](#inside-a-connection): at least `Actions/`, `Composers/` and `Connections/`, plus `Triggers/`, `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.

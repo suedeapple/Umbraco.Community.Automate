@@ -1,0 +1,117 @@
+---
+name: automate-connection
+description: Scaffold and build Umbraco Automate connection packages in the Umbraco.Community.Automate repo the house way: the Connections/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Configuration, Client), project wiring (solution, Demo site, Directory.Build.props, MinVer, CI), tests, README and secrets handling. Use this whenever someone wants to create a new connection or provider (e.g. "add a Slack connection", "build a Bluesky integration for Automate"), add an action or trigger to an existing connection, check a connection follows the repo conventions, or asks where a class or file should go in this repo, even if they don't say "connection" or "skill".
+---
+
+# Umbraco Automate connections
+
+This repo is a monorepo of community connections for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate). Each connection is one NuGet package that adds a **connection type** (credentials for an external service) and **actions** (and later **triggers**) that automations can use.
+
+Every connection follows the same shape on purpose: contributors and reviewers should be able to open any package and know where everything is, and CI discovers packages purely from the folder layout. Follow this skill so a new connection looks like the existing ones. When in doubt, copy **Mastodon** (`Connections/Mastodon/`), the simplest complete example: one connection, one action, no front end. **Google Sheets** shows OAuth and a custom backoffice editor; **DevTo** shows outcomes, outputs and error classification in depth.
+
+Code templates for every file below are in [references/templates.md](references/templates.md). Read it before writing code.
+
+## Layout
+
+```
+Connections/<Area>/                               <Area> = PascalCase service name, e.g. Bluesky
+  Umbraco.Community.Automate.<Area>/              the package
+    Actions/        one class per action + its settings and output classes
+    Triggers/       one class per trigger + its settings and output classes (when needed)
+    Connections/    the connection type + its connection settings (+ validator)
+    Composers/      IComposer, package manifest reader, IUmbracoBuilder extensions
+    Api/            C# client for the external service: client, request/response models, exceptions
+    Configuration/  appsettings-bound classes (section paths, options) + validators
+    Client/         backoffice front end (Vite + Lit, npm). Only if custom UI is needed
+    wwwroot/        static backoffice files served under App_Plugins/ (icons)
+    Directory.Build.props
+    README.md
+    community-automate-128.png
+    Umbraco.Community.Automate.<Area>.csproj
+  Umbraco.Community.Automate.<Area>.Tests/        xUnit tests, same folder names where grouped
+```
+
+Why these names:
+- **Plural** for Automate's building blocks (`Actions`, `Triggers`, `Connections`) and for `Composers`, matching each other and Umbraco's own convention for composers.
+- **`Connections/`, not `Connection/` or `ConnectionType/`**: a singular `Connection` namespace shadows Automate's `Connection` type inside the package's own namespace tree and breaks code that uses it.
+- **`Client/` is only ever the npm front end.** CI gives a package front-end jobs when `Client/package.json` exists, so a C# API client must go in `Api/`, never `Client/`.
+- Namespaces follow folders: `Umbraco.Community.Automate.<Area>.Actions`, `.Connections`, and so on.
+- Folders unique to one connection (e.g. DevTo's `Articles/`, `Content/`) are fine alongside the standard ones.
+
+Don't create empty folders: add `Triggers/`, `Api/`, `Configuration/`, `Client/` or `wwwroot/` only when there's something to put in them.
+
+## Creating a new connection
+
+Work through these in order and tick them off. Ask the user for the service name, what it should do (which actions), and how it authenticates (API key/token, OAuth, none) before starting.
+
+1. **Projects.** Create the package and `.Tests` projects under `Connections/<Area>/` from the templates. The package uses `Microsoft.NET.Sdk.Razor` (so `wwwroot/` is served as static web assets) with `StaticWebAssetBasePath` `App_Plugins/UmbracoCommunityAutomate<Area>`.
+2. **`Directory.Build.props`** in the package folder, with `MinVerTagPrefix` `<area-lowercase>-v` and `MinVerIgnoreHeight` true. This file is also the marker that makes CI find the package; without it the package is silently skipped.
+3. **Connection type and settings** in `Connections/`.
+4. **Actions** in `Actions/`, each with its settings (and output, if it returns data).
+5. **Composer** in `Composers/`: register the connection type, actions, any services and the package manifest (icons). If the connection reads `$`-references from configuration, add the allow-list (see Configuration below).
+6. **Icons** in `wwwroot/` plus the manifest reader in `Composers/`.
+7. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
+8. **Wire it in**: add both projects to `Umbraco.Community.Automate.slnx` (in a `/Connections/<Area>/` solution folder) and a `ProjectReference` from `Demo/Umbraco.Community.Automate.Demo.csproj`.
+9. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Demo/appsettings.Development.json`. Real credentials go in user secrets only.
+10. **Tests** for every action and the connection validation (see Testing).
+11. **README.md** in the package (see README), and a row in the root `README.md` connections table.
+12. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Connections/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site and check the connection type appears under **Automation → Settings → Connections → Create** with its icon.
+
+You don't need to edit any CI workflow: `ci.yml` discovers packages from the layout, and `release.yml` finds a package from its tag prefix.
+
+## Conventions
+
+### Aliases, names and groups
+- **Aliases are permanent.** Saved automations reference the connection type alias and action aliases, so never rename an existing one. Pick them carefully up front.
+- For new connections use `<area>` (camelCase) for the connection type alias and `<area>.<actionName>` for actions, e.g. `bluesky` and `bluesky.createPost`. (Existing packages vary; leave them as they are.)
+- Set `ConnectionTypeAlias` on every action to the connection type alias, so the action only offers matching connections.
+- Use a shared `Group` where one fits (`Social Networks`, `Productivity`) so related connections sit together in the pickers.
+- Name icons `icon-automate-<area>` and use the same icon on the connection type and its actions.
+
+### Settings fields
+- Use `[Field(Label = ..., Description = ..., SortOrder = ...)]` on every setting; the description is the user's only help text in the backoffice.
+- Mark credentials `IsSensitive = true`.
+- Set `SupportsBindings = true` on action settings that should accept `${ ... }` values from the trigger or earlier steps (content, titles, IDs).
+- Put rarely-changed options in `Group = "Advanced"`.
+
+### Configuration and secrets
+- Never commit real credentials, not even temporarily. The repo's gitleaks hooks (`.githooks/`) block commits and pushes that contain them.
+- Prefer letting users reference configuration from connection fields: values go in `Umbraco:Community:Automate:<Area>:Variables` and `:Secrets`, referenced as `$Umbraco:Community:Automate:<Area>:Secrets:ApiKey`. Automate only resolves prefixes on its allow-list, so the composer must add both paths (and mark the Secrets path as secret). Keep the paths as constants in `Configuration/<Area>Configuration.cs`.
+- OAuth providers use `Umbraco:Automate:Providers:<Area>` (see Google Sheets).
+
+### Actions
+- Return `Success()` or `Success(output)` on success. Use `SuccessWithOutcome("found", output)`-style outcomes when later steps should branch (e.g. `created`/`updated`, `found`/`notFound`), and document each outcome.
+- Return a typed output (`ActionBase<TSettings, TOutput>`) when the action produces data later steps need. Output properties are exposed in camelCase as `${ steps.<alias>.<property> }`.
+- Fail with `ActionResult.Failed(exception, StepRunErrorCategory.X)` and pick the category deliberately, because Automate uses it to decide whether to retry: `Validation` and `ConfigurationError` for problems the user must fix, `Authentication` for 401/403, `RateLimiting` for 429, `Timeout`, `ServiceUnavailable` for 5xx, `InvalidResponse` for anything else unexpected. Map HTTP status codes in one place in `Api/` (DevTo's `Classify` method is the model).
+- Validate the connection and settings first and fail fast with a clear message telling the user what to fix.
+- Send an idempotency key where the service supports one (`$"{context.RunId}:{context.StepId}"`), so a retried step doesn't post twice.
+- Treat `TaskCanceledException` when the caller didn't cancel as a timeout, and `HttpRequestException` as the service being unreachable.
+- Log with structured placeholders, never secrets.
+
+### Connection validation
+- `ValidateAsync` should check required fields, then make one cheap authenticated call and return `Success("Connected as @name")`-style feedback.
+- If each check costs the user API quota, make the live check opt-in (see Skoda's `ValidateConnection`).
+
+## Testing
+
+- **xUnit only**: use xUnit's `Assert`, and don't add assertion or mocking libraries (no Shouldly, FluentAssertions, Moq or NSubstitute). One framework keeps tests readable for every contributor and the dependency list short. Some older packages still use Shouldly or Moq; don't copy that into new code.
+- Instead of a mocking library, write small hand-written fakes: a stub `HttpMessageHandler` that returns canned responses and records requests, behind a tiny `IHttpClientFactory` implementation (see the templates).
+- Test each action's success path, each outcome, missing or invalid settings, and how API errors map to categories. Never call the real service.
+- Group tests in the same folders as the package (`Actions/`, `Connections/`, `Api/`).
+- If the connection has a `Client/` front end, add web-test-runner unit tests, and Playwright specs if it needs end-to-end coverage (see Google Sheets).
+
+## README
+
+The package README ships inside the NuGet package and is what nuget.org and the Umbraco Marketplace show, so write it for site developers installing the package. Sections, in order: one-line summary; **Installation** (`dotnet add package`); **Setup** (getting credentials from the service, configuration with Variables/Secrets and environment-variable equivalents, creating the connection under **Automation → Settings → Connections**); **Actions** (a table of every setting); **Outcomes and outputs**; **Troubleshooting** (the error messages users will actually see); **Compatibility**; **Links**. Use absolute URLs for anything outside the package folder, because relative links break on nuget.org.
+
+## Adding to an existing connection
+
+- **New action**: add it to `Actions/` with its settings and output, register it in the composer, add tests, and document it in the package README. One action per PR is the norm.
+- **New trigger**: same, in `Triggers/`.
+- Keep existing aliases, namespaces and public types stable. They're used by people's saved automations and code.
+
+## Working notes
+
+This skill is a living document. Add new conventions and lessons learned here (or in the sections above) as the team agrees on them.
+
+- Packages use either an `IPackageManifestReader` (Mastodon, DevTo) or a static `wwwroot/umbraco-package.json` (Skoda) to register icons. New connections should use the manifest reader; see the template.
