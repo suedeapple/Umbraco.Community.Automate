@@ -9,7 +9,7 @@ Thanks for your interest in contributing to Umbraco.Community.Automate! This is 
 
 ## Project layout
 
-Each provider package lives in its own folder under `Connections/` (e.g. `Connections/GoogleSheets/`, containing `Umbraco.Community.Automate.GoogleSheets` and its matching `*.Tests` project). This groups a provider's package, tests and any `Client/` frontend together, and keeps the repo root short as more providers are added; `Connections` is the name Umbraco Automate's backoffice uses for them. New providers go in `Connections/<Area>/`. `Umbraco.Community.Automate.Demo` is a throwaway Umbraco site used to manually exercise every package end-to-end, and also hosts the Playwright E2E suite.
+Each provider package lives in its own folder under `Connections/` (e.g. `Connections/GoogleSheets/`, containing `Umbraco.Community.Automate.GoogleSheets` and its matching `*.Tests` project). This groups a provider's package, tests and any `Client/` frontend together, and keeps the repo root short as more providers are added; `Connections` is the name Umbraco Automate's backoffice uses for them. New providers go in `Connections/<Area>/`. `Demo/` is a throwaway Umbraco site used to manually exercise every package end-to-end, and also hosts the Playwright E2E suite.
 
 ## Building and testing
 
@@ -38,8 +38,8 @@ If a package has a `Client/` folder, run its frontend unit tests with `npm test`
 Never put real credentials (OAuth Client IDs/Secrets, API keys, etc.) into a git-tracked file like `appsettings.Development.json` — even locally, even temporarily. Use [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) instead, which stores them outside the repo entirely:
 
 ```bash
-dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<your-real-client-id>" --project Umbraco.Community.Automate.Demo
-dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<your-real-client-secret>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<your-real-client-id>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<your-real-client-secret>" --project Demo
 ```
 
 These values transparently override the tracked placeholder values in `appsettings.Development.json` at runtime when running the Demo site in Development — no code changes needed, and nothing about them ever touches git.
@@ -49,14 +49,14 @@ These values transparently override the tracked placeholder values in `appsettin
 Run the setup script for your platform once per clone:
 
 ```bash
-./SetupRepo.sh        # macOS/Linux
+./.githooks/setup.sh       # macOS/Linux
 ```
 
 ```powershell
-.\SetupRepo.ps1       # Windows
+.\.githooks\setup.ps1      # Windows
 ```
 
-This installs [Lefthook](https://github.com/evilmartians/lefthook) and wires up `pre-commit`/`pre-push` git hooks that run [gitleaks](https://github.com/gitleaks/gitleaks) against your changes automatically — a second, local layer of defense in case a real secret ever ends up staged despite the above.
+This points git at the `pre-commit`/`pre-push` hooks in `.githooks/`, which run [gitleaks](https://github.com/gitleaks/gitleaks) against your changes automatically — a second, local layer of defense in case a real secret ever ends up staged despite the above.
 
 ### If a commit or push is blocked
 
@@ -97,4 +97,4 @@ Trusted Publishing is bound to this specific repository and workflow — a fork'
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+By contributing, you agree that your contributions will be licensed under the [MIT License](../LICENSE).
