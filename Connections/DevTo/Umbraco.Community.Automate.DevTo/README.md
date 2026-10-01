@@ -56,7 +56,7 @@ Reference these values from the backoffice with a `$` prefix, e.g. `$Umbraco:Com
 
 ### 3. Create the connection
 
-1. Go to **Automate → Connections** and create a new **DEV Community** connection.
+1. Go to **Automation → Settings → Connections** and create a new **DEV Community** connection.
 2. **API Key**: `$Umbraco:Community:Automate:DevTo:Secrets:ApiKey`
 3. Click **Test connection**. You should see "Connected as @yourname".
 

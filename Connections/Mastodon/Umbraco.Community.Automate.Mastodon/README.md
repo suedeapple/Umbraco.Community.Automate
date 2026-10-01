@@ -58,7 +58,7 @@ The key names (`InstanceUrl`, `AccessToken`) are your choice — add more (e.g. 
 
 ### 3. Create the connection in the backoffice
 
-1. Go to **Automate → Connections** and create a new **Mastodon** connection (in the **Social Networks** group).
+1. Go to **Automation → Settings → Connections** and create a new **Mastodon** connection (in the **Social Networks** group).
 2. **Instance URL** — enter the URL directly (e.g. `https://mastodon.social`), or reference your configuration value: `$Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl`
 3. **Access Token** — enter the token directly, or (recommended) reference your configuration value: `$Umbraco:Community:Automate:Mastodon:Secrets:AccessToken`
 4. Click **Test connection** to verify.
