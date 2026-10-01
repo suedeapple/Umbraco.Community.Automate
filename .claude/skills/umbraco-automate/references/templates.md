@@ -12,7 +12,7 @@ Starting points for every file in a new connection, based on the working Mastodo
 - [Api client and models](#api-client-and-models)
 - [Action, settings and output](#action-settings-and-output)
 - [Composer](#composer)
-- [Icons and manifest reader](#icons-and-manifest-reader)
+- [Icons and umbraco-package.json](#icons-and-umbraco-packagejson)
 - [Tests](#tests)
 - [Wiring into the repo](#wiring-into-the-repo)
 - [README skeleton](#readme-skeleton)
@@ -31,7 +31,7 @@ Starting points for every file in a new connection, based on the working Mastodo
     <Title>Umbraco Community Automate Example</Title>
     <Description>Example connection type and actions for Umbraco Automate. One or two sentences on what it lets automations do.</Description>
     <PackageTags>umbraco automate automation example umbraco-marketplace</PackageTags>
-    <!-- Serves wwwroot/ as static web assets under this path (icons, manifest). -->
+    <!-- Serves wwwroot/ as static web assets under this path (umbraco-package.json, icons). -->
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <StaticWebAssetBasePath>App_Plugins/UmbracoCommunityAutomateExample</StaticWebAssetBasePath>
     <PackageIcon>community-automate-128.png</PackageIcon>
@@ -395,7 +395,6 @@ using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Infrastructure.Manifest;
 using Umbraco.Community.Automate.Example.Actions;
 using Umbraco.Community.Automate.Example.Api;
 using Umbraco.Community.Automate.Example.Connections;
@@ -415,20 +414,51 @@ public class ExampleComposer : IComposer
         builder.WithCollectionBuilder<ActionCollectionBuilder>()
             .Add<CreatePostAction>();
 
-        builder.Services.AddSingleton<IPackageManifestReader, ExamplePackageManifestReader>();
-
+        // No icon registration: Umbraco finds wwwroot/umbraco-package.json on its own.
         // No configuration registration: the default references live under Automate's shared
         // Umbraco:Automate:Secrets / Variables sections, which it resolves out of the box.
     }
 }
 ```
 
-## Icons and manifest reader
+## Icons and umbraco-package.json
 
-`wwwroot/icons.js`
+Every package with a custom icon registers it the same way, with hand-written files and no C#. Umbraco finds `umbraco-package.json` under `App_Plugins/` on its own, so nothing goes in the composer.
+
+```
+wwwroot/                    or Client/public/ in a package with a Client/ (Vite copies it into wwwroot/)
+  umbraco-package.json      the package manifest: the icons, plus any other backoffice extensions
+  icons/
+    icons.js                lists the icons
+    example.icon.js         one file per icon: the SVG markup
+```
+
+`wwwroot/umbraco-package.json`
+
+```json
+{
+  "$schema": "https://json.schemastore.org/umbraco-package.json",
+  "id": "Umbraco.Community.Automate.Example",
+  "name": "Umbraco Community Automate Example",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "type": "icons",
+      "alias": "UmbracoCommunityAutomateExample.Icons",
+      "name": "Example Icons",
+      "js": "/App_Plugins/UmbracoCommunityAutomateExample/icons/icons.js"
+    }
+  ]
+}
+```
+
+The `/App_Plugins/UmbracoCommunityAutomateExample` prefix must match `StaticWebAssetBasePath` in the csproj. Leave out `version`, since nothing would keep it in step with the package version. Other hand-written backoffice extensions (property editor UIs, modals, localization; see DevTo) go in the same `extensions` array. A package with a `Client/` adds a `bundle` extension for what Vite builds (see `Examples/Example/`), but keeps its icons as these plain files rather than in `Client/src/`.
+
+`wwwroot/icons/icons.js`
 
 ```js
-// Served from /App_Plugins/UmbracoCommunityAutomateExample/; registered by ExamplePackageManifestReader.
+// Hand-written static web asset, served at /App_Plugins/UmbracoCommunityAutomateExample/icons/.
+// Registered by wwwroot/umbraco-package.json. Icon names must match the C# attributes' Icon.
 export default [
     {
         name: "icon-automate-example",
@@ -438,41 +468,9 @@ export default [
 ];
 ```
 
-`wwwroot/example.icon.js` exports the SVG markup as a string: `export default \`<svg ...>...</svg>\`;`. Icon SVGs are inlined into the backoffice page, so prefix any `id` inside the SVG (gradients, clip paths) with the area name. Otherwise another package's icon with the same id can hijack it.
+`wwwroot/icons/example.icon.js` exports the SVG markup as a string: `export default \`<svg ...>...</svg>\`;`. Icon SVGs are inlined into the backoffice page, so prefix any `id` inside the SVG (gradients, clip paths) with the area name. Otherwise another package's icon with the same id can hijack it.
 
-`Composers/ExamplePackageManifestReader.cs`
-
-```csharp
-using Umbraco.Cms.Core.Manifest;
-using Umbraco.Cms.Infrastructure.Manifest;
-
-namespace Umbraco.Community.Automate.Example.Composers;
-
-public class ExamplePackageManifestReader : IPackageManifestReader
-{
-    // Matches StaticWebAssetBasePath in the csproj.
-    private const string AppPluginPath = "/App_Plugins/UmbracoCommunityAutomateExample";
-
-    public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
-    {
-        var version = typeof(ExamplePackageManifestReader).Assembly.GetName().Version?.ToString() ?? "1.0.0";
-        return Task.FromResult<IEnumerable<PackageManifest>>(
-        [
-            new PackageManifest
-            {
-                Id = "Umbraco.Community.Automate.Example",
-                Name = "Umbraco Community Automate Example",
-                Version = version,
-                AllowTelemetry = true,
-                Extensions =
-                [
-                    new { type = "icons", alias = "UmbracoCommunityAutomateExample.Icons", name = "Example Icons", js = $"{AppPluginPath}/icons.js" },
-                ],
-            },
-        ]);
-    }
-}
-```
+A wrong path or icon name fails silently (the icon is just blank), so add an icon test that links the files to the attributes (see Tests).
 
 ## Tests
 
@@ -580,6 +578,67 @@ private sealed class UnusedModelResolver : IEditableModelResolver
 }
 
 var connectionType = new ExampleConnectionType(new ConnectionTypeInfrastructure(new UnusedModelResolver()), client);
+```
+
+`ExampleIconTests.cs`, for a package with custom icons. Nothing else checks that the manifest path, the icon files and the attributes' `Icon` agree, and a mismatch just shows a blank icon. In a package with a `Client/`, read `Client/public` instead of `wwwroot` (see `Examples/Example/`).
+
+```csharp
+using System.Reflection;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using Umbraco.Automate.Core.Actions;
+using Umbraco.Automate.Core.Connections;
+using Umbraco.Community.Automate.Example.Connections;
+using Xunit;
+
+namespace Umbraco.Community.Automate.Example.Tests;
+
+public class ExampleIconTests
+{
+    private static readonly string Wwwroot = Path.Combine(ProjectDirectory(), "wwwroot");
+
+    [Fact]
+    public void Manifest_registers_icons_from_files_that_exist()
+    {
+        using var doc = JsonDocument.Parse(File.ReadAllText(Path.Combine(Wwwroot, "umbraco-package.json")));
+        var icons = Assert.Single(doc.RootElement.GetProperty("extensions").EnumerateArray(), e => e.GetProperty("type").GetString() == "icons");
+
+        // Must match StaticWebAssetBasePath in the csproj, or the backoffice 404s on the module.
+        Assert.Equal("/App_Plugins/UmbracoCommunityAutomateExample/icons/icons.js", icons.GetProperty("js").GetString());
+        Assert.True(File.Exists(Path.Combine(Wwwroot, "icons", "icons.js")));
+        Assert.True(File.Exists(Path.Combine(Wwwroot, "icons", "example.icon.js")));
+    }
+
+    [Fact]
+    public void Every_connection_type_and_action_uses_a_registered_icon()
+    {
+        var registered = Regex.Matches(File.ReadAllText(Path.Combine(Wwwroot, "icons", "icons.js")), @"name:\s*""([^""]+)""")
+            .Select(m => m.Groups[1].Value)
+            .ToHashSet();
+
+        var used = typeof(ExampleConnectionType).Assembly.GetTypes()
+            .Select(t => t.GetCustomAttribute<ConnectionTypeAttribute>()?.Icon ?? t.GetCustomAttribute<ActionAttribute>()?.Icon)
+            .OfType<string>()
+            .Distinct()
+            .ToList();
+
+        Assert.NotEmpty(used);
+        Assert.All(used, icon => Assert.Contains(icon, registered));
+    }
+
+    // The static web assets aren't copied to the test output, so read them from the project.
+    private static string ProjectDirectory()
+    {
+        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
+        {
+            var candidate = Path.Combine(dir.FullName, "Umbraco.Community.Automate.Example");
+            if (Directory.Exists(Path.Combine(candidate, "wwwroot")))
+                return candidate;
+        }
+
+        throw new DirectoryNotFoundException("Could not locate the Example project directory.");
+    }
+}
 ```
 
 ## Wiring into the repo

@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "community.skoda.startActiveVentilation",
     "Start Active Ventilation",
     Group = "Skoda",
-    Icon = "icon-skoda",
+    Icon = "icon-automate-skoda",
     ConnectionTypeAlias = "community.skoda")]
 public sealed class StartActiveVentilationAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<StartActiveVentilationSettings, VehicleCommandOutput>(infrastructure)
 {

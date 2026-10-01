@@ -24,7 +24,7 @@ It talks to [httpbin.org](https://httpbin.org), a free service that echoes reque
 | `Api/` | [`ExampleClient`](Api/ExampleClient.cs), the only class that talks HTTP: it sends requests and maps every failure to a `StepRunErrorCategory`, which decides whether Automate retries. |
 | `Models/` | Request and response models for the service. |
 | `Configuration/` | `ExampleConfiguration`: the one place the configuration path and default reference are defined. |
-| `Client/` | The backoffice front end (Vite + Lit): the icon and a message editor with a character count, with a unit test. `npm run build` writes it to `wwwroot/`. |
+| `Client/` | The backoffice front end (Vite + Lit): a message editor with a character count, with a unit test. `public/` holds the hand-written `umbraco-package.json` and `icons/`, the same files every package uses for its icons. `npm run build` writes all of it to `wwwroot/`. |
 | `wwwroot/` | Build output from `Client/` (not committed), served at `/App_Plugins/UmbracoCommunityAutomateExample/`. |
 
 The tests in `Umbraco.Community.Automate.Example.Tests/` use the same folders, xUnit only, with hand-written HTTP fakes and Umbraco's `ActionTestHarness`.

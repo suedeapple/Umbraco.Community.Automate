@@ -4,7 +4,6 @@ using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Infrastructure.Manifest;
 using Umbraco.Community.Automate.Mastodon.Api;
 using Umbraco.Community.Automate.Mastodon.Connections;
 
@@ -23,7 +22,6 @@ public class MastodonComposer : IComposer
         builder.WithCollectionBuilder<ConnectionTypeCollectionBuilder>()
             .Add<MastodonConnectionType>();
 
-        builder.Services.AddSingleton<IPackageManifestReader, MastodonPackageManifestReader>();
 
     }
 }

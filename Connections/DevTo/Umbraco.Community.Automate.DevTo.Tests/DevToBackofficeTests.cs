@@ -8,7 +8,6 @@ using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.DevTo.Actions;
-using Umbraco.Community.Automate.DevTo.Composers;
 using Umbraco.Community.Automate.DevTo.Controllers;
 using Umbraco.Community.Automate.DevTo.Tests.Helpers;
 using Xunit;
@@ -23,7 +22,7 @@ namespace Umbraco.Community.Automate.DevTo.Tests;
 public class DevToBackofficeTests
 {
     private static string[] RegisteredIconNames()
-        => Regex.Matches(File.ReadAllText(Path.Combine(DevToPackagePaths.Wwwroot, "icons.js")), @"name:\s*""([^""]+)""")
+        => Regex.Matches(File.ReadAllText(Path.Combine(DevToPackagePaths.Wwwroot, "icons", "icons.js")), @"name:\s*""([^""]+)""")
             .Select(m => m.Groups[1].Value)
             .ToArray();
 
@@ -33,11 +32,16 @@ public class DevToBackofficeTests
         typeof(PublishContentAction),
     };
 
-    private static async Task<JsonElement> GetExtensionAsync(string type)
+    // The aliases the backoffice JavaScript and the C# settings must agree on.
+    private const string BodyPropertiesEditorUiAlias = "UmbracoCommunityAutomateDevTo.PropertyEditorUi.BodyProperties";
+    private const string PreviewModalAlias = "UmbracoCommunityAutomateDevTo.Modal.Preview";
+
+    /// <summary>Reads an extension from wwwroot/umbraco-package.json, which registers them all.</summary>
+    private static Task<JsonElement> GetExtensionAsync(string type)
     {
-        var manifest = Assert.Single(await new DevToPackageManifestReader().ReadPackageManifestsAsync());
-        return Assert.Single(JsonSerializer.SerializeToElement(manifest.Extensions).EnumerateArray(),
-            e => e.GetProperty("type").GetString() == type);
+        using var doc = JsonDocument.Parse(File.ReadAllText(Path.Combine(DevToPackagePaths.Wwwroot, "umbraco-package.json")));
+        return Task.FromResult(Assert.Single(doc.RootElement.GetProperty("extensions").EnumerateArray(),
+            e => e.GetProperty("type").GetString() == type).Clone());
     }
 
     [Theory]
@@ -54,9 +58,9 @@ public class DevToBackofficeTests
     {
         var js = (await GetExtensionAsync("icons")).GetProperty("js").GetString()!;
 
-        Assert.Equal("/App_Plugins/UmbracoCommunityAutomateDevTo/icons.js", js);
-        Assert.True(File.Exists(Path.Combine(DevToPackagePaths.Wwwroot, "icons.js")));
-        Assert.True(File.Exists(Path.Combine(DevToPackagePaths.Wwwroot, "devto.icon.js")));
+        Assert.Equal("/App_Plugins/UmbracoCommunityAutomateDevTo/icons/icons.js", js);
+        Assert.True(File.Exists(Path.Combine(DevToPackagePaths.Wwwroot, "icons", "icons.js")));
+        Assert.True(File.Exists(Path.Combine(DevToPackagePaths.Wwwroot, "icons", "devto.icon.js")));
     }
 
     [Fact]
@@ -64,7 +68,7 @@ public class DevToBackofficeTests
     {
         var editor = await GetExtensionAsync("propertyEditorUi");
 
-        Assert.Equal(DevToPackageManifestReader.BodyPropertiesEditorUiAlias, editor.GetProperty("alias").GetString());
+        Assert.Equal(BodyPropertiesEditorUiAlias, editor.GetProperty("alias").GetString());
 
         var element = editor.GetProperty("element").GetString()!;
         Assert.StartsWith("/App_Plugins/UmbracoCommunityAutomateDevTo/", element);
@@ -77,7 +81,7 @@ public class DevToBackofficeTests
         var field = typeof(PublishContentSettings).GetProperty(nameof(PublishContentSettings.BodyProperties))!
             .GetCustomAttribute<EditableModelFieldAttribute>();
 
-        Assert.Equal(DevToPackageManifestReader.BodyPropertiesEditorUiAlias, field?.EditorUiAlias);
+        Assert.Equal(BodyPropertiesEditorUiAlias, field?.EditorUiAlias);
     }
 
     [Fact]
@@ -93,7 +97,7 @@ public class DevToBackofficeTests
     public async Task Preview_modal_is_registered_under_the_alias_the_editor_opens()
     {
         var modal = await GetExtensionAsync("modal");
-        Assert.Equal(DevToPackageManifestReader.PreviewModalAlias, modal.GetProperty("alias").GetString());
+        Assert.Equal(PreviewModalAlias, modal.GetProperty("alias").GetString());
 
         var element = modal.GetProperty("element").GetString()!;
         var js = File.ReadAllText(Path.Combine(DevToPackagePaths.Wwwroot, Path.GetFileName(element)));
@@ -101,7 +105,7 @@ public class DevToBackofficeTests
         Assert.Contains("export { UaDevToPreviewModalElement as element }", js);
 
         var editor = File.ReadAllText(Path.Combine(DevToPackagePaths.Wwwroot, "body-properties.element.js"));
-        Assert.Contains($"PREVIEW_MODAL_ALIAS = \"{DevToPackageManifestReader.PreviewModalAlias}\"", editor);
+        Assert.Contains($"PREVIEW_MODAL_ALIAS = \"{PreviewModalAlias}\"", editor);
     }
 
     /// <summary>The backoffice builds its URLs by hand, so check each one matches its controller route.</summary>

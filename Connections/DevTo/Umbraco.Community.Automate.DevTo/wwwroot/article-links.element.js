@@ -1,4 +1,4 @@
-// "DEV" box on a document's Info tab (registered by DevToPackageManifestReader): the DEV articles
+// "DEV" box on a document's Info tab (registered by wwwroot/umbraco-package.json): the DEV articles
 // Publish Content to DEV last posted this item as, from DevToController. Renders
 // nothing until the item has been posted. DEV is only called when someone clicks Check on DEV.
 import { css, html, nothing, repeat } from "@umbraco-cms/backoffice/external/lit";

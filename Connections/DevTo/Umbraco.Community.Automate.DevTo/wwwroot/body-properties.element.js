@@ -1,4 +1,4 @@
-// Editor for Publish Content to DEV's Body Properties (registered by DevToPackageManifestReader).
+// Editor for Publish Content to DEV's Body Properties (registered by wwwroot/umbraco-package.json).
 // Hand-written: the package has no front-end build. The value is what BodyProperties.Parse reads:
 // {"documentType":"…","aliases":[…]} once a document type is picked, otherwise "intro, contentRows".
 import { css, html, nothing, repeat } from "@umbraco-cms/backoffice/external/lit";
@@ -20,7 +20,7 @@ const BODY_EDITORS = {
     "Umbraco.TextArea": "Textarea",
 };
 
-// Matches DevToPackageManifestReader.PreviewModalAlias.
+// Matches the modal's alias in wwwroot/umbraco-package.json.
 const PREVIEW_MODAL_ALIAS = "UmbracoCommunityAutomateDevTo.Modal.Preview";
 
 // Step settings the preview sends along, by their camelCased PublishContentSettings names.

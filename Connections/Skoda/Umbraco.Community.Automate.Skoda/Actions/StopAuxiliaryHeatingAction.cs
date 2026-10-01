@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "community.skoda.stopAuxiliaryHeating", 
     "Stop Auxiliary Heating", 
     Group = "Skoda", 
-    Icon = "icon-skoda", 
+    Icon = "icon-automate-skoda", 
     ConnectionTypeAlias = "community.skoda")]
 public sealed class StopAuxiliaryHeatingAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<StopAuxiliaryHeatingSettings, VehicleCommandOutput>(infrastructure)
 {

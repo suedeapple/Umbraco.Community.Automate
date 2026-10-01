@@ -9,7 +9,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "community.skoda.stopCharging", 
     "Stop Charging", 
     Group = "Skoda", 
-    Icon = "icon-skoda", 
+    Icon = "icon-automate-skoda", 
     ConnectionTypeAlias = "community.skoda")]
 public sealed class StopChargingAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<StopChargingSettings, VehicleCommandOutput>(infrastructure)
 {

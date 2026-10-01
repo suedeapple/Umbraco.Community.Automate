@@ -9,7 +9,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "community.skoda.setChargeMode",
     "Set Charge Mode",
     Group = "Skoda",
-    Icon = "icon-skoda",
+    Icon = "icon-automate-skoda",
     ConnectionTypeAlias = "community.skoda")]
 public sealed class SetChargeModeAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<SetChargeModeSettings, VehicleCommandOutput>(infrastructure)
 {

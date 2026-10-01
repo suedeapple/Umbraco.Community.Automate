@@ -9,7 +9,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "community.skoda.startAirConditioning",
     "Start Air Conditioning",
     Group = "Skoda",
-    Icon = "icon-skoda",
+    Icon = "icon-automate-skoda",
     ConnectionTypeAlias = "community.skoda")]
 public sealed class StartAirConditioningAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<StartAirConditioningSettings, VehicleCommandOutput>(infrastructure)
 {

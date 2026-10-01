@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.Skoda.Connections;
     "community.skoda",
     "Škoda",
     Description = "Connects Umbraco Automate to a Škoda vehicle using the MyŠkoda Public API.",
-    Icon = "icon-skoda")]
+    Icon = "icon-automate-skoda")]
 public sealed class SkodaConnectionType(ConnectionTypeInfrastructure infrastructure, ISkodaClient skodaClient) : ConnectionTypeBase<SkodaConnectionSettings>(infrastructure)
 {
     public override async Task<ConnectionValidationResult> ValidateAsync(

@@ -79,12 +79,12 @@ Every package uses the same folder names, so you always know where to look. The 
 | `Actions/` | One class per action, plus its settings and output classes |
 | `Triggers/` | One class per trigger, plus its settings and output classes. No connection has triggers yet. |
 | `Connections/` | The connection type and its connection settings (and their validator) |
-| `Composers/` | The `IComposer` that registers everything, plus any package manifest reader or `IUmbracoBuilder` extensions |
+| `Composers/` | The `IComposer` that registers everything, plus any `IUmbracoBuilder` extensions |
 | `Api/` | The C# client for the external service: HTTP client, error mapping, exceptions |
 | `Models/` | Request and response models for the external API, at the package root (not inside `Api/`) |
 | `Configuration/` | `<Area>Configuration` with the configuration paths and default references (one place to change them), plus any options classes bound from `appsettings.json` and their validators |
-| `Client/` | The backoffice front end source (Vite + Lit, built by npm into `wwwroot/`). Only for connections that need custom UI. |
-| `wwwroot/` | Static backoffice files served under `App_Plugins/` (icons, `umbraco-package.json`) |
+| `Client/` | The backoffice front end source (Vite + Lit, built by npm into `wwwroot/`). Only for connections that need custom UI. Its `public/` folder holds what would otherwise be in `wwwroot/` and is copied there unchanged. |
+| `wwwroot/` | Static backoffice files served under `App_Plugins/`: `umbraco-package.json`, which Umbraco discovers by itself and which registers the icons and any other backoffice extensions, and `icons/` (`icons.js` plus one `<area>.icon.js` per icon). Every package with a custom icon uses this same pattern. |
 
 Next to those folders sit `Directory.Build.props` (package metadata and the MinVer tag prefix), `README.md` (shipped inside the NuGet package) and usually a package icon. Folders specific to one connection, such as DevTo's `Articles/` and `Content/`, are fine as well. Namespaces follow the folders, and where a test project groups its tests into folders, it uses the same names.
 
@@ -98,7 +98,7 @@ CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/`
 
 ```bash
 # Build the backoffice front ends. Their output (wwwroot/) is gitignored, so without
-# this step the Google Sheets column-list editor and the Example icon won't appear.
+# this step the Google Sheets and Example icons and editors won't appear.
 cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci
 npm run build

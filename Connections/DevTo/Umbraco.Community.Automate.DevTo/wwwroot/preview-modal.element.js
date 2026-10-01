@@ -1,4 +1,4 @@
-// Preview for Publish Content to DEV (registered by DevToPackageManifestReader, opened from the
+// Preview for Publish Content to DEV (registered by wwwroot/umbraco-package.json, opened from the
 // Body Properties editor). Shows the Markdown and canonical URL the action would post, from
 // DevToController.Preview; DEV itself isn't called.
 import { css, html, nothing } from "@umbraco-cms/backoffice/external/lit";

@@ -19,12 +19,12 @@ Connections/<Area>/                               <Area> = PascalCase service na
     Actions/        one class per action + its settings and output classes
     Triggers/       one class per trigger + its settings and output classes (when needed)
     Connections/    the connection type + its connection settings (+ validator)
-    Composers/      IComposer, package manifest reader, IUmbracoBuilder extensions
+    Composers/      IComposer, IUmbracoBuilder extensions
     Api/            C# client for the external service: client, error mapping, exceptions
     Models/         request and response models for the external API
     Configuration/  <Area>Configuration (config paths + default references), plus options classes if genuinely needed
     Client/         backoffice front end (Vite + Lit, npm). Only if custom UI is needed
-    wwwroot/        static backoffice files served under App_Plugins/ (icons)
+    wwwroot/        static backoffice files served under App_Plugins/: umbraco-package.json, icons/
     Directory.Build.props
     README.md
     community-automate-128.png
@@ -52,8 +52,8 @@ Work through these in order and tick them off. Ask the user for the service name
 3. **Configuration class** `Configuration/<Area>Configuration.cs` holding the config paths and each credential's default reference (see Configuration and secrets).
 4. **Connection type and settings** in `Connections/`, with credential fields defaulting to those references.
 5. **Actions** in `Actions/`, each with its settings (and output, if it returns data).
-6. **Composer** in `Composers/`: register the connection type, actions, any services and the package manifest (icons). Configuration references need no registration (see Configuration below).
-7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one in `wwwroot/` plus the manifest reader in `Composers/`.
+6. **Composer** in `Composers/`: register the connection type, actions, triggers and any services. Icons and configuration references references need no registration.
+7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from the templates.
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
 9. **Wire it in**: add both projects to `Umbraco.Community.Automate.slnx` (in a `/Connections/<Area>/` solution folder) and a `ProjectReference` from `Demo/Umbraco.Community.Automate.Demo.csproj`.
 10. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Demo/appsettings.Development.json`. Real credentials go in user secrets only.
@@ -71,7 +71,8 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 - Set `ConnectionTypeAlias` on every action to the connection type alias, so the action only offers matching connections.
 - Write the alias, name, group and icon directly on each `[ConnectionType]`, `[Action]` and `[Trigger]` attribute, as Umbraco Automate's own step types do. Don't gather them into an `<Area>Constants` class: the attribute is where a reader looks for them.
 - Use a shared `Group` where one fits (`Social Networks`, `Productivity`) so related connections sit together in the pickers.
-- Use the same icon on the connection type and its actions. A built-in Umbraco icon is fine; name custom icons `icon-automate-<area>`.
+- Use the same icon on the connection type, its actions and triggers. A built-in Umbraco icon is fine; name custom icons `icon-automate-<area>`.
+- Register backoffice extensions (icons, editors, modals) in a static `umbraco-package.json`, which Umbraco discovers under `App_Plugins/` by itself. Don't use an `IPackageManifestReader` or list icons in `Client/src/`: one pattern everywhere means a contributor adding an icon only ever touches the same three files.
 
 ### Settings fields
 - Use `[Field(Label = ..., Description = ..., SortOrder = ...)]` on every setting; the description is the user's only help text in the backoffice.
@@ -143,6 +144,6 @@ To bring in a connection that already lives in its own repo (as WeatherApi did f
 This skill is a living document. Add new conventions and lessons learned here (or in the sections above) as the team agrees on them.
 
 - Front-end packages pin Playwright to the version Google Sheets uses (`"overrides": { "playwright": "1.61.0", "playwright-core": "1.61.0" }` in `Client/package.json`), so every `Client/` shares one downloaded browser.
-- Registering icons and editors: a package with a `Client/` lists them in `Client/src/manifests.ts`, loaded by `Client/public/umbraco-package.json` (Example, Google Sheets); one with only hand-written icons uses an `IPackageManifestReader` (Mastodon, DevTo; see the template). Skoda's static `wwwroot/umbraco-package.json` also works but isn't the pattern to copy.
+- In a package with a `Client/`, `Client/public/` is copied unchanged into `wwwroot/` by Vite, so `umbraco-package.json` and `icons/` live there and the manifest adds one `bundle` extension for whatever Vite builds (`Client/src/manifests.ts`). Hand-written editors without a build step go straight in `umbraco-package.json` (DevTo).
 - Automate also discovers `[ConnectionType]` and `[Action]` classes on its own: Skoda's composer registers neither, and both still appear. Register them explicitly in the composer anyway, so a reader can see everything the package adds in one place.
 - .NET accepts any well-formed culture name (e.g. `xx-YY`), so `CultureInfo.GetCultureInfo` only throws for malformed input. Don't rely on it to reject unknown cultures.

@@ -1,5 +1,4 @@
 using Umbraco.Automate.Core.Settings;
-using Umbraco.Community.Automate.DevTo.Composers;
 using Umbraco.Community.Automate.DevTo.Api;
 using Umbraco.Community.Automate.DevTo.Configuration;
 
@@ -10,7 +9,7 @@ public sealed class PublishContentSettings
     [Field(Label = "Body Properties",
         Description = "The properties holding the article body, in order. Markdown, Rich Text, Block List and Block Grid are converted to Markdown.",
         SortOrder = 0,
-        EditorUiAlias = DevToPackageManifestReader.BodyPropertiesEditorUiAlias)]
+        EditorUiAlias = "UmbracoCommunityAutomateDevTo.PropertyEditorUi.BodyProperties")]
     public string BodyProperties { get; set; } = string.Empty;
 
     [Field(Label = "Title",
