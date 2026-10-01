@@ -25,7 +25,7 @@ You can contribute in several ways: report a bug, improve a README, add an actio
 | A trusted HTTPS dev certificate | The Demo site. Run `dotnet dev-certs https --trust` once per machine. |
 | [Node.js 22.x](https://nodejs.org/) | Only for connections with a backoffice front end (a `Client/` folder), currently Google Sheets |
 
-Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.slnx`.
+Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.Demo.slnx`.
 
 ## Getting the code
 
@@ -65,7 +65,7 @@ Demo/                                         throwaway Umbraco site referencing
 .github/                                      CI and release workflows, this guide, design notes
 .githooks/                                    gitleaks pre-commit and pre-push hooks
 Directory.Packages.props                      central NuGet versions for every project
-Umbraco.Community.Automate.slnx               the solution
+Umbraco.Community.Automate.Demo.slnx          the solution: every package, the example and the Demo site
 ```
 
 Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Examples/Example/` is a reference package that uses every folder below, including a trigger and a front end; it has no release tag prefix and isn't packable, so it's never published.
@@ -224,7 +224,7 @@ If you use [Claude Code](https://claude.com/claude-code), the repo includes an `
 1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a package](#inside-a-package): `Composers/`, plus `Actions/`, `Triggers/` and `Connections/` for whichever of those the package adds, and `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
-4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.
+4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.
 5. **Add package versions to `Directory.Packages.props`.** Projects don't specify versions themselves.
 6. **Write the package `README.md`**: installation, setup, every setting, outcomes and outputs, troubleshooting and compatibility. Add a row for it to the table in the root `README.md`.
 7. **Use placeholder settings only.** If the Demo site needs settings to boot, put obviously fake values in `Demo/appsettings.Development.json`.

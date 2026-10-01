@@ -23,5 +23,7 @@
     <Project Path="Examples/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj" />
     <Project Path="Examples/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj" />
   </Folder>
-  <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
+  <Folder Name="/Demo/">
+    <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
+  </Folder>
 </Solution>
