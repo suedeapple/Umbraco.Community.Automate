@@ -1,4 +1,5 @@
-﻿using Umbraco.Community.Automate.Skoda.Api.Models;
+﻿using Umbraco.Community.Automate.Skoda.Models;
+
 
 
 namespace Umbraco.Community.Automate.Skoda.Api;

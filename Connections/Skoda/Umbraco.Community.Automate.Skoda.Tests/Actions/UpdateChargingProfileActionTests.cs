@@ -6,8 +6,8 @@ using Umbraco.Community.Automate.Skoda.Actions;
 using Umbraco.Community.Automate.Skoda.Connections;
 using Xunit;
 using Umbraco.Community.Automate.Skoda.Api;
-using Umbraco.Community.Automate.Skoda.Api.Models;
-using Timer = Umbraco.Community.Automate.Skoda.Api.Models.Timer;
+using Umbraco.Community.Automate.Skoda.Models;
+using Timer = Umbraco.Community.Automate.Skoda.Models.Timer;
 
 namespace Umbraco.Community.Automate.Skoda.Tests.Actions;
 

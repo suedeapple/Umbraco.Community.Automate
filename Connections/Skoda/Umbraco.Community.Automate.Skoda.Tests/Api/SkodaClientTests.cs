@@ -7,7 +7,7 @@ using Shouldly;
 using Umbraco.Community.Automate.Skoda;
 using Xunit;
 using Umbraco.Community.Automate.Skoda.Api;
-using Umbraco.Community.Automate.Skoda.Api.Models;
+using Umbraco.Community.Automate.Skoda.Models;
 
 namespace Umbraco.Community.Automate.Skoda.Tests.Api;
 

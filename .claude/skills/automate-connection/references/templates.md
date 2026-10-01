@@ -9,7 +9,7 @@ Starting points for every file in a new connection, based on the working Mastodo
 - [Test project](#test-project)
 - [Configuration](#configuration)
 - [Connection settings, validator and type](#connection-settings-validator-and-type)
-- [Api client](#api-client)
+- [Api client and models](#api-client-and-models)
 - [Action, settings and output](#action-settings-and-output)
 - [Composer](#composer)
 - [Icons and manifest reader](#icons-and-manifest-reader)
@@ -218,9 +218,9 @@ public sealed class ExampleConnectionType(ConnectionTypeInfrastructure infrastru
 }
 ```
 
-## Api client
+## Api client and models
 
-`Api/ExampleClient.cs`. One place that talks HTTP and turns failures into `StepRunErrorCategory` values, so every action handles errors the same way. Keep request/response models in `Api/` too.
+`Api/ExampleClient.cs`. One place that talks HTTP and turns failures into `StepRunErrorCategory` values, so every action handles errors the same way. Request and response models go in the root `Models/` folder.
 
 ```csharp
 using System.Net;
@@ -228,6 +228,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Community.Automate.Example.Connections;
+using Umbraco.Community.Automate.Example.Models;
 
 namespace Umbraco.Community.Automate.Example.Api;
 
@@ -285,6 +286,12 @@ public sealed class ExampleApiException(string message, StepRunErrorCategory cat
 {
     public StepRunErrorCategory Category { get; } = category;
 }
+```
+
+`Models/ExampleUser.cs`. One file per model, in the root `Models/` folder.
+
+```csharp
+namespace Umbraco.Community.Automate.Example.Models;
 
 public sealed class ExampleUser
 {

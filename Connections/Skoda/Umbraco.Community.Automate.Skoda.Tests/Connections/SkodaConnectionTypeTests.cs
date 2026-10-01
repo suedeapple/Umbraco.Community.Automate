@@ -6,7 +6,7 @@ using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.Skoda.Connections;
 using Xunit;
 using Umbraco.Community.Automate.Skoda.Api;
-using Umbraco.Community.Automate.Skoda.Api.Models;
+using Umbraco.Community.Automate.Skoda.Models;
 
 namespace Umbraco.Community.Automate.Skoda.Tests.Connections;
 

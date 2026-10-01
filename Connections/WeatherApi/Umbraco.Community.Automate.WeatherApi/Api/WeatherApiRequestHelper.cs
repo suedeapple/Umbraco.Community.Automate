@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.Json;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
-using Umbraco.Community.Automate.WeatherApi.Api.Models;
+using Umbraco.Community.Automate.WeatherApi.Models;
 
 namespace Umbraco.Community.Automate.WeatherApi.Api;
 

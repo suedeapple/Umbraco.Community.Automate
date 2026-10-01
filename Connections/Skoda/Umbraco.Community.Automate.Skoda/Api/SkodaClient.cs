@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using Umbraco.Community.Automate.Skoda.Api.Models;
+using Umbraco.Community.Automate.Skoda.Models;
 
 namespace Umbraco.Community.Automate.Skoda.Api;
 

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Umbraco.Community.Automate.Mastodon.Actions;
 using Xunit;
 using Umbraco.Community.Automate.Mastodon.Api;
+using Umbraco.Community.Automate.Mastodon.Models;
 
 namespace Umbraco.Community.Automate.Mastodon.Tests;
 

@@ -20,7 +20,8 @@ Connections/<Area>/                               <Area> = PascalCase service na
     Triggers/       one class per trigger + its settings and output classes (when needed)
     Connections/    the connection type + its connection settings (+ validator)
     Composers/      IComposer, package manifest reader, IUmbracoBuilder extensions
-    Api/            C# client for the external service: client, request/response models, exceptions
+    Api/            C# client for the external service: client, error mapping, exceptions
+    Models/         request and response models for the external API
     Configuration/  <Area>Configuration (config paths + default references), plus options classes if genuinely needed
     Client/         backoffice front end (Vite + Lit, npm). Only if custom UI is needed
     wwwroot/        static backoffice files served under App_Plugins/ (icons)
@@ -38,7 +39,9 @@ Why these names:
 - Namespaces follow folders: `Umbraco.Community.Automate.<Area>.Actions`, `.Connections`, and so on.
 - Folders unique to one connection (e.g. DevTo's `Articles/`, `Content/`) are fine alongside the standard ones.
 
-Don't create empty folders: add `Triggers/`, `Api/`, `Configuration/`, `Client/` or `wwwroot/` only when there's something to put in them.
+Don't create empty folders: add `Triggers/`, `Api/`, `Models/`, `Configuration/`, `Client/` or `wwwroot/` only when there's something to put in them.
+
+Keep the structure flat: these packages are small, so standard folders sit directly in the package root (models in a root `Models/`, not `Api/Models/`), which makes everything easy to find.
 
 ## Creating a new connection
 

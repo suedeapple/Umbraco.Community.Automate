@@ -79,7 +79,8 @@ Every package uses the same folder names, so you always know where to look. The 
 | `Triggers/` | One class per trigger, plus its settings and output classes. No connection has triggers yet. |
 | `Connections/` | The connection type and its connection settings (and their validator) |
 | `Composers/` | The `IComposer` that registers everything, plus any package manifest reader or `IUmbracoBuilder` extensions |
-| `Api/` | The C# client for the external service: HTTP client, request and response models, exceptions |
+| `Api/` | The C# client for the external service: HTTP client, error mapping, exceptions |
+| `Models/` | Request and response models for the external API, at the package root (not inside `Api/`) |
 | `Configuration/` | `<Area>Configuration` with the configuration paths and default references (one place to change them), plus any options classes bound from `appsettings.json` and their validators |
 | `Client/` | The backoffice front end source (Vite + Lit, built by npm into `wwwroot/`). Only for connections that need custom UI. |
 | `wwwroot/` | Static backoffice files served under `App_Plugins/` (icons, `umbraco-package.json`) |

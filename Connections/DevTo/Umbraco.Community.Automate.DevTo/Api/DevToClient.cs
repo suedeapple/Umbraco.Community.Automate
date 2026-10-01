@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Community.Automate.DevTo.Connections;
+using Umbraco.Community.Automate.DevTo.Models;
 
 namespace Umbraco.Community.Automate.DevTo.Api;
 
