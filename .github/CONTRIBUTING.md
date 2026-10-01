@@ -219,7 +219,7 @@ git push --force-with-lease
 
 ## Adding a new connection
 
-If you use [Claude Code](https://claude.com/claude-code), the repo includes an `automate-connection` skill ([`.claude/skills/automate-connection/`](../.claude/skills/automate-connection/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>" and it scaffolds the package in this layout with these conventions. The checklist below is the same process by hand.
+If you use [Claude Code](https://claude.com/claude-code), the repo includes an `umbraco-automate` skill ([`.claude/skills/umbraco-automate/`](../.claude/skills/umbraco-automate/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>", "add a trigger to Mastodon" or anything else Automate-related, and it follows the layout and conventions here. The checklist below is the same process by hand.
 
 1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a connection](#inside-a-connection): at least `Actions/`, `Composers/` and `Connections/`, plus `Triggers/`, `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
