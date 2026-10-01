@@ -83,5 +83,5 @@ The command actions output the `vin` they acted on.
 
 ## Links
 
-- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/Skoda/Umbraco.Community.Automate.Skoda)
+- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Skoda/Umbraco.Community.Automate.Skoda)
 - [Report an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues)

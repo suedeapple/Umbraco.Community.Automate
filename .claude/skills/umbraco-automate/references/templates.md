@@ -1,6 +1,6 @@
 # Connection templates
 
-Starting points for every file in a new connection, based on the working Mastodon and WeatherApi packages. Replace `Example` / `example` with the connection's area name (PascalCase / camelCase / lowercase as shown) and adjust to the service. Compare with `Connections/WeatherApi/` (or `Connections/Mastodon/` for custom icons) if anything here is unclear; the real code wins if they disagree.
+Starting points for every file in a new connection, based on the working Mastodon and WeatherApi packages. Replace `Example` / `example` with the connection's area name (PascalCase / camelCase / lowercase as shown) and adjust to the service. Compare with `Packages/WeatherApi/` (or `Packages/Mastodon/` for custom icons) if anything here is unclear; the real code wins if they disagree.
 
 ## Contents
 
@@ -19,7 +19,7 @@ Starting points for every file in a new connection, based on the working Mastodo
 
 ## Package project
 
-`Connections/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj`. This version serves custom icons from `wwwroot/`. Without a `wwwroot/`, use `Microsoft.NET.Sdk` and drop `AddRazorSupportForMvc` and `StaticWebAssetBasePath`.
+`Packages/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj`. This version serves custom icons from `wwwroot/`. Without a `wwwroot/`, use `Microsoft.NET.Sdk` and drop `AddRazorSupportForMvc` and `StaticWebAssetBasePath`.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Razor">
@@ -63,13 +63,13 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
 
 ## Directory.Build.props
 
-`Connections/Example/Umbraco.Community.Automate.Example/Directory.Build.props`
+`Packages/Example/Umbraco.Community.Automate.Example/Directory.Build.props`
 
 ```xml
 <Project>
   <PropertyGroup>
     <Authors>Your Name, Umbraco Community</Authors>
-    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/Example/Umbraco.Community.Automate.Example</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Example/Umbraco.Community.Automate.Example</PackageProjectUrl>
     <RepositoryUrl>https://github.com/umbraco-community/Umbraco.Community.Automate</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -92,7 +92,7 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
 
 ## Test project
 
-`Connections/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj`
+`Packages/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj`
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -651,22 +651,22 @@ public class ExampleIconTests
 `Umbraco.Community.Automate.slnx`, alongside the other connections:
 
 ```xml
-  <Folder Name="/Connections/Example/">
-    <Project Path="Connections/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj" />
-    <Project Path="Connections/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj" />
+  <Folder Name="/Packages/Example/">
+    <Project Path="Packages/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj" />
+    <Project Path="Packages/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj" />
   </Folder>
 ```
 
 `Demo/Umbraco.Community.Automate.Demo.csproj`:
 
 ```xml
-    <ProjectReference Include="..\Connections\Example\Umbraco.Community.Automate.Example\Umbraco.Community.Automate.Example.csproj" />
+    <ProjectReference Include="..\Packages\Example\Umbraco.Community.Automate.Example\Umbraco.Community.Automate.Example.csproj" />
 ```
 
 Root `README.md` connections table:
 
 ```markdown
-| [Example](Connections/Example/Umbraco.Community.Automate.Example/README.md) | What it does, in one or two sentences. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
+| [Example](Packages/Example/Umbraco.Community.Automate.Example/README.md) | What it does, in one or two sentences. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
 ```
 
 ## README skeleton
@@ -711,6 +711,6 @@ The error messages users will actually see, and what to do about each.
 |---|---|---|
 
 ## Links
-- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/Example/Umbraco.Community.Automate.Example)
+- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Example/Umbraco.Community.Automate.Example)
 - [Report an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues)
 ```

@@ -1,6 +1,6 @@
 ---
 name: umbraco-automate
-description: The house rules for building anything for Umbraco Automate in the Umbraco.Community.Automate repo: connections, actions, triggers, outcomes and outputs, API clients, configuration and secrets ($-references in Umbraco:Automate:Secrets/Variables), backoffice front ends (Client/, Vite + Lit), tests (xUnit only), the Demo site, CI and releases. Covers the Connections/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Models, Configuration, Client), community.<area> aliases and project wiring, with Examples/Example as the reference to copy. Use it whenever someone wants to create or change a connection, action or trigger (e.g. "add a Slack connection", "add a trigger to Mastodon", "build a Bluesky integration"), import an existing Automate package, write tests or a front end for one, wire something into the Demo site, or asks where something goes or how something is done in this repo, even if they don't mention Automate or the skill.
+description: The house rules for building anything for Umbraco Automate in the Umbraco.Community.Automate repo: connections, actions, triggers, outcomes and outputs, API clients, configuration and secrets ($-references in Umbraco:Automate:Secrets/Variables), backoffice front ends (Client/, Vite + Lit), tests (xUnit only), the Demo site, CI and releases. Covers the Packages/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Models, Configuration, Client), community.<area> aliases and project wiring, with Examples/Example as the reference to copy. Use it whenever someone wants to create or change a connection, action or trigger (e.g. "add a Slack connection", "add a trigger to Mastodon", "build a Bluesky integration"), import an existing Automate package, write tests or a front end for one, wire something into the Demo site, or asks where something goes or how something is done in this repo, even if they don't mention Automate or the skill.
 ---
 
 # Building for Umbraco Automate
@@ -14,7 +14,7 @@ Code templates for every file below are in [references/templates.md](references/
 ## Layout
 
 ```
-Connections/<Area>/                               <Area> = PascalCase service name, e.g. Bluesky
+Packages/<Area>/                                  <Area> = PascalCase name, usually the service, e.g. Bluesky
   Umbraco.Community.Automate.<Area>/              the package
     Actions/        one class per action + its settings and output classes
     Triggers/       one class per trigger + its settings and output classes (when needed)
@@ -41,13 +41,15 @@ Why these names:
 
 Don't create empty folders: add `Triggers/`, `Api/`, `Models/`, `Configuration/`, `Client/` or `wwwroot/` only when there's something to put in them.
 
+A package doesn't have to be a connection. One that only adds a trigger or an action (for example an Umbraco-side trigger, or an action that needs no external service) is just as welcome: it uses the same layout with only the folders it needs, say `Triggers/` and `Composers/`, and no `Connections/`. Name its `<Area>` after what it does when there's no service to name it after.
+
 Keep the structure flat: these packages are small, so standard folders sit directly in the package root (models in a root `Models/`, not `Api/Models/`), which makes everything easy to find.
 
 ## Creating a new connection
 
-Work through these in order and tick them off. Ask the user for the service name, what it should do (which actions), and how it authenticates (API key/token, OAuth, none) before starting.
+Work through these in order and tick them off. For a package with no connection, skip the connection steps (3, 4 and the connection validation) and the `ConnectionTypeAlias` on actions; everything else applies. Ask the user for the service name, what it should do (which actions), and how it authenticates (API key/token, OAuth, none) before starting.
 
-1. **Projects.** Create the package and `.Tests` projects under `Connections/<Area>/` from the templates. If the package has a `wwwroot/` (custom icons), use `Microsoft.NET.Sdk.Razor` with `StaticWebAssetBasePath` `App_Plugins/UmbracoCommunityAutomate<Area>` so it's served as static web assets; otherwise plain `Microsoft.NET.Sdk` is enough (see WeatherApi).
+1. **Projects.** Create the package and `.Tests` projects under `Packages/<Area>/` from the templates. If the package has a `wwwroot/` (custom icons), use `Microsoft.NET.Sdk.Razor` with `StaticWebAssetBasePath` `App_Plugins/UmbracoCommunityAutomate<Area>` so it's served as static web assets; otherwise plain `Microsoft.NET.Sdk` is enough (see WeatherApi).
 2. **`Directory.Build.props`** in the package folder, with `MinVerTagPrefix` `<area-lowercase>-v` and `MinVerIgnoreHeight` true. This file is also the marker that makes CI find the package; without it the package is silently skipped.
 3. **Configuration class** `Configuration/<Area>Configuration.cs` holding the config paths, each credential's default reference and the service's fixed values such as its base URL (see Configuration and secrets).
 4. **Connection type and settings** in `Connections/`, with credential fields defaulting to those references.
@@ -55,11 +57,11 @@ Work through these in order and tick them off. Ask the user for the service name
 6. **Composer** in `Composers/`: register the connection type, actions, triggers and any services. Icons and configuration references references need no registration.
 7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from the templates.
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
-9. **Wire it in**: add both projects to `Umbraco.Community.Automate.slnx` (in a `/Connections/<Area>/` solution folder) and a `ProjectReference` from `Demo/Umbraco.Community.Automate.Demo.csproj`.
+9. **Wire it in**: add both projects to `Umbraco.Community.Automate.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Demo/Umbraco.Community.Automate.Demo.csproj`.
 10. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Demo/appsettings.Development.json`. Real credentials go in user secrets only.
 11. **Tests** for every action and the connection validation (see Testing).
 12. **README.md** in the package (see README), and a row in the root `README.md` connections table.
-13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Connections/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Demo/appsettings.Development.json` or user secrets).
+13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Demo/appsettings.Development.json` or user secrets).
 
 You don't need to edit any CI workflow: `ci.yml` discovers packages from the layout, and `release.yml` finds a package from its tag prefix.
 

@@ -121,6 +121,6 @@ Then create a **WeatherAPI.com** connection as in [Setup](#setup). Its API key i
 
 ## Links
 
-- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/WeatherApi/Umbraco.Community.Automate.WeatherApi)
+- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/WeatherApi/Umbraco.Community.Automate.WeatherApi)
 - [Report an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues)
 - [WeatherAPI.com documentation](https://www.weatherapi.com/docs/)

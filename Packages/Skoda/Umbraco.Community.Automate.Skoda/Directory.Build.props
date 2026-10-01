@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <Authors>Erik-Jan Westendorp, Umbraco Community</Authors>
-    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/Skoda/Umbraco.Community.Automate.Skoda</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Skoda/Umbraco.Community.Automate.Skoda</PackageProjectUrl>
     <RepositoryUrl>https://github.com/umbraco-community/Umbraco.Community.Automate</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

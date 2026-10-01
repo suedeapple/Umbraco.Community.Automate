@@ -6,7 +6,7 @@ name: CI
 # Packages are discovered from the folder layout rather than listed here, so a new package
 # needs no change to this file at all: drop it in following the existing convention
 # (<Category>/<Area>/Umbraco.Community.Automate.<Area>/ with a sibling .Tests project, e.g.
-# Connections/Mastodon/) and it is picked up on the next run.
+# Packages/Mastodon/) and it is picked up on the next run.
 
 on:
   pull_request:
@@ -34,7 +34,7 @@ jobs:
 
           # A package is any directory with its own Directory.Build.props — the same marker
           # release.yml already relies on to map a tag back to a package. Packages sit at
-          # <Category>/<Area>/<Project>/, e.g. Connections/Mastodon/Umbraco.Community.Automate.Mastodon.
+          # <Category>/<Area>/<Project>/, e.g. Packages/Mastodon/Umbraco.Community.Automate.Mastodon.
           mapfile -t PROJECT_DIRS < <(
             find . -mindepth 4 -maxdepth 4 -name Directory.Build.props -not -path './.git/*' \
               | xargs -r -n1 dirname | sed 's#^\./##' | sort
@@ -49,7 +49,7 @@ jobs:
           AREAS=()
 
           for PROJECT_DIR in "${PROJECT_DIRS[@]}"; do
-            AREA="${PROJECT_DIR%/*}"                       # e.g. Connections/Mastodon
+            AREA="${PROJECT_DIR%/*}"                       # e.g. Packages/Mastodon
             NAME="${AREA##*/}"                             # e.g. Mastodon
             TESTS_DIR="${PROJECT_DIR}.Tests"
             CLIENT_DIR=""
@@ -72,7 +72,7 @@ jobs:
             fi
 
             # Optional Umbraco-version compatibility check: a package opts in by keeping a
-            # test-umbraco-compat.sh at the root of its area folder (e.g. Connections/DevTo/).
+            # test-umbraco-compat.sh at the root of its area folder (e.g. Packages/DevTo/).
             if [ -f "$AREA/test-umbraco-compat.sh" ]; then
               COMPAT_SCRIPT="$AREA/test-umbraco-compat.sh"
             fi

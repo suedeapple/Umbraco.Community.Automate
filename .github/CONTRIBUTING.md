@@ -12,7 +12,7 @@ You can contribute in several ways: report a bug, improve a README, add an actio
 - [Running the Demo site](#running-the-demo-site)
 - [Building and testing](#building-and-testing)
 - [Making a change](#making-a-change)
-- [Adding a new connection](#adding-a-new-connection)
+- [Adding a new package](#adding-a-new-package)
 - [Preventing secret leaks](#preventing-secret-leaks)
 - [Releasing a package](#releasing-a-package)
 
@@ -56,11 +56,11 @@ git push origin main
 ## Repo layout
 
 ```
-Connections/                                  one folder per connection
+Packages/                                     one folder per package
   <Area>/                                     e.g. Mastodon
     Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
     Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
-Examples/Example/                             reference connection to copy (built and tested, never published)
+Examples/Example/                             reference package to copy (built and tested, never published)
 Demo/                                         throwaway Umbraco site referencing every package
 .github/                                      CI and release workflows, this guide, design notes
 .githooks/                                    gitleaks pre-commit and pre-push hooks
@@ -68,9 +68,9 @@ Directory.Packages.props                      central NuGet versions for every p
 Umbraco.Community.Automate.slnx               the solution
 ```
 
-Connections live under `Connections/`, the name Umbraco Automate's backoffice uses for them. `Examples/Example/` is a reference connection that uses every folder below, including a trigger and a front end; it has no release tag prefix and isn't packable, so it's never published.
+Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Examples/Example/` is a reference package that uses every folder below, including a trigger and a front end; it has no release tag prefix and isn't packable, so it's never published.
 
-### Inside a connection
+### Inside a package
 
 Every package uses the same folder names, so you always know where to look. The folders for the building blocks Umbraco Automate defines (actions, triggers, connections) and for composers are plural:
 
@@ -99,7 +99,7 @@ CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/`
 ```bash
 # Build the backoffice front ends. Their output (wwwroot/) is gitignored, so without
 # this step the Google Sheets and Example icons and editors won't appear.
-cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci
 npm run build
 cd ../../../..
@@ -126,7 +126,7 @@ In Visual Studio or Rider, set `Umbraco.Community.Automate.Demo` as the startup 
 While you edit a connection's `Client/` code, run its build in watch mode next to the Demo site and refresh the browser after each change:
 
 ```bash
-cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm run watch
 ```
 
@@ -159,13 +159,13 @@ Stop the site and delete `Demo/umbraco/Data/`. On the next run it reinstalls fro
 dotnet build                 # the whole solution
 dotnet test                  # every test project
 
-dotnet test Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets.Tests   # just one connection
+dotnet test Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets.Tests   # just one connection
 ```
 
 CI also runs `dotnet pack` on each package. That catches packaging mistakes that a build won't, such as a missing README or icon. If you touch a `.csproj` or `Directory.Build.props`, run it yourself:
 
 ```bash
-dotnet pack Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets -c Release -o ./pack-check
+dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets -c Release -o ./pack-check
 ```
 
 ### Front-end unit tests
@@ -179,10 +179,10 @@ npm test            # web-test-runner; add :watch to re-run on change
 
 ### End-to-end tests
 
-The Playwright suite lives with Google Sheets (`Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client/tests/e2e`). It drives the Demo site in E2E mode, which swaps Google's API for a stub so that no real calls are made.
+The Playwright suite lives with Google Sheets (`Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client/tests/e2e`). It drives the Demo site in E2E mode, which swaps Google's API for a stub so that no real calls are made.
 
 ```bash
-cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 cp .env.example .env               # defaults match the Demo site
 npm ci && npm run build
 npx playwright install chromium    # first time only
@@ -196,7 +196,7 @@ Playwright starts the Demo site itself with `AUTOMATE_E2E_MODE=1`. If you alread
 The DevTo package ships one build for Umbraco 17 and 18. If you change it, run its compatibility check (it needs bash, so on Windows use Git Bash or WSL):
 
 ```bash
-./Connections/DevTo/test-umbraco-compat.sh
+./Packages/DevTo/test-umbraco-compat.sh
 ```
 
 ## Making a change
@@ -205,7 +205,7 @@ The DevTo package ships one build for Umbraco 17 and 18. If you change it, run i
 2. **Make the change with tests.** New actions and bug fixes should come with unit tests in the package's `.Tests` project. Check UI changes in the Demo site.
 3. **Update the docs.** If users would notice the change (a new action, setting, outcome or error message), update that package's `README.md`. It's what NuGet shows.
 4. **Commit** using `type(scope): Description`, e.g. `add(action): AppendRowAction — append a row of values to a sheet`, `fix(action): require LookupValue in UpdateRowAction`, `test(action): FindRowActionTests — found/notFound outcomes`. Common types: `add`, `fix`, `refactor`, `test`, `docs`, `chore`.
-5. **Push to your fork and open a PR against `umbraco-community/main`.** CI runs backend tests, front-end tests and the Playwright E2E suite, but only for the connections your change touches. Changes outside `Connections/<Area>/` (the Demo site, `Directory.Packages.props`, workflows) run everything. All checks must pass before the PR is merged.
+5. **Push to your fork and open a PR against `umbraco-community/main`.** CI runs backend tests, front-end tests and the Playwright E2E suite, but only for the connections your change touches. Changes outside `Packages/<Area>/` (the Demo site, `Directory.Packages.props`, workflows) run everything. All checks must pass before the PR is merged.
 
 Keep PRs focused. A new action normally lands in its own PR, with its own tests.
 
@@ -217,12 +217,12 @@ git rebase upstream/main
 git push --force-with-lease
 ```
 
-## Adding a new connection
+## Adding a new package
 
 If you use [Claude Code](https://claude.com/claude-code), the repo includes an `umbraco-automate` skill ([`.claude/skills/umbraco-automate/`](../.claude/skills/umbraco-automate/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>", "add a trigger to Mastodon" or anything else Automate-related, and it follows the layout and conventions here. The checklist below is the same process by hand.
 
-1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
-2. **Use the standard folders** from [Inside a connection](#inside-a-connection): at least `Actions/`, `Composers/` and `Connections/`, plus `Triggers/`, `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
+1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
+2. **Use the standard folders** from [Inside a package](#inside-a-package): `Composers/`, plus `Actions/`, `Triggers/` and `Connections/` for whichever of those the package adds, and `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.
 5. **Add package versions to `Directory.Packages.props`.** Projects don't specify versions themselves.

@@ -130,5 +130,5 @@ counting spoiler text and counting each link as 23. Posts over the cap are rejec
 
 ## Links
 
-- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Connections/Mastodon/Umbraco.Community.Automate.Mastodon)
+- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Mastodon/Umbraco.Community.Automate.Mastodon)
 - [Report an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues)
