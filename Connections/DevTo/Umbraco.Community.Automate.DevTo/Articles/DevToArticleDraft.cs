@@ -1,3 +1,5 @@
+using Umbraco.Community.Automate.DevTo.Api;
+
 namespace Umbraco.Community.Automate.DevTo.Articles;
 
 public sealed class DevToArticleDraft

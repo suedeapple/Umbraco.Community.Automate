@@ -1,5 +1,6 @@
 using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.DevTo.Composers;
+using Umbraco.Community.Automate.DevTo.Api;
 
 namespace Umbraco.Community.Automate.DevTo.Actions;
 

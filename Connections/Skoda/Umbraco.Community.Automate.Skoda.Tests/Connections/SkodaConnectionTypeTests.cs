@@ -3,10 +3,10 @@ using Moq;
 using Shouldly;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Automate.Core.Settings;
-using Umbraco.Community.Automate.Skoda.Client;
-using Umbraco.Community.Automate.Skoda.Client.Models;
 using Umbraco.Community.Automate.Skoda.Connections;
 using Xunit;
+using Umbraco.Community.Automate.Skoda.Api;
+using Umbraco.Community.Automate.Skoda.Api.Models;
 
 namespace Umbraco.Community.Automate.Skoda.Tests.Connections;
 

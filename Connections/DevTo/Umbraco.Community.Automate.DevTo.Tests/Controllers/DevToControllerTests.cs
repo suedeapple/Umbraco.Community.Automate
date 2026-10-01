@@ -13,11 +13,11 @@ using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Security.Authorization;
 using Umbraco.Community.Automate.DevTo.Articles;
-using Umbraco.Community.Automate.DevTo.Client;
 using Umbraco.Community.Automate.DevTo.Content;
 using Umbraco.Community.Automate.DevTo.Controllers;
 using Umbraco.Community.Automate.DevTo.Tests.Helpers;
 using Xunit;
+using Umbraco.Community.Automate.DevTo.Api;
 using static Umbraco.Community.Automate.DevTo.Tests.Helpers.PublishedContentMocks;
 
 namespace Umbraco.Community.Automate.DevTo.Tests.Controllers;

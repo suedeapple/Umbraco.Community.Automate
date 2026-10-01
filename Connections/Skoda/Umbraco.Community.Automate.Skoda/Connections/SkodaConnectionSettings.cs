@@ -1,4 +1,5 @@
 ﻿using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.Skoda.Api.Models;
 
 namespace Umbraco.Community.Automate.Skoda.Connections;
 

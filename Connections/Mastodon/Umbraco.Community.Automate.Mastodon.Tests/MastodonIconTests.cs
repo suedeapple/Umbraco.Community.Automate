@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Community.Automate.Mastodon.Actions;
-using Umbraco.Community.Automate.Mastodon.ConnectionTypes;
 using Xunit;
+using Umbraco.Community.Automate.Mastodon.Connections;
 
 namespace Umbraco.Community.Automate.Mastodon.Tests;
 

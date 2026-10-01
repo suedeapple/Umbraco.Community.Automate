@@ -3,11 +3,11 @@ using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
-using Umbraco.Community.Automate.Skoda.Client;
-using Umbraco.Community.Automate.Skoda.Client.Models;
 using Umbraco.Community.Automate.Skoda.Connections;
 using Xunit;
-using Timer = Umbraco.Community.Automate.Skoda.Client.Models.Timer;
+using Umbraco.Community.Automate.Skoda.Api;
+using Umbraco.Community.Automate.Skoda.Api.Models;
+using Timer = Umbraco.Community.Automate.Skoda.Api.Models.Timer;
 
 namespace Umbraco.Community.Automate.Skoda.Tests.Actions;
 

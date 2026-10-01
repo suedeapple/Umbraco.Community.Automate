@@ -1,6 +1,6 @@
 ﻿using Umbraco.Automate.Core.Actions;
-using Umbraco.Community.Automate.Skoda.Client;
 using Umbraco.Community.Automate.Skoda.Connections;
+using Umbraco.Community.Automate.Skoda.Api;
 
 namespace Umbraco.Community.Automate.Skoda.Actions;
 

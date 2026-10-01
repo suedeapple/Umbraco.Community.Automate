@@ -11,7 +11,8 @@ using Umbraco.Cms.Core.Security.Authorization;
 using Umbraco.Cms.Web.Common.Authorization;
 using Umbraco.Community.Automate.DevTo.Articles;
 using Umbraco.Community.Automate.DevTo.Content;
-using Umbraco.Community.Automate.DevTo.Settings;
+using Umbraco.Community.Automate.DevTo.Api;
+using Umbraco.Community.Automate.DevTo.Configuration;
 
 namespace Umbraco.Community.Automate.DevTo.Controllers;
 

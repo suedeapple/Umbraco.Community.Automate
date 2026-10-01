@@ -1,6 +1,6 @@
 using Shouldly;
-using Umbraco.Community.Automate.DevTo.Settings;
 using Xunit;
+using Umbraco.Community.Automate.DevTo.Connections;
 
 namespace Umbraco.Community.Automate.DevTo.Tests;
 

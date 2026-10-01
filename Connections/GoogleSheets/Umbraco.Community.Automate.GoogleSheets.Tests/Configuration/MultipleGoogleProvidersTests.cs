@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using OpenIddict.Client;
 using Shouldly;
 using Xunit;
+using Umbraco.Community.Automate.GoogleSheets.Composers;
 
 namespace Umbraco.Community.Automate.GoogleSheets.Tests.Configuration;
 

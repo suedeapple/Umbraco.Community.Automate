@@ -4,10 +4,10 @@ using Moq;
 using Shouldly;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Community.Automate.DevTo.Articles;
-using Umbraco.Community.Automate.DevTo.Client;
-using Umbraco.Community.Automate.DevTo.Settings;
 using Umbraco.Community.Automate.DevTo.Tests.Helpers;
 using Xunit;
+using Umbraco.Community.Automate.DevTo.Api;
+using Umbraco.Community.Automate.DevTo.Connections;
 
 namespace Umbraco.Community.Automate.DevTo.Tests.Articles;
 

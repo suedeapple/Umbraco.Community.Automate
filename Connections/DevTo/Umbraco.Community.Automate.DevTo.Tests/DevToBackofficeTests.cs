@@ -9,10 +9,10 @@ using Umbraco.Automate.Core.Connections;
 using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.DevTo.Actions;
 using Umbraco.Community.Automate.DevTo.Composers;
-using Umbraco.Community.Automate.DevTo.ConnectionTypes;
 using Umbraco.Community.Automate.DevTo.Controllers;
 using Umbraco.Community.Automate.DevTo.Tests.Helpers;
 using Xunit;
+using Umbraco.Community.Automate.DevTo.Connections;
 
 namespace Umbraco.Community.Automate.DevTo.Tests;
 
@@ -169,7 +169,7 @@ public class DevToBackofficeTests
     public static TheoryData<Type> SettingsTypes => new()
     {
         typeof(PublishContentSettings),
-        typeof(Settings.DevToConnectionSettings),
+        typeof(Connections.DevToConnectionSettings),
     };
 
     /// <summary>
