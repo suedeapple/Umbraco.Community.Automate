@@ -648,7 +648,7 @@ public class ExampleIconTests
 
 ## Wiring into the repo
 
-`Umbraco.Community.Automate.Demo.slnx`, alongside the other connections:
+`Demo.slnx`, alongside the other connections:
 
 ```xml
   <Folder Name="/Packages/Example/">
