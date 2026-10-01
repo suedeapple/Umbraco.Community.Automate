@@ -10,7 +10,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "Update Charging Profile",
     Group = "Skoda",
     Icon = "icon-skoda",
-    ConnectionTypeAlias = SkodaConstants.ConnectionTypeAlias)]
+    ConnectionTypeAlias = "community.skoda")]
 public sealed class UpdateChargingProfileAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<UpdateChargingProfileSettings, VehicleCommandOutput>(infrastructure)
 {
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)

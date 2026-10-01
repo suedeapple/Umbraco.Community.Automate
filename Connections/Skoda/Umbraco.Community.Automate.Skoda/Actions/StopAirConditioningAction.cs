@@ -9,7 +9,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "Stop Air Conditioning", 
     Group = "Skoda", 
     Icon = "icon-skoda", 
-    ConnectionTypeAlias = SkodaConstants.ConnectionTypeAlias)]
+    ConnectionTypeAlias = "community.skoda")]
 public sealed class StopAirConditioningAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<StopAirConditioningSettings, VehicleCommandOutput>(infrastructure)
 {
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)

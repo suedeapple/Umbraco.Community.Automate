@@ -11,7 +11,7 @@ internal static class UmbracoBuilderExtensions
         public IUmbracoBuilder AddSkodaAutomate()
         {
             builder.Services.AddHttpClient<ISkodaClient, SkodaClient>(
-                client => client.BaseAddress = new Uri(SkodaConstants.BaseUrl));
+                client => client.BaseAddress = new Uri(SkodaClient.BaseUrl));
 
             return builder;
         }

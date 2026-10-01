@@ -28,7 +28,7 @@ public class SkodaClientTests
         var result = await sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Get);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}");
         captured.Headers.GetValues("X-API-Key").ShouldContain(ApiKey);
         result.Vehicle.Vin.ShouldBe(Vin);
         result.Vehicle.Name.ShouldBe("My Car");
@@ -48,7 +48,7 @@ public class SkodaClientTests
         // Uri.ToString() unescapes characters that aren't structurally significant (like a
         // space) for display, but keeps a reserved character like '/' percent-encoded since
         // decoding it would change how the path is parsed - AbsoluteUri shows the wire form.
-        captured!.RequestUri.AbsoluteUri.ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/AB%2FCD%20EF");
+        captured!.RequestUri.AbsoluteUri.ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/AB%2FCD%20EF");
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class SkodaClientTests
         await sut.StartChargingAsync(ApiKey, Vin, CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Post);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/charging/start");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/charging/start");
         captured.Body.ShouldBe("{}");
     }
 
@@ -131,7 +131,7 @@ public class SkodaClientTests
         await sut.StopChargingAsync(ApiKey, Vin, CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Post);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/charging/stop");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/charging/stop");
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class SkodaClientTests
         await sut.SetChargingLimitAsync(ApiKey, Vin, 80, CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Put);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/charging/limit");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/charging/limit");
         captured.Body.ShouldBe("""{"targetStateOfChargeInPercent":80}""");
     }
 
@@ -156,7 +156,7 @@ public class SkodaClientTests
         await sut.SetChargeModeAsync(ApiKey, Vin, "TIMER", CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Put);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/charging/mode");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/charging/mode");
         captured.Body.ShouldBe("""{"chargeMode":"TIMER"}""");
     }
 
@@ -176,7 +176,7 @@ public class SkodaClientTests
         await sut.UpdateChargingProfileAsync(ApiKey, Vin, 123456, profile, CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Put);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/charging-profiles/123456");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/charging-profiles/123456");
         captured.Body!.ShouldContain("\"name\":\"Home\"");
         captured.Body!.ShouldContain("\"targetStateOfChargeInPercent\":80");
     }
@@ -194,7 +194,7 @@ public class SkodaClientTests
             CancellationToken.None);
 
         captured!.Method.ShouldBe(HttpMethod.Post);
-        captured.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/start");
+        captured.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/start");
         captured.Body.ShouldBe("""{"targetTemperature":{"value":21.5,"unit":"CELSIUS"},"airConditioningWithoutExternalPower":true}""");
     }
 
@@ -206,7 +206,7 @@ public class SkodaClientTests
 
         await sut.StopAirConditioningAsync(ApiKey, Vin, CancellationToken.None);
 
-        captured!.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/stop");
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/stop");
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public class SkodaClientTests
             new StartAuxiliaryHeatingConfiguration(new TargetTemperature(21, "CELSIUS"), "1234", 1800, "HEATING"),
             CancellationToken.None);
 
-        captured!.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/start");
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/start");
         captured.Body.ShouldBe("""{"targetTemperature":{"value":21,"unit":"CELSIUS"},"spin":"1234","durationInSeconds":1800,"startMode":"HEATING"}""");
     }
 
@@ -233,7 +233,7 @@ public class SkodaClientTests
 
         await sut.StopAuxiliaryHeatingAsync(ApiKey, Vin, CancellationToken.None);
 
-        captured!.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/stop");
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/stop");
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class SkodaClientTests
 
         await sut.StartActiveVentilationAsync(ApiKey, Vin, CancellationToken.None);
 
-        captured!.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/start");
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/start");
     }
 
     [Fact]
@@ -255,14 +255,14 @@ public class SkodaClientTests
 
         await sut.StopActiveVentilationAsync(ApiKey, Vin, CancellationToken.None);
 
-        captured!.RequestUri.ToString().ShouldBe($"{SkodaConstants.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/stop");
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaClient.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/stop");
     }
 
     private static SkodaClient CreateSut(HttpStatusCode statusCode, string json, Action<CapturedRequest> capture) =>
         new(CreateHttpClient(StubHandler(statusCode, json, capture)));
 
     private static HttpClient CreateHttpClient(HttpMessageHandler handler) =>
-        new(handler) { BaseAddress = new Uri(SkodaConstants.BaseUrl) };
+        new(handler) { BaseAddress = new Uri(SkodaClient.BaseUrl) };
 
     private static HttpMessageHandler StubHandler(HttpStatusCode code, string json, Action<CapturedRequest> capture) =>
         StubHandlerWithContent(code, new StringContent(json, Encoding.UTF8, "application/json"), capture);

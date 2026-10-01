@@ -5,7 +5,7 @@ using Umbraco.Community.Automate.Skoda.Configuration;
 namespace Umbraco.Community.Automate.Skoda.Connections;
 
 [ConnectionType(
-    SkodaConstants.ConnectionTypeAlias,
+    "community.skoda",
     "Škoda",
     Description = "Connects Umbraco Automate to a Škoda vehicle using the MyŠkoda Public API.",
     Icon = "icon-skoda")]

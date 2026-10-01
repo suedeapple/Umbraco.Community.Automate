@@ -10,7 +10,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "Start Auxiliary Heating",
     Group = "Skoda",
     Icon = "icon-skoda",
-    ConnectionTypeAlias = SkodaConstants.ConnectionTypeAlias)]
+    ConnectionTypeAlias = "community.skoda")]
 public sealed class StartAuxiliaryHeatingAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<StartAuxiliaryHeatingSettings, VehicleCommandOutput>(infrastructure)
 {
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)

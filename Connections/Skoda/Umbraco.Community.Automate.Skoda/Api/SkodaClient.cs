@@ -6,6 +6,9 @@ namespace Umbraco.Community.Automate.Skoda.Api;
 
 internal sealed class SkodaClient(HttpClient httpClient) : ISkodaClient
 {
+    /// <summary>The MyŠkoda Public API. A fixed address, so a constant rather than configuration.</summary>
+    internal const string BaseUrl = "https://public.api.connect.skoda-auto.cz/";
+
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     public async Task<VehicleResponse> GetVehicleAsync(

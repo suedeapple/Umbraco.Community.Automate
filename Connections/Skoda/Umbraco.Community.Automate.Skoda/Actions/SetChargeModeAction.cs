@@ -10,7 +10,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
     "Set Charge Mode",
     Group = "Skoda",
     Icon = "icon-skoda",
-    ConnectionTypeAlias = SkodaConstants.ConnectionTypeAlias)]
+    ConnectionTypeAlias = "community.skoda")]
 public sealed class SetChargeModeAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<SetChargeModeSettings, VehicleCommandOutput>(infrastructure)
 {
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)
