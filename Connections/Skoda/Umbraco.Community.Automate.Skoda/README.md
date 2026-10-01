@@ -88,8 +88,8 @@ The API base URL defaults to `https://public.api.connect.skoda-auto.cz/`. Overri
 ```json
 {
   "Umbraco": {
-    "Community": {
-      "Automate": {
+    "Automate": {
+      "Variables": {
         "Skoda": {
           "BaseUrl": "https://public.api.connect.skoda-auto.cz/"
         }
@@ -98,6 +98,8 @@ The API base URL defaults to `https://public.api.connect.skoda-auto.cz/`. Overri
   }
 }
 ```
+
+Or as an environment variable: `Umbraco__Automate__Variables__Skoda__BaseUrl=...`. It sits alongside the package's other settings in Umbraco Automate's shared Variables section.
 
 ## Links
 
