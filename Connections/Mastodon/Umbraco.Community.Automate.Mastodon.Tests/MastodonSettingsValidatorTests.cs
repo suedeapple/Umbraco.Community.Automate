@@ -79,19 +79,19 @@ public class MastodonSettingsValidatorTests
     {
         var settings = new MastodonSettings();
 
-        Assert.Equal("$Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl", settings.InstanceUrl);
-        Assert.Equal("$Umbraco:Community:Automate:Mastodon:Secrets:AccessToken", settings.AccessToken);
+        Assert.Equal("$Umbraco:Automate:Variables:Mastodon:InstanceUrl", settings.InstanceUrl);
+        Assert.Equal("$Umbraco:Automate:Secrets:Mastodon:AccessToken", settings.AccessToken);
     }
 
     [Fact]
     public void Unresolved_instance_url_reference_explains_where_to_put_the_url()
     {
-        // Automate leaves a reference as-is when the value isn't in configuration.
+        // A reference arriving unresolved (Automate normally resolves it, or reports the missing key, first).
         var error = MastodonSettingsValidator.Validate(new MastodonSettings { AccessToken = "token" });
 
         Assert.NotNull(error);
         Assert.Contains("could not be resolved", error);
-        Assert.Contains("Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl", error);
+        Assert.Contains("Umbraco:Automate:Variables:Mastodon:InstanceUrl", error);
     }
 
     [Fact]
@@ -100,6 +100,6 @@ public class MastodonSettingsValidatorTests
         var error = MastodonSettingsValidator.Validate(new MastodonSettings { InstanceUrl = "https://mastodon.social" });
 
         Assert.NotNull(error);
-        Assert.Contains("Umbraco:Community:Automate:Mastodon:Secrets:AccessToken", error);
+        Assert.Contains("Umbraco:Automate:Secrets:Mastodon:AccessToken", error);
     }
 }

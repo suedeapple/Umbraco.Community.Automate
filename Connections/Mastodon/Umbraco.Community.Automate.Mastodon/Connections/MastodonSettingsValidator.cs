@@ -17,13 +17,13 @@ public static class MastodonSettingsValidator
         if (string.IsNullOrWhiteSpace(settings.AccessToken))
             return "Access token is required.";
 
-        // Automate replaces a $-reference with the configured value; one that's still here
-        // means the value isn't in configuration.
+        // Automate resolves $-references before settings reach this code, and reports a missing
+        // key itself; this is a safety net for a reference that arrives unresolved anyway.
         if (IsUnresolvedReference(settings.InstanceUrl))
-            return $"The instance URL reference '{settings.InstanceUrl}' could not be resolved. Add the URL to configuration at Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl, or enter it on the connection.";
+            return $"The instance URL reference '{settings.InstanceUrl}' could not be resolved. Add the URL to configuration at Umbraco:Automate:Variables:Mastodon:InstanceUrl, or enter it on the connection.";
 
         if (IsUnresolvedReference(settings.AccessToken))
-            return $"The access token reference '{settings.AccessToken}' could not be resolved. Add the token to configuration at Umbraco:Community:Automate:Mastodon:Secrets:AccessToken, or enter it on the connection.";
+            return $"The access token reference '{settings.AccessToken}' could not be resolved. Add the token to configuration at Umbraco:Automate:Secrets:Mastodon:AccessToken, or enter it on the connection.";
 
         if (!Uri.TryCreate(settings.InstanceUrl, UriKind.Absolute, out var uri)
             || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))

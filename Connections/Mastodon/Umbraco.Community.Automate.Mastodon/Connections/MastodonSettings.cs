@@ -12,13 +12,13 @@ public sealed class MastodonSettings
 {
     [Field(
         Label = "Instance URL",
-        Description = "The base URL of your Mastodon instance, e.g. https://mastodon.social. Defaults to the value in configuration at Umbraco:Community:Automate:Mastodon:Variables:InstanceUrl.",
+        Description = "The base URL of your Mastodon instance, e.g. https://mastodon.social. Defaults to the value in configuration at Umbraco:Automate:Variables:Mastodon:InstanceUrl.",
         SortOrder = 1)]
     public string InstanceUrl { get; set; } = MastodonConfiguration.InstanceUrlReference;
 
     [Field(
         Label = "Access Token",
-        Description = "An access token with the write:statuses scope. Defaults to the token in configuration at Umbraco:Community:Automate:Mastodon:Secrets:AccessToken.",
+        Description = "An access token with the write:statuses scope. Defaults to the token in configuration at Umbraco:Automate:Secrets:Mastodon:AccessToken.",
         IsSensitive = true,
         SortOrder = 2)]
     public string AccessToken { get; set; } = MastodonConfiguration.AccessTokenReference;

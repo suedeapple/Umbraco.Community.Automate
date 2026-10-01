@@ -12,7 +12,7 @@ public class DevToConnectionSettingsValidatorTests
 
     [Theory]
     [InlineData("", "https://dev.to", "API key is required")]
-    [InlineData("$Umbraco:Community:Automate:DevTo:Secrets:ApiKey", "https://dev.to", "could not be resolved")]
+    [InlineData("$Umbraco:Automate:Secrets:DevTo:ApiKey", "https://dev.to", "could not be resolved")]
     [InlineData("abc", "dev.to", "not a valid instance URL")]
     [InlineData("abc", "ftp://dev.to", "not a valid instance URL")]
     public void Invalid_settings_explain_the_problem(string apiKey, string instanceUrl, string expected)
@@ -25,5 +25,5 @@ public class DevToConnectionSettingsValidatorTests
 
     [Fact]
     public void New_connections_default_to_the_configuration_reference()
-        => Assert.Equal("$Umbraco:Community:Automate:DevTo:Secrets:ApiKey", new DevToConnectionSettings().ApiKey);
+        => Assert.Equal("$Umbraco:Automate:Secrets:DevTo:ApiKey", new DevToConnectionSettings().ApiKey);
 }

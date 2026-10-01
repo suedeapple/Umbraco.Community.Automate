@@ -25,12 +25,12 @@ public sealed class SkodaConnectionType(ConnectionTypeInfrastructure infrastruct
             return ConnectionValidationResult.Failure("API key and VIN must be provided.");
         }
 
-        // Automate replaces a $-reference with the configured value; one that's still here
-        // means the key isn't in configuration.
+        // Automate resolves $-references before settings reach this code, and reports a missing
+        // key itself; this is a safety net for a reference that arrives unresolved anyway.
         if (skodaSettings.ApiKey.TrimStart().StartsWith('$'))
         {
             return ConnectionValidationResult.Failure(
-                $"The API key reference '{skodaSettings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Community:Automate:Skoda:Secrets:ApiKey, or enter the key itself on the connection.");
+                $"The API key reference '{skodaSettings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Automate:Secrets:Skoda:ApiKey, or enter the key itself on the connection.");
         }
 
         if (!skodaSettings.ValidateConnection)

@@ -7,7 +7,7 @@ public class WeatherApiConnectionSettingsValidatorTests
 {
     [Fact]
     public void New_connections_default_to_the_configuration_reference()
-        => Assert.Equal("$Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey", new WeatherApiConnectionSettings().ApiKey);
+        => Assert.Equal("$Umbraco:Automate:Secrets:WeatherApi:ApiKey", new WeatherApiConnectionSettings().ApiKey);
 
     [Theory]
     [InlineData("")]
@@ -23,12 +23,12 @@ public class WeatherApiConnectionSettingsValidatorTests
     [Fact]
     public void Unresolved_default_reference_explains_where_to_put_the_key()
     {
-        // Automate leaves the reference as-is when the key isn't in configuration.
+        // A reference arriving unresolved (Automate normally resolves it, or reports the missing key, first).
         var error = WeatherApiConnectionSettingsValidator.Validate(new WeatherApiConnectionSettings());
 
         Assert.NotNull(error);
         Assert.Contains("could not be resolved", error);
-        Assert.Contains("Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey", error);
+        Assert.Contains("Umbraco:Automate:Secrets:WeatherApi:ApiKey", error);
     }
 
     [Fact]

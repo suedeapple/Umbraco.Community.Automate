@@ -41,23 +41,21 @@ Each package reads its settings from configuration, so secrets stay out of the d
 ```json
 {
   "Umbraco": {
-    "Community": {
-      "Automate": {
-        "Mastodon": {
-          "Variables": { "InstanceUrl": "https://mastodon.social" },
-          "Secrets":   { "AccessToken": "your-access-token" }
-        }
-      }
+    "Automate": {
+      "Variables": { "Mastodon": { "InstanceUrl": "https://mastodon.social" } },
+      "Secrets":   { "Mastodon": { "AccessToken": "your-access-token" } }
     }
   }
 }
 ```
 
-Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) rather than `appsettings.json`. In production, use environment variables (`Umbraco__Community__Automate__Mastodon__Secrets__AccessToken=...`) or a key vault. Google Sheets uses OAuth instead: you supply a Client ID and Secret under `Umbraco:Automate:Providers:GoogleSheets`, then sign in from the backoffice.
+Every connection keeps its values under its own name inside Umbraco Automate's shared `Variables` and `Secrets` sections, which Automate reads references from out of the box.
+
+Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) rather than `appsettings.json`. In production, use environment variables (`Umbraco__Automate__Secrets__Mastodon__AccessToken=...`) or a key vault. Google Sheets uses OAuth instead: you supply a Client ID and Secret under `Umbraco:Automate:Providers:GoogleSheets`, then sign in from the backoffice.
 
 ### 3. Create a connection
 
-In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. Credential fields come pre-filled with a reference to configuration, e.g. `$Umbraco:Community:Automate:Mastodon:Secrets:AccessToken`, so values you stored in step 2 are used without typing anything. Replace a reference with the value itself if you'd rather store it on the connection. Click **Test connection** to check it.
+In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. Credential fields come pre-filled with a reference to configuration, e.g. `$Umbraco:Automate:Secrets:Mastodon:AccessToken`, so values you stored in step 2 are used without typing anything. Replace a reference with the value itself if you'd rather store it on the connection. Click **Test connection** to check it.
 
 ### 4. Build an automation
 

@@ -20,17 +20,15 @@ Sign up at [weatherapi.com](https://www.weatherapi.com/) and copy the API key fr
 
 ### 2. Store the key in configuration
 
-Add the key to the package's `Umbraco:Community:Automate:WeatherApi:Secrets` section. Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) rather than `appsettings.json`:
+Add the key under `Umbraco:Automate:Secrets:WeatherApi`, in Umbraco Automate's shared Secrets section. Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) rather than `appsettings.json`:
 
 ```json
 {
   "Umbraco": {
-    "Community": {
-      "Automate": {
+    "Automate": {
+      "Secrets": {
         "WeatherApi": {
-          "Secrets": {
-            "ApiKey": "your-api-key"
-          }
+          "ApiKey": "your-api-key"
         }
       }
     }
@@ -41,15 +39,15 @@ Add the key to the package's `Umbraco:Community:Automate:WeatherApi:Secrets` sec
 In production, use an environment variable instead:
 
 ```
-Umbraco__Community__Automate__WeatherApi__Secrets__ApiKey=your-api-key
+Umbraco__Automate__Secrets__WeatherApi__ApiKey=your-api-key
 ```
 
-The package registers this section with Umbraco Automate's configuration allow-list, so no extra setup is needed.
+Umbraco Automate resolves references from this shared section out of the box, so there's nothing to register.
 
 ### 3. Create the connection
 
 1. Go to **Automation → Settings → Connections** and create a new **WeatherAPI.com** connection (in the **Weather** group).
-2. **API Key** is already filled in with `$Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey`, a reference to the key you stored in step 2. Leave it as it is. If you'd rather keep the key on the connection itself, replace the reference with the key.
+2. **API Key** is already filled in with `$Umbraco:Automate:Secrets:WeatherApi:ApiKey`, a reference to the key you stored in step 2. Leave it as it is. If you'd rather keep the key on the connection itself, replace the reference with the key.
 3. Click **Test connection**. This requests the current weather for London to confirm the key works.
 
 ## Actions
@@ -96,7 +94,7 @@ Gets today's forecast. Outputs:
 
 ## Troubleshooting
 
-**"The API key reference '$Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey' could not be resolved"**: the key isn't in configuration. Add it as in [step 2](#2-store-the-key-in-configuration), or replace the reference on the connection with the key itself.
+**"Configuration key 'Umbraco:Automate:Secrets:WeatherApi:ApiKey' not found"**: the key isn't in configuration. Add it as in [step 2](#2-store-the-key-in-configuration), or replace the reference on the connection with the key itself.
 
 **"API key is invalid."** or **"API key has been disabled."**: the key was rejected by WeatherAPI.com. Check it in your WeatherAPI.com dashboard.
 
@@ -113,7 +111,7 @@ dotnet remove package SA.Automate.WeatherApi
 dotnet add package Umbraco.Community.Automate.WeatherApi
 ```
 
-The connection type alias (`weatherApi`) and action aliases (`weatherApi.GetCurrentWeather`, `weatherApi.GetTodaysWeather`) are unchanged, so existing connections and automations keep working. Existing connections keep whatever API key or reference they already have; only new connections default to the new `$Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey` reference.
+The connection type alias (`weatherApi`) and action aliases (`weatherApi.GetCurrentWeather`, `weatherApi.GetTodaysWeather`) are unchanged, so existing connections and automations keep working. Existing connections keep whatever API key or reference they already have; only new connections default to the new `$Umbraco:Automate:Secrets:WeatherApi:ApiKey` reference.
 
 ## Compatibility
 

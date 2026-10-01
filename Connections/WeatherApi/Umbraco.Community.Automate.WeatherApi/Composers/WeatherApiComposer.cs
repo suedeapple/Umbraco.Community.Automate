@@ -1,11 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Automate.Core.Actions;
-using Umbraco.Automate.Core.Configuration;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Community.Automate.WeatherApi.Actions;
-using Umbraco.Community.Automate.WeatherApi.Configuration;
 using Umbraco.Community.Automate.WeatherApi.Connections;
 
 namespace Umbraco.Community.Automate.WeatherApi.Composers;
@@ -26,21 +24,5 @@ public class WeatherApiComposer : IComposer
             .Add<GetCurrentWeatherAction>()
             .Add<GetTodaysWeatherAction>();
 
-        // Automate only resolves $-references under allow-listed prefixes, so the default
-        // $Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey reference needs this.
-        builder.Services.PostConfigure<AutomateOptions>(options =>
-        {
-            options.AllowedConfigurationKeyPrefixes =
-            [
-                .. options.AllowedConfigurationKeyPrefixes,
-                WeatherApiConfiguration.VariablesPath,
-                WeatherApiConfiguration.SecretsPath,
-            ];
-            options.SecretConfigurationKeyPrefixes =
-            [
-                .. options.SecretConfigurationKeyPrefixes,
-                WeatherApiConfiguration.SecretsPath,
-            ];
-        });
     }
 }

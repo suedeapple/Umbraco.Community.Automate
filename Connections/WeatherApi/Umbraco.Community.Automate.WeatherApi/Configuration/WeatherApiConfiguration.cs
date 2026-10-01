@@ -1,15 +1,15 @@
 namespace Umbraco.Community.Automate.WeatherApi.Configuration;
 
 /// <summary>
-/// Configuration section paths for values the WeatherAPI.com connection can reference with
-/// Umbraco Automate's <c>$</c> syntax. Registered on Automate's allow-list in
-/// <see cref="Composers.WeatherApiComposer"/>.
+/// Where this package's values live in configuration. They sit under Umbraco Automate's shared
+/// <c>Umbraco:Automate:Secrets</c> and <c>Umbraco:Automate:Variables</c> sections, which Automate
+/// resolves <c>$</c> references from by default, so nothing needs registering. Nesting under
+/// <c>WeatherApi</c> keeps this package's keys together and avoids clashes with other packages.
 /// </summary>
 public static class WeatherApiConfiguration
 {
-    public const string SectionPath = "Umbraco:Community:Automate:WeatherApi";
-    public const string VariablesPath = SectionPath + ":Variables";
-    public const string SecretsPath = SectionPath + ":Secrets";
+    public const string VariablesPath = "Umbraco:Automate:Variables:WeatherApi";
+    public const string SecretsPath = "Umbraco:Automate:Secrets:WeatherApi";
 
     /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";

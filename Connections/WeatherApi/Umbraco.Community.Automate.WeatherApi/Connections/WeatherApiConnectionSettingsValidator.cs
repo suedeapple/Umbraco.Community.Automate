@@ -12,10 +12,10 @@ public static class WeatherApiConnectionSettingsValidator
         if (string.IsNullOrWhiteSpace(settings?.ApiKey))
             return "A WeatherAPI.com API key is required.";
 
-        // Automate replaces a $-reference with the configured value; one that's still here
-        // means the key isn't in configuration (or isn't on the allow-list).
+        // Automate resolves $-references before settings reach this code, and reports a missing
+        // key itself; this is a safety net for a reference that arrives unresolved anyway.
         if (settings.ApiKey.TrimStart().StartsWith('$'))
-            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey, or enter the key itself on the connection.";
+            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Automate:Secrets:WeatherApi:ApiKey, or enter the key itself on the connection.";
 
         return null;
     }

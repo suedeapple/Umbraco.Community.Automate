@@ -8,7 +8,7 @@ public sealed class SkodaConnectionSettings
 {
     [Field(
         Label = "API key",
-        Description = "The API key generated in the MyŠkoda app. Defaults to the key in configuration at Umbraco:Community:Automate:Skoda:Secrets:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
+        Description = "The API key generated in the MyŠkoda app. Defaults to the key in configuration at Umbraco:Automate:Secrets:Skoda:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
         IsSensitive = true,
         SortOrder = 0)]
     public string ApiKey { get; set; } = SkodaConfiguration.ApiKeyReference;

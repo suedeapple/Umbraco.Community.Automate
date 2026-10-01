@@ -48,7 +48,7 @@ Work through these in order and tick them off. Ask the user for the service name
 2. **`Directory.Build.props`** in the package folder, with `MinVerTagPrefix` `<area-lowercase>-v` and `MinVerIgnoreHeight` true. This file is also the marker that makes CI find the package; without it the package is silently skipped.
 3. **Connection type and settings** in `Connections/`, with credential fields defaulting to their configuration reference (see Configuration and secrets).
 4. **Actions** in `Actions/`, each with its settings (and output, if it returns data).
-5. **Composer** in `Composers/`: register the connection type, actions, any services and the package manifest (icons). If the connection reads `$`-references from configuration, add the allow-list (see Configuration below).
+5. **Composer** in `Composers/`: register the connection type, actions, any services and the package manifest (icons). Configuration references need no registration (see Configuration below).
 6. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one in `wwwroot/` plus the manifest reader in `Composers/`.
 7. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
 8. **Wire it in**: add both projects to `Umbraco.Community.Automate.slnx` (in a `/Connections/<Area>/` solution folder) and a `ProjectReference` from `Demo/Umbraco.Community.Automate.Demo.csproj`.
@@ -76,9 +76,9 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 
 ### Configuration and secrets
 - Never commit real credentials, not even temporarily. The repo's gitleaks hooks (`.githooks/`) block commits and pushes that contain them.
-- Credentials live in configuration, not the database: values go in `Umbraco:Community:Automate:<Area>:Variables` (non-sensitive) and `:Secrets` (sensitive), referenced from connection fields as `$Umbraco:Community:Automate:<Area>:Secrets:ApiKey`. Automate only resolves prefixes on its allow-list, so the composer must add both paths (and mark the Secrets path as secret). Keep the paths, and each default reference, as constants in `Configuration/<Area>Configuration.cs`.
+- Credentials live in configuration, not the database, under Umbraco Automate's **shared** sections, nested under the area name: `Umbraco:Automate:Secrets:<Area>:<Key>` for sensitive values and `Umbraco:Automate:Variables:<Area>:<Key>` for the rest, referenced from fields as `$Umbraco:Automate:Secrets:<Area>:ApiKey`. Automate resolves references from these two sections by default (its allow-list is default-deny for everything else), so **don't register anything** in the composer. Nesting under `<Area>` keeps a package's keys together and avoids clashes. Secrets can only be referenced from `IsSensitive` fields. Keep the paths, and each default reference, as constants in `Configuration/<Area>Configuration.cs`.
 - **Pre-fill each credential field with its reference as the default value** (`public string ApiKey { get; set; } = <Area>Configuration.ApiKeyReference;`). A new connection then opens with the reference already filled in, so users who store the key in configuration don't type anything, and anyone who prefers can overwrite it with the value. Don't ask users to copy and paste references from help text. Leave per-connection values (like a vehicle VIN) blank.
-- Automate leaves a reference unchanged when the key isn't in configuration, so the shared validator must check for a leftover `$` value and return a message naming the configuration key to add, before any API call is made.
+- Automate resolves references before settings reach your code. If the key is missing it fails the step or the **Test connection** itself, with *Configuration key '...' not found*, so you don't need to handle that. As a cheap safety net, the shared validator can still reject a value that starts with `$` (one that arrived unresolved) with a message naming the key, before any API call.
 - OAuth providers use `Umbraco:Automate:Providers:<Area>` (see Google Sheets).
 
 ### Actions

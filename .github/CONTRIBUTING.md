@@ -132,10 +132,10 @@ The Demo site's `appsettings.Development.json` contains placeholder credentials 
 ```bash
 dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<client-id>" --project Demo
 dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<client-secret>" --project Demo
-dotnet user-secrets set "Umbraco:Community:Automate:Mastodon:Secrets:AccessToken" "<token>" --project Demo
-dotnet user-secrets set "Umbraco:Community:Automate:DevTo:Secrets:ApiKey" "<api-key>" --project Demo
-dotnet user-secrets set "Umbraco:Community:Automate:Skoda:Secrets:ApiKey" "<api-key>" --project Demo
-dotnet user-secrets set "Umbraco:Community:Automate:WeatherApi:Secrets:ApiKey" "<api-key>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:Mastodon:AccessToken" "<token>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:DevTo:ApiKey" "<api-key>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:Skoda:ApiKey" "<api-key>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:WeatherApi:ApiKey" "<api-key>" --project Demo
 ```
 
 New connections are pre-filled with references to exactly these keys, so once they're set you can create a connection without typing any credentials.

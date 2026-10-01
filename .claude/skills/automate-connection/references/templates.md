@@ -124,16 +124,15 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
 
 ## Configuration
 
-`Configuration/ExampleConfiguration.cs`. Section paths for the allow-list, plus the default reference for each credential field.
+`Configuration/ExampleConfiguration.cs`. Where the package's values live (nested in Automate's shared sections, which need no registration), plus the default reference for each credential field.
 
 ```csharp
 namespace Umbraco.Community.Automate.Example.Configuration;
 
 public static class ExampleConfiguration
 {
-    public const string SectionPath = "Umbraco:Community:Automate:Example";
-    public const string VariablesPath = SectionPath + ":Variables";
-    public const string SecretsPath = SectionPath + ":Secrets";
+    public const string VariablesPath = "Umbraco:Automate:Variables:Example";
+    public const string SecretsPath = "Umbraco:Automate:Secrets:Example";
 
     /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
@@ -154,7 +153,7 @@ public sealed class ExampleConnectionSettings
 {
     [Field(
         Label = "API key",
-        Description = "Generate a key under Settings → API in Example. Defaults to the key in configuration at Umbraco:Community:Automate:Example:Secrets:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
+        Description = "Generate a key under Settings → API in Example. Defaults to the key in configuration at Umbraco:Automate:Secrets:Example:ApiKey; replace it with the key itself if you'd rather store it on the connection.",
         IsSensitive = true,
         SortOrder = 0)]
     public string ApiKey { get; set; } = ExampleConfiguration.ApiKeyReference;
@@ -175,7 +174,7 @@ public static class ExampleConnectionSettingsValidator
             return "An API key is required.";
 
         if (settings.ApiKey.TrimStart().StartsWith('$'))
-            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Community:Automate:Example:Secrets:ApiKey, or enter the key itself on the connection.";
+            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Automate:Secrets:Example:ApiKey, or enter the key itself on the connection.";
 
         return null;
     }
@@ -384,14 +383,12 @@ For branching, return an outcome instead: `return SuccessWithOutcome("notFound",
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Automate.Core.Actions;
-using Umbraco.Automate.Core.Configuration;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Infrastructure.Manifest;
 using Umbraco.Community.Automate.Example.Actions;
 using Umbraco.Community.Automate.Example.Api;
-using Umbraco.Community.Automate.Example.Configuration;
 using Umbraco.Community.Automate.Example.Connections;
 
 namespace Umbraco.Community.Automate.Example.Composers;
@@ -411,21 +408,8 @@ public class ExampleComposer : IComposer
 
         builder.Services.AddSingleton<IPackageManifestReader, ExamplePackageManifestReader>();
 
-        // Automate only resolves $-references under allow-listed prefixes.
-        builder.Services.PostConfigure<AutomateOptions>(options =>
-        {
-            options.AllowedConfigurationKeyPrefixes =
-            [
-                .. options.AllowedConfigurationKeyPrefixes,
-                ExampleConfiguration.VariablesPath,
-                ExampleConfiguration.SecretsPath,
-            ];
-            options.SecretConfigurationKeyPrefixes =
-            [
-                .. options.SecretConfigurationKeyPrefixes,
-                ExampleConfiguration.SecretsPath,
-            ];
-        });
+        // No configuration registration: the default references live under Automate's shared
+        // Umbraco:Automate:Secrets / Variables sections, which it resolves out of the box.
     }
 }
 ```
@@ -497,7 +481,7 @@ public class ExampleConnectionSettingsValidatorTests
 {
     [Fact]
     public void New_connections_default_to_the_configuration_reference()
-        => Assert.Equal("$Umbraco:Community:Automate:Example:Secrets:ApiKey", new ExampleConnectionSettings().ApiKey);
+        => Assert.Equal("$Umbraco:Automate:Secrets:Example:ApiKey", new ExampleConnectionSettings().ApiKey);
 
     [Fact]
     public void Missing_api_key_fails()
@@ -506,7 +490,7 @@ public class ExampleConnectionSettingsValidatorTests
     [Fact]
     public void Unresolved_reference_fails_with_a_hint()
         => Assert.Contains("could not be resolved",
-            ExampleConnectionSettingsValidator.Validate(new ExampleConnectionSettings { ApiKey = "$Umbraco:Community:Automate:Example:Secrets:ApiKey" }));
+            ExampleConnectionSettingsValidator.Validate(new ExampleConnectionSettings { ApiKey = "$Umbraco:Automate:Secrets:Example:ApiKey" }));
 
     [Fact]
     public void Valid_settings_pass()
@@ -633,7 +617,7 @@ No further setup required. The composer registers itself automatically.
 Where to find it in the service, step by step.
 
 ### 2. Store it in configuration
-appsettings.json under Umbraco:Community:Automate:Example (Variables / Secrets), the environment-variable equivalents, and the $-reference to use.
+appsettings.json under Umbraco:Automate:Secrets:Example and Umbraco:Automate:Variables:Example, the environment-variable equivalents, and the $-reference to use.
 
 ### 3. Create the connection
 1. Go to **Automation → Settings → Connections** and create a new **Example** connection.

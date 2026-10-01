@@ -22,17 +22,15 @@ Generate an API key in the **MyŠkoda** app. You'll also need the vehicle's VIN 
 
 ### 2. Store the key in configuration
 
-Add the key to the package's `Umbraco:Community:Automate:Skoda:Secrets` section (locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)):
+Add the key under `Umbraco:Automate:Secrets:Skoda`, in Umbraco Automate's shared Secrets section (locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)):
 
 ```json
 {
   "Umbraco": {
-    "Community": {
-      "Automate": {
+    "Automate": {
+      "Secrets": {
         "Skoda": {
-          "Secrets": {
-            "ApiKey": "your-api-key"
-          }
+          "ApiKey": "your-api-key"
         }
       }
     }
@@ -40,12 +38,12 @@ Add the key to the package's `Umbraco:Community:Automate:Skoda:Secrets` section 
 }
 ```
 
-In production, use an environment variable instead: `Umbraco__Community__Automate__Skoda__Secrets__ApiKey=your-api-key`. The package registers this section with Umbraco Automate's configuration allow-list.
+In production, use an environment variable instead: `Umbraco__Automate__Secrets__Skoda__ApiKey=your-api-key`. Umbraco Automate resolves references from this shared section out of the box, so there's nothing to register.
 
 ### 3. Create the connection
 
 1. Go to **Automation → Settings → Connections** and create a new **Škoda** connection.
-2. **API key** is already filled in with `$Umbraco:Community:Automate:Skoda:Secrets:ApiKey`, a reference to the key you stored in step 2. Leave it, or replace it with the key itself to store it on the connection.
+2. **API key** is already filled in with `$Umbraco:Automate:Secrets:Skoda:ApiKey`, a reference to the key you stored in step 2. Leave it, or replace it with the key itself to store it on the connection.
 3. **VIN**: the vehicle you want to control. Create one connection per vehicle.
 4. **Validate connection**: when on, saving or testing the connection checks the API key and VIN against the Škoda API. Each check uses one request from your API quota, so it's off by default.
 
