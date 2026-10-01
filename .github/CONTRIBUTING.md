@@ -1,62 +1,242 @@
 # Contributing
 
-Thanks for your interest in contributing to Umbraco.Community.Automate! This is a monorepo of community-maintained provider packages for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate), each contributing connections, triggers, and/or actions.
+Thanks for your interest in contributing! This repo holds community-maintained connections for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate). Each one is a NuGet package that adds a connection type and actions for one external service.
+
+You can contribute in several ways: report a bug, improve a README, add an action to an existing connection, or build a whole new connection. If you're planning something large, [open an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues) first so we can agree on the approach before you write the code.
+
+## Contents
+
+- [Prerequisites](#prerequisites)
+- [Getting the code](#getting-the-code)
+- [Repo layout](#repo-layout)
+- [Running the Demo site](#running-the-demo-site)
+- [Building and testing](#building-and-testing)
+- [Making a change](#making-a-change)
+- [Adding a new connection](#adding-a-new-connection)
+- [Preventing secret leaks](#preventing-secret-leaks)
+- [Releasing a package](#releasing-a-package)
 
 ## Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 22.x](https://nodejs.org/) — only needed for packages with a backoffice `Client/` folder (custom property editors, etc.)
+| Tool | Needed for |
+|---|---|
+| [.NET 10 SDK](https://dotnet.microsoft.com/download) | Everything |
+| [gitleaks](https://github.com/gitleaks/gitleaks#installing) | The secret scan that runs before each commit and push (`winget install gitleaks`, `scoop install gitleaks` or `brew install gitleaks`) |
+| A trusted HTTPS dev certificate | The Demo site. Run `dotnet dev-certs https --trust` once per machine. |
+| [Node.js 22.x](https://nodejs.org/) | Only for connections with a backoffice front end (a `Client/` folder), currently Google Sheets |
 
-## Project layout
+Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.slnx`.
 
-Each provider package lives in its own folder under `Connections/` (e.g. `Connections/GoogleSheets/`, containing `Umbraco.Community.Automate.GoogleSheets` and its matching `*.Tests` project). This groups a provider's package, tests and any `Client/` frontend together, and keeps the repo root short as more providers are added; `Connections` is the name Umbraco Automate's backoffice uses for them. New providers go in `Connections/<Area>/`. `Demo/` is a throwaway Umbraco site used to manually exercise every package end-to-end, and also hosts the Playwright E2E suite.
+## Getting the code
+
+Contributions come in through pull requests from a fork:
+
+```bash
+# 1. Fork umbraco-community/Umbraco.Community.Automate on GitHub, then clone your fork
+git clone https://github.com/<you>/Umbraco.Community.Automate.git
+cd Umbraco.Community.Automate
+
+# 2. Add the original repo as "upstream" so you can pull in other people's changes
+git remote add upstream https://github.com/umbraco-community/Umbraco.Community.Automate.git
+git fetch upstream
+
+# 3. Turn on the git hooks (once per clone; see "Preventing secret leaks")
+./.githooks/setup.sh        # macOS/Linux
+.\.githooks\setup.ps1       # Windows
+```
+
+Before starting new work, bring your `main` up to date:
+
+```bash
+git checkout main
+git pull upstream main
+git push origin main
+```
+
+## Repo layout
+
+```
+Connections/                                  one folder per connection
+  <Area>/                                     e.g. Mastodon
+    Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
+    Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
+Demo/                                         throwaway Umbraco site referencing every package
+.github/                                      CI and release workflows, this guide, design notes
+.githooks/                                    gitleaks pre-commit and pre-push hooks
+Directory.Packages.props                      central NuGet versions for every project
+Umbraco.Community.Automate.slnx               the solution
+```
+
+Connections live under `Connections/`, the name Umbraco Automate's backoffice uses for them.
+
+### Inside a connection
+
+Every package uses the same folder names, so you always know where to look. The folders for the building blocks Umbraco Automate defines (actions, triggers, connections) and for composers are plural:
+
+| Folder | What goes in it |
+|---|---|
+| `Actions/` | One class per action, plus its settings and output classes |
+| `Triggers/` | One class per trigger, plus its settings and output classes. No connection has triggers yet. |
+| `Connections/` | The connection type and its connection settings (and their validator) |
+| `Composers/` | The `IComposer` that registers everything, plus any package manifest reader or `IUmbracoBuilder` extensions |
+| `Api/` | The C# client for the external service: HTTP client, request and response models, exceptions |
+| `Configuration/` | Classes bound from `appsettings.json` (options, config section paths) and their validators |
+| `Client/` | The backoffice front end source (Vite + Lit, built by npm into `wwwroot/`). Only for connections that need custom UI. |
+| `wwwroot/` | Static backoffice files served under `App_Plugins/` (icons, `umbraco-package.json`) |
+
+Next to those folders sit `Directory.Build.props` (package metadata and the MinVer tag prefix), `README.md` (shipped inside the NuGet package) and usually a package icon. Folders specific to one connection, such as DevTo's `Articles/` and `Content/`, are fine as well. Namespaces follow the folders, and where a test project groups its tests into folders, it uses the same names.
+
+CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/` that contains a `Directory.Build.props` counts as a package. It must have a sibling `.Tests` project, and it gets front-end jobs if `Client/package.json` exists. You don't need to edit any workflow file to add a connection.
+
+## Running the Demo site
+
+`Demo/` references every package, so it's where you check a change in the real backoffice. On first run it installs itself into a local SQLite database without any prompts.
+
+### First run
+
+```bash
+# Build the Google Sheets backoffice front end. Its output (wwwroot/) is gitignored,
+# so without this step the column-list editor won't appear.
+cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+npm ci
+npm run build
+cd ../../../..
+
+dotnet run --project Demo --launch-profile Umbraco.Web.UI
+```
+
+Then open <https://localhost:44343/umbraco> and log in:
+
+| | |
+|---|---|
+| Email | `admin@example.com` |
+| Password | `password1234` |
+
+The connections are under the **Automation** section in the top navigation. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
+
+In Visual Studio or Rider, set `Umbraco.Community.Automate.Demo` as the startup project and choose the `Umbraco.Web.UI` launch profile.
+
+### Working on a front end
+
+While you edit a connection's `Client/` code, run its build in watch mode next to the Demo site and refresh the browser after each change:
+
+```bash
+cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+npm run watch
+```
+
+### Using real credentials
+
+The Demo site's `appsettings.Development.json` contains placeholder credentials (`e2e-test`) so that everything boots. To test against the real services, override those values with user secrets. **Never edit the tracked config files with real values.**
+
+```bash
+dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<client-id>" --project Demo
+dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<client-secret>" --project Demo
+dotnet user-secrets set "Umbraco:Community:Automate:Mastodon:Secrets:AccessToken" "<token>" --project Demo
+dotnet user-secrets set "Umbraco:Community:Automate:DevTo:Secrets:ApiKey" "<api-key>" --project Demo
+```
+
+For Google Sheets, also add `https://localhost:44343/umbraco/automate/oauth/callback/googlesheets` as an authorised redirect URI on your OAuth client. Skoda's API key and VIN are entered directly on the connection. Each package's README explains where to get its credentials.
+
+### Resetting the site
+
+Stop the site and delete `Demo/umbraco/Data/`. On the next run it reinstalls from scratch, with no content, connections or automations.
 
 ## Building and testing
 
-```bash
-dotnet build
-dotnet test
-```
-
-Run a single package's tests directly, e.g.:
+### .NET
 
 ```bash
-dotnet test Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets.Tests
+dotnet build                 # the whole solution
+dotnet test                  # every test project
+
+dotnet test Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets.Tests   # just one connection
 ```
 
-If a package has a `Client/` folder, run its frontend unit tests with `npm test` from that folder (`npm ci` first). CI also runs a Playwright E2E pass against the Demo site — see `.github/workflows/ci.yml` for the exact steps if you need to reproduce it locally.
+CI also runs `dotnet pack` on each package. That catches packaging mistakes that a build won't, such as a missing README or icon. If you touch a `.csproj` or `Directory.Build.props`, run it yourself:
+
+```bash
+dotnet pack Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets -c Release -o ./pack-check
+```
+
+### Front-end unit tests
+
+From a connection's `Client/` folder:
+
+```bash
+npm ci
+npm test            # web-test-runner; add :watch to re-run on change
+```
+
+### End-to-end tests
+
+The Playwright suite lives with Google Sheets (`Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client/tests/e2e`). It drives the Demo site in E2E mode, which swaps Google's API for a stub so that no real calls are made.
+
+```bash
+cd Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
+cp .env.example .env               # defaults match the Demo site
+npm ci && npm run build
+npx playwright install chromium    # first time only
+npm run test:e2e                   # or test:e2e:ui to watch it run
+```
+
+Playwright starts the Demo site itself with `AUTOMATE_E2E_MODE=1`. If you already have the site running normally, stop it first. Otherwise Playwright reuses that instance, which isn't in E2E mode, and the tests fail.
+
+### Umbraco version compatibility (DevTo)
+
+The DevTo package ships one build for Umbraco 17 and 18. If you change it, run its compatibility check (it needs bash, so on Windows use Git Bash or WSL):
+
+```bash
+./Connections/DevTo/test-umbraco-compat.sh
+```
 
 ## Making a change
 
-1. Branch off `main` — branch names follow `<type>/<short-description>`, e.g. `feat/google-sheets-clear-range`, `fix/oauth-token-refresh`, `docs/readme-cleanup`.
-2. Commit messages follow `type(scope): Description`, e.g. `add(action): AppendRowAction — append a row of values to a sheet`, `fix(action): require LookupValue in UpdateRowAction`, `test(action): FindRowActionTests — found/notFound outcomes`. Common types: `add`, `fix`, `refactor`, `test`, `docs`, `chore`.
-3. Open a PR against `main`. CI runs backend/frontend unit tests and the Playwright E2E suite — all three must pass before merge.
-4. Keep PRs scoped to one action/feature where practical; a new action typically lands as its own PR with its own tests.
+1. **Branch off an up-to-date `main`.** Name branches `<type>/<short-description>`, e.g. `feat/google-sheets-clear-range`, `fix/oauth-token-refresh`, `docs/readme-cleanup`.
+2. **Make the change with tests.** New actions and bug fixes should come with unit tests in the package's `.Tests` project. Check UI changes in the Demo site.
+3. **Update the docs.** If users would notice the change (a new action, setting, outcome or error message), update that package's `README.md`. It's what NuGet shows.
+4. **Commit** using `type(scope): Description`, e.g. `add(action): AppendRowAction — append a row of values to a sheet`, `fix(action): require LookupValue in UpdateRowAction`, `test(action): FindRowActionTests — found/notFound outcomes`. Common types: `add`, `fix`, `refactor`, `test`, `docs`, `chore`.
+5. **Push to your fork and open a PR against `umbraco-community/main`.** CI runs backend tests, front-end tests and the Playwright E2E suite, but only for the connections your change touches. Changes outside `Connections/<Area>/` (the Demo site, `Directory.Packages.props`, workflows) run everything. All checks must pass before the PR is merged.
+
+Keep PRs focused. A new action normally lands in its own PR, with its own tests.
+
+If `main` moves on while your PR is open, rebase onto it:
+
+```bash
+git fetch upstream
+git rebase upstream/main
+git push --force-with-lease
+```
+
+## Adding a new connection
+
+1. **Create the projects.** Add `Connections/<Area>/Umbraco.Community.Automate.<Area>/` and `Connections/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Mastodon is the simplest one to copy: a connection, one action and no front end. Google Sheets shows OAuth and a custom backoffice editor.
+2. **Use the standard folders** from [Inside a connection](#inside-a-connection): at least `Actions/`, `Composers/` and `Connections/`, plus `Triggers/`, `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
+3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
+4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.slnx`, and reference the package from `Demo/Umbraco.Community.Automate.Demo.csproj`.
+5. **Add package versions to `Directory.Packages.props`.** Projects don't specify versions themselves.
+6. **Write the package `README.md`**: installation, setup, every setting, outcomes and outputs, troubleshooting and compatibility. Add a row for it to the table in the root `README.md`.
+7. **Use placeholder settings only.** If the Demo site needs settings to boot, put obviously fake values in `Demo/appsettings.Development.json`.
+
+Before the first release, follow [Adding a new package to this scheme](#adding-a-new-package-to-this-scheme) below.
 
 ## Preventing secret leaks
 
-Never put real credentials (OAuth Client IDs/Secrets, API keys, etc.) into a git-tracked file like `appsettings.Development.json` — even locally, even temporarily. Use [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) instead, which stores them outside the repo entirely:
+Never put real credentials (OAuth Client IDs/Secrets, API keys, etc.) into a git-tracked file like `appsettings.Development.json` — even locally, even temporarily. Use [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) instead, which stores them outside the repo entirely (see [Using real credentials](#using-real-credentials)). User secrets override the tracked placeholder values at runtime when running the Demo site in Development, and nothing about them ever touches git.
+
+### Git hooks
+
+The setup script from [Getting the code](#getting-the-code) needs running once per clone:
 
 ```bash
-dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<your-real-client-id>" --project Demo
-dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<your-real-client-secret>" --project Demo
-```
-
-These values transparently override the tracked placeholder values in `appsettings.Development.json` at runtime when running the Demo site in Development — no code changes needed, and nothing about them ever touches git.
-
-### One-time setup
-
-Run the setup script for your platform once per clone:
-
-```bash
-./.githooks/setup.sh       # macOS/Linux
+./.githooks/setup.sh        # macOS/Linux
 ```
 
 ```powershell
-.\.githooks\setup.ps1      # Windows
+.\.githooks\setup.ps1       # Windows
 ```
 
-This points git at the `pre-commit`/`pre-push` hooks in `.githooks/`, which run [gitleaks](https://github.com/gitleaks/gitleaks) against your changes automatically — a second, local layer of defense in case a real secret ever ends up staged despite the above.
+It points git at the hooks in `.githooks/`, which run [gitleaks](https://github.com/gitleaks/gitleaks) automatically: `pre-commit` scans what you've staged, and `pre-push` scans every commit you're about to push. They're a second, local layer of defence in case a real secret ever ends up staged despite the above. If you set this repo up with the old Lefthook-based script, run the setup script again.
 
 ### If a commit or push is blocked
 
@@ -67,6 +247,8 @@ If gitleaks finds something that looks like a secret, your commit or push will f
 3. Re-commit/re-push.
 
 ## Releasing a package
+
+Releases are cut by maintainers with push access to this repo. Contributors don't need to do anything here: once your PR is merged, it ships in that package's next release.
 
 This repo uses [MinVer](https://github.com/adamralph/minver) to derive each package's version from git tags — there is no hand-maintained `<Version>` anywhere. Each package has its own tag prefix (e.g. `googlesheets-v`) configured via `MinVerTagPrefix` in that package's own `Directory.Build.props`, so packages in this monorepo version independently: a `googlesheets-v1.0.0` tag only affects the Google Sheets package, even if other packages have had commits in between.
 
