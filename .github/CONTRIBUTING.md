@@ -56,19 +56,21 @@ git push origin main
 ## Repo layout
 
 ```
+_Examples/                                    reference packages to copy (built and tested, never published)
+  Simple/                                     an API key and one action
+  KitchenSink/                                every convention, including a trigger and a front end
 Packages/                                     one folder per package
   <Area>/                                     e.g. Mastodon
     Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
     Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
-Examples/Example/                             reference package to copy (built and tested, never published)
 Umbraco.Community.Automate.Demo/              the Demo site: a throwaway Umbraco site referencing every package
 .github/                                      CI and release workflows, this guide, design notes
 .githooks/                                    gitleaks pre-commit and pre-push hooks
 Directory.Packages.props                      central NuGet versions for every project
-Umbraco.Community.Automate.Demo.slnx          the solution: every package, the example and the Demo site
+Umbraco.Community.Automate.Demo.slnx          the solution: every package, the examples and the Demo site
 ```
 
-Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Examples/Example/` is a reference package that uses every folder below, including a trigger and a front end; it has no release tag prefix and isn't packable, so it's never published.
+Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `_Examples/` holds two reference packages laid out the same way (the underscore keeps them at the top of the tree): **Simple**, an API key and one action, and **KitchenSink**, which uses every folder below, including a trigger and a front end. Neither has a release tag prefix and both are marked not packable, so they're never published.
 
 ### Inside a package
 
@@ -98,12 +100,12 @@ CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/`
 
 ```bash
 # Build the backoffice front ends. Their output (wwwroot/) is gitignored, so without
-# this step the Google Sheets and Example icons and editors won't appear.
+# this step the Google Sheets and Kitchen Sink icons and editors won't appear.
 cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci
 npm run build
 cd ../../../..
-cd Examples/Example/Umbraco.Community.Automate.Example/Client
+cd _Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm run build
 cd ../../../..
 
@@ -221,7 +223,7 @@ git push --force-with-lease
 
 If you use [Claude Code](https://claude.com/claude-code), the repo includes an `umbraco-automate` skill ([`.claude/skills/umbraco-automate/`](../.claude/skills/umbraco-automate/SKILL.md)). It loads automatically when you work in this repo: ask it to "add a new connection for <service>", "add a trigger to Mastodon" or anything else Automate-related, and it follows the layout and conventions here. The checklist below is the same process by hand.
 
-1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from [`Examples/Example`](../Examples/Example/Umbraco.Community.Automate.Example/README.md), which uses every folder (including a trigger and a front end) with tests; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
+1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from the [Simple example](../_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md) for an API key and an action, or the [Kitchen Sink](../_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md) when you need a trigger, outcomes or a front end; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a package](#inside-a-package): `Composers/`, plus `Actions/`, `Triggers/` and `Connections/` for whichever of those the package adds, and `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`.
