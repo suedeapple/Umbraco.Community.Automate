@@ -5,7 +5,7 @@ using Umbraco.Community.Automate.Skoda.Api;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.stopAirConditioning", 
+    "community.skoda.stopAirConditioning", 
     "Stop Air Conditioning", 
     Group = "Skoda", 
     Icon = "icon-skoda", 

@@ -7,8 +7,8 @@ using Umbraco.Community.Automate.Mastodon.Models;
 
 namespace Umbraco.Community.Automate.Mastodon.Actions;
 
-[Action("mastodonSendPost", "Send Mastodon Post",
-    ConnectionTypeAlias = "mastodon",
+[Action("community.mastodon.sendPost", "Send Mastodon Post",
+    ConnectionTypeAlias = "community.mastodon",
     Description = "Sends a Mastodon Post",
     Icon = "icon-automate-mastodon",
     Group = "Social Networks")]

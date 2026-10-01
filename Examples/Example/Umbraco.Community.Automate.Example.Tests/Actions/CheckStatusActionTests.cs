@@ -47,7 +47,7 @@ public class CheckStatusActionTests
         var result = await ActionTestHarness.For<CheckStatusAction>()
             .WithService(new ExampleClient(new StubHttpClientFactory(handler)))
             .WithSettings(new CheckStatusSettings { StatusCode = 42 })
-            .WithConnection("example", new ExampleConnectionSettings { ApiKey = "token" })
+            .WithConnection("community.example", new ExampleConnectionSettings { ApiKey = "token" })
             .ExecuteAsync();
 
         Assert.Equal(StepRunErrorCategory.Validation, result.ErrorCategory);
@@ -58,6 +58,6 @@ public class CheckStatusActionTests
         => ActionTestHarness.For<CheckStatusAction>()
             .WithService(new ExampleClient(new StubHttpClientFactory(new StubHttpMessageHandler(new HttpResponseMessage(answer)))))
             .WithSettings(new CheckStatusSettings { StatusCode = requested })
-            .WithConnection("example", new ExampleConnectionSettings { ApiKey = "token" })
+            .WithConnection("community.example", new ExampleConnectionSettings { ApiKey = "token" })
             .ExecuteAsync();
 }

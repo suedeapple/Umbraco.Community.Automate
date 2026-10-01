@@ -9,9 +9,9 @@ namespace Umbraco.Community.Automate.Example.Actions;
 /// Shows outcomes: instead of failing when something isn't there, the action succeeds with an
 /// outcome that later steps can branch on, like a "find" or "look up" action would.
 /// </summary>
-[Action("example.checkStatus", "Check Example Status",
+[Action("community.example.checkStatus", "Check Example Status",
     Description = "Asks httpbin.org for a status code and branches on the answer.",
-    ConnectionTypeAlias = "example",
+    ConnectionTypeAlias = "community.example",
     Group = "Example",
     Icon = "icon-automate-example")]
 public sealed class CheckStatusAction(ActionInfrastructure infrastructure, ExampleClient client)

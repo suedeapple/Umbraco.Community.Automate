@@ -6,7 +6,7 @@ using Umbraco.Community.Automate.Skoda.Models;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.getVehicleStatus",
+    "community.skoda.getVehicleStatus",
     "Get Vehicle Status",
     Group = "Skoda",
     Icon = "icon-skoda",

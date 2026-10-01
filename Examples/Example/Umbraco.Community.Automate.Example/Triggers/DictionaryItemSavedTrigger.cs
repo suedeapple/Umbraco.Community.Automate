@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.Example.Triggers;
 /// kind: Umbraco raises the notification, <see cref="MapEvent"/> turns it into trigger events,
 /// and <see cref="CanHandle"/> lets each automation filter them with its own settings.
 /// </summary>
-[Trigger("example.dictionaryItemSaved", "Dictionary Item Saved (Example)",
+[Trigger("community.example.dictionaryItemSaved", "Dictionary Item Saved (Example)",
     Description = "Runs when a dictionary item is saved.",
     Group = "Example",
     Icon = "icon-automate-example")]

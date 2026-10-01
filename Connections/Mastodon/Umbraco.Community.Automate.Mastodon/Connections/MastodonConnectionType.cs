@@ -5,7 +5,7 @@ using Umbraco.Community.Automate.Mastodon.Api;
 
 namespace Umbraco.Community.Automate.Mastodon.Connections;
 
-[ConnectionType("mastodon", "Mastodon",
+[ConnectionType("community.mastodon", "Mastodon",
     Description = "Send post to Mastodon",
     Group = "Social Networks",
     Icon = "icon-automate-mastodon")]

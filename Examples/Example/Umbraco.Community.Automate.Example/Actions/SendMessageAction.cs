@@ -10,9 +10,9 @@ namespace Umbraco.Community.Automate.Example.Actions;
 /// Sends a message to the service and returns what it received: the shape of most "create
 /// something" actions (post to a channel, add a row, publish an article).
 /// </summary>
-[Action("example.sendMessage", "Send Example Message",
+[Action("community.example.sendMessage", "Send Example Message",
     Description = "Sends a message to httpbin.org and returns what it received.",
-    ConnectionTypeAlias = "example",
+    ConnectionTypeAlias = "community.example",
     Group = "Example",
     Icon = "icon-automate-example")]
 public sealed class SendMessageAction(

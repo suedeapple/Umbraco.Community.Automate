@@ -88,6 +88,6 @@ public class GetCurrentWeatherActionTests
         => ActionTestHarness.For<GetCurrentWeatherAction>()
             .WithService<IHttpClientFactory>(new StubHttpClientFactory(handler))
             .WithSettings(settings)
-            .WithConnection("weatherApi", connection ?? new WeatherApiConnectionSettings { ApiKey = "abc123" })
+            .WithConnection("community.weatherApi", connection ?? new WeatherApiConnectionSettings { ApiKey = "abc123" })
             .ExecuteAsync();
 }

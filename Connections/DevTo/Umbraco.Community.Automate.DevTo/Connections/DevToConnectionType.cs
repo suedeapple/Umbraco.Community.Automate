@@ -10,7 +10,7 @@ namespace Umbraco.Community.Automate.DevTo.Connections;
     Icon = "icon-automate-devto")]
 public sealed class DevToConnectionType : ConnectionTypeBase<DevToConnectionSettings>
 {
-    public const string ConnectionTypeAlias = "devto";
+    public const string ConnectionTypeAlias = "community.devto";
 
     private readonly DevToClient _client;
 

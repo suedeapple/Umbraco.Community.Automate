@@ -66,8 +66,8 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 ## Conventions
 
 ### Aliases, names and groups
-- **Aliases are permanent.** Saved automations reference the connection type alias and action aliases, so never rename an existing one. Pick them carefully up front.
-- For new connections use `<area>` (camelCase) for the connection type alias and `<area>.<actionName>` for actions, e.g. `bluesky` and `bluesky.createPost`. (Existing packages vary; leave them as they are.)
+- **Aliases are permanent once released.** Saved connections and automations store the connection type, action and trigger aliases, so renaming one breaks them. Pick them carefully up front.
+- Prefix every alias with `community.`: `community.<area>` for the connection type and `community.<area>.<name>` (camelCase) for actions and triggers, e.g. `community.bluesky` and `community.bluesky.createPost`. The prefix keeps community packages apart from Umbraco's own step types. Every connection in this repo follows it.
 - Set `ConnectionTypeAlias` on every action to the connection type alias, so the action only offers matching connections.
 - Write the alias, name, group and icon directly on each `[ConnectionType]`, `[Action]` and `[Trigger]` attribute, as Umbraco Automate's own step types do. Don't gather them into an `<Area>Constants` class: the attribute is where a reader looks for them.
 - Use a shared `Group` where one fits (`Social Networks`, `Productivity`) so related connections sit together in the pickers.
@@ -133,10 +133,10 @@ To bring in a connection that already lives in its own repo (as WeatherApi did f
 
 - Work from the source repo's latest `origin/main`, not a possibly stale local checkout.
 - Move the files into the standard folders and rename namespaces to `Umbraco.Community.Automate.<Area>.*`; the package ID becomes `Umbraco.Community.Automate.<Area>`.
-- **Keep every alias exactly as it is** (connection type and actions), so existing connections and automations keep working after the switch.
+- **Rename aliases to the `community.<area>` convention** as part of the import. That breaks connections and steps saved with the old package, so it happens once, here, and the README tells users exactly what to recreate.
 - Replace hard-coded package versions with central ones, add `Directory.Build.props`, MinVer and tests, and drop files this repo handles centrally (release workflow, `umbraco-marketplace.json`, `NuGet.config`, separate licence/icon copies).
 - Apply the conventions here (configuration class, pre-filled references under the shared sections, error categories, validators) and note any behaviour change in the README. If the old package used a different config path (WeatherApi used `Umbraco:Automate:Secrets:WeatherApiKey`), say that existing connections keep their saved values and only new ones get the new default.
-- Add a **Migrating from <old package>** README section with the `dotnet remove`/`dotnet add` commands and a note that aliases are unchanged (see the Mastodon and WeatherApi READMEs).
+- Add a **Migrating from <old package>** README section with the `dotnet remove`/`dotnet add` commands, a table of old and new aliases, and the steps to recreate connections and automation steps (see the Mastodon and WeatherApi READMEs).
 
 ## Working notes
 

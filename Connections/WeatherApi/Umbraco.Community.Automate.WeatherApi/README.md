@@ -111,7 +111,18 @@ dotnet remove package SA.Automate.WeatherApi
 dotnet add package Umbraco.Community.Automate.WeatherApi
 ```
 
-The connection type alias (`weatherApi`) and action aliases (`weatherApi.GetCurrentWeather`, `weatherApi.GetTodaysWeather`) are unchanged, so existing connections and automations keep working. Existing connections keep whatever API key or reference they already have; only new connections default to the new `$Umbraco:Automate:Secrets:WeatherApi:ApiKey` reference.
+Every connection in this repo uses a `community.` prefix, so the aliases changed:
+
+| | Old | New |
+|---|---|---|
+| Connection type | `weatherApi` | `community.weatherApi` |
+| Get Current Weather | `weatherApi.GetCurrentWeather` | `community.weatherApi.getCurrentWeather` |
+| Get Today's Weather | `weatherApi.GetTodaysWeather` | `community.weatherApi.getTodaysWeather` |
+
+Saved connections and automation steps refer to these aliases, so after upgrading:
+
+1. Recreate your **WeatherAPI.com** connection. The API key is pre-filled with `$Umbraco:Automate:Secrets:WeatherApi:ApiKey`; move your key there (from `Umbraco:Automate:Secrets:WeatherApiKey`), or enter it on the connection.
+2. In each automation that used a weather action, remove the old step, add it again with the new connection and the same settings, and publish the automation.
 
 ## Compatibility
 

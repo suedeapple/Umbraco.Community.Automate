@@ -24,7 +24,7 @@ public class DictionaryItemSavedTriggerTests
         var output = Assert.IsType<TriggerEvent<DictionaryItemSavedOutput>>(events[0]).Output;
         Assert.Equal("Footer.Copyright", output.Key);
         Assert.Equal(first.Key, output.ItemId);
-        Assert.All(events, e => Assert.Equal("example.dictionaryItemSaved", e.TriggerAlias));
+        Assert.All(events, e => Assert.Equal("community.example.dictionaryItemSaved", e.TriggerAlias));
     }
 
     [Fact]

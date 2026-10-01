@@ -54,6 +54,6 @@ public class SendMessageActionTests
         => ActionTestHarness.For<SendMessageAction>()
             .WithService(new ExampleClient(new StubHttpClientFactory(handler)))
             .WithSettings(settings)
-            .WithConnection("example", new ExampleConnectionSettings { ApiKey = "token" })
+            .WithConnection("community.example", new ExampleConnectionSettings { ApiKey = "token" })
             .ExecuteAsync();
 }

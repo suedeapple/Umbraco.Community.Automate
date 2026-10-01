@@ -6,7 +6,7 @@ using Umbraco.Community.Automate.Skoda.Models;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.setChargingLimit",
+    "community.skoda.setChargingLimit",
     "Set Charging Limit",
     Group = "Skoda",
     Icon = "icon-skoda",

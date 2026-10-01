@@ -191,7 +191,7 @@ using Umbraco.Community.Automate.Example.Api;
 
 namespace Umbraco.Community.Automate.Example.Connections;
 
-[ConnectionType("example", "Example",
+[ConnectionType("community.example", "Example",
     Description = "Connects Umbraco Automate to Example.",
     Group = "Productivity",
     Icon = "icon-automate-example")]
@@ -341,8 +341,8 @@ using Umbraco.Community.Automate.Example.Connections;
 
 namespace Umbraco.Community.Automate.Example.Actions;
 
-[Action("example.createPost", "Create Example Post",
-    ConnectionTypeAlias = "example",
+[Action("community.example.createPost", "Create Example Post",
+    ConnectionTypeAlias = "community.example",
     Description = "Creates a post on Example.",
     Group = "Productivity",
     Icon = "icon-automate-example")]
@@ -562,7 +562,7 @@ public async Task Missing_text_is_a_validation_error()
     var result = await ActionTestHarness.For<CreatePostAction>()
         .WithService(new ExampleClient(new StubHttpClientFactory(handler)))
         .WithSettings(new CreatePostSettings { Text = "" })
-        .WithConnection("example", new ExampleConnectionSettings { ApiKey = "key" })
+        .WithConnection("community.example", new ExampleConnectionSettings { ApiKey = "key" })
         .ExecuteAsync();
 
     Assert.Equal(StepRunErrorCategory.Validation, result.ErrorCategory);

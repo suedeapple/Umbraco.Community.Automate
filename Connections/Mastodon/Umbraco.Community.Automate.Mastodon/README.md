@@ -92,8 +92,16 @@ dotnet remove package OC.Automate.Mastodon
 dotnet add package Umbraco.Community.Automate.Mastodon
 ```
 
-The connection type alias (`mastodon`) and action alias (`mastodonSendPost`) are unchanged, so
-existing automations keep working across the rename.
+### Aliases
+Every connection in this repo now uses a `community.` prefix, so the aliases changed:
+
+| | Old | New |
+|---|---|---|
+| Connection type | `mastodon` | `community.mastodon` |
+| Send Mastodon Post action | `mastodonSendPost` | `community.mastodon.sendPost` |
+
+Saved connections and automation steps refer to these aliases, so ones created with an earlier
+version stop working after the upgrade and need recreating (steps below).
 
 ### Configuration Structure
 - **Old (1.x)**: `OC:Automate:Mastodon:AccessTokens:connectionName` or `Umbraco:Automate:Providers:OCAutomateMastodon:AccessTokens:connectionName`
@@ -107,8 +115,8 @@ existing automations keep working across the rename.
 
 ### Steps to migrate:
 1. Move your access token to `Umbraco:Automate:Secrets:Mastodon:AccessToken` (and optionally the instance URL to `Umbraco:Automate:Variables:Mastodon:InstanceUrl`) in `appsettings.json` or environment variables
-2. Recreate your Mastodon connections in the backoffice (select the new **Mastodon** connection type in the **Social Networks** group)
-3. Both fields come pre-filled with the references above; leave them, or enter the values directly
+2. Recreate your Mastodon connections in the backoffice (select the **Mastodon** connection type in the **Social Networks** group); both fields come pre-filled with the references above
+3. In each automation that posted to Mastodon, remove the old step, add **Send Mastodon Post** again, choose the new connection and re-enter its settings, then publish the automation
 
 ## Troubleshooting
 

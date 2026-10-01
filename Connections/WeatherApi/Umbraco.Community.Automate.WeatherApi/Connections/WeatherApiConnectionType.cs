@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.WeatherApi.Connections;
 /// Stores the API key per connection, and validates it against the
 /// WeatherAPI.com current weather endpoint before saving.
 /// </summary>
-[ConnectionType("weatherApi", "WeatherAPI.com",
+[ConnectionType("community.weatherApi", "WeatherAPI.com",
     Description = "Connect to WeatherAPI.com using an API key",
     Group = "Weather",
     Icon = "icon-partly-cloudy")]

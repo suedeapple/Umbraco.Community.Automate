@@ -6,7 +6,7 @@ using Umbraco.Community.Automate.Skoda.Models;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.setChargeMode",
+    "community.skoda.setChargeMode",
     "Set Charge Mode",
     Group = "Skoda",
     Icon = "icon-skoda",

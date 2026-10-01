@@ -6,7 +6,7 @@ using Umbraco.Community.Automate.Skoda.Models;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.stopCharging", 
+    "community.skoda.stopCharging", 
     "Stop Charging", 
     Group = "Skoda", 
     Icon = "icon-skoda", 

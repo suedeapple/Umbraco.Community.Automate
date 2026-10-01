@@ -10,11 +10,11 @@ namespace Umbraco.Community.Automate.WeatherApi.Actions;
 /// Umbraco Automate action that gets the current weather conditions for a location from
 /// WeatherAPI.com, using the connection's API key.
 /// </summary>
-[Action("weatherApi.GetCurrentWeather", "Get Current Weather",
+[Action("community.weatherApi.getCurrentWeather", "Get Current Weather",
     Description = "Gets the current weather conditions for a location",
     Group = "Weather",
     Icon = "icon-partly-cloudy",
-    ConnectionTypeAlias = "weatherApi")]
+    ConnectionTypeAlias = "community.weatherApi")]
 public class GetCurrentWeatherAction : ActionBase<GetCurrentWeatherSettings, GetCurrentWeatherOutput>
 {
     private readonly IHttpClientFactory _httpClientFactory;

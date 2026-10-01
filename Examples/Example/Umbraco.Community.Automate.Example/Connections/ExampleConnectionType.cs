@@ -5,10 +5,10 @@ namespace Umbraco.Community.Automate.Example.Connections;
 
 /// <summary>
 /// The Example connection: stores an API key and checks it when the user clicks
-/// <b>Test connection</b>. The alias ("example") is stored in saved automations and set as each
+/// <b>Test connection</b>. The alias ("community.example") is stored in saved automations and set as each
 /// action's ConnectionTypeAlias, so once released it must never change.
 /// </summary>
-[ConnectionType("example", "Example (httpbin.org)",
+[ConnectionType("community.example", "Example (httpbin.org)",
     Description = "A reference connection that talks to httpbin.org.",
     Group = "Example",
     Icon = "icon-automate-example")]

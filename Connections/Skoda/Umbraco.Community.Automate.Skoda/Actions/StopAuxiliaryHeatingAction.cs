@@ -5,7 +5,7 @@ using Umbraco.Community.Automate.Skoda.Api;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.stopAuxiliaryHeating", 
+    "community.skoda.stopAuxiliaryHeating", 
     "Stop Auxiliary Heating", 
     Group = "Skoda", 
     Icon = "icon-skoda", 

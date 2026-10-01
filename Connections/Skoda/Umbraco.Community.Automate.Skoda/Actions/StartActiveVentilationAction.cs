@@ -5,7 +5,7 @@ using Umbraco.Community.Automate.Skoda.Api;
 namespace Umbraco.Community.Automate.Skoda.Actions;
 
 [Action(
-    "community.automate.skoda.startActiveVentilation",
+    "community.skoda.startActiveVentilation",
     "Start Active Ventilation",
     Group = "Skoda",
     Icon = "icon-skoda",
