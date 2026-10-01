@@ -7,6 +7,7 @@ Starting points for every file in a new connection, based on the working Mastodo
 - [Package project](#package-project)
 - [Directory.Build.props](#directorybuildprops)
 - [Test project](#test-project)
+- [Configuration](#configuration)
 - [Connection settings, validator and type](#connection-settings-validator-and-type)
 - [Api client](#api-client)
 - [Action, settings and output](#action-settings-and-output)
@@ -121,12 +122,30 @@ Copy `community-automate-128.png` from another connection. No `Version` attribut
 </Project>
 ```
 
+## Configuration
+
+`Configuration/ExampleConfiguration.cs`. Where the package's values live (nested in Automate's shared sections, which need no registration), plus the default reference for each credential field.
+
+```csharp
+namespace Umbraco.Community.Automate.Example.Configuration;
+
+public static class ExampleConfiguration
+{
+    public const string VariablesPath = "Umbraco:Automate:Variables:Example";
+    public const string SecretsPath = "Umbraco:Automate:Secrets:Example";
+
+    /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
+    public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
+}
+```
+
 ## Connection settings, validator and type
 
-`Connections/ExampleConnectionSettings.cs`. The credential defaults to its configuration reference, hard-coded on the property, so a new connection opens pre-filled. The key lives under Umbraco Automate's shared `Umbraco:Automate:Secrets` section, nested by area, which Automate resolves without any registration.
+`Connections/ExampleConnectionSettings.cs`. The credential defaults to its configuration reference, so a new connection opens pre-filled.
 
 ```csharp
 using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.Example.Configuration;
 
 namespace Umbraco.Community.Automate.Example.Connections;
 
@@ -137,13 +156,15 @@ public sealed class ExampleConnectionSettings
         Description = "Generate a key under Settings → API in Example.",
         IsSensitive = true,
         SortOrder = 0)]
-    public string ApiKey { get; set; } = "$Umbraco:Automate:Secrets:Example:ApiKey";
+    public string ApiKey { get; set; } = ExampleConfiguration.ApiKeyReference;
 }
 ```
 
 `Connections/ExampleConnectionSettingsValidator.cs`. Shared by the connection type and every action, so both report the same message.
 
 ```csharp
+using Umbraco.Community.Automate.Example.Configuration;
+
 namespace Umbraco.Community.Automate.Example.Connections;
 
 public static class ExampleConnectionSettingsValidator
@@ -155,7 +176,7 @@ public static class ExampleConnectionSettingsValidator
             return "An API key is required.";
 
         if (settings.ApiKey.TrimStart().StartsWith('$'))
-            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Automate:Secrets:Example:ApiKey, or enter the key itself on the connection.";
+            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at {ExampleConfiguration.SecretsPath}:ApiKey, or enter the key itself on the connection.";
 
         return null;
     }

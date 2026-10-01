@@ -1,6 +1,7 @@
 using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.DevTo.Composers;
 using Umbraco.Community.Automate.DevTo.Api;
+using Umbraco.Community.Automate.DevTo.Configuration;
 
 namespace Umbraco.Community.Automate.DevTo.Actions;
 
@@ -66,7 +67,7 @@ public sealed class PublishContentSettings
     public string? Culture { get; set; }
 
     [Field(Label = "Site URL",
-        Description = "Your site's public base URL, used for the canonical URL, links and images. Leave blank to use the URL Umbraco generates (requires a domain or UmbracoApplicationUrl). Can reference configuration, e.g. $Umbraco:Automate:Variables:DevTo:SiteUrl",
+        Description = "Your site's public base URL, used for the canonical URL, links and images. Leave blank to use the URL Umbraco generates (requires a domain or UmbracoApplicationUrl). Can reference configuration, e.g. $" + DevToConfiguration.VariablesPath + ":SiteUrl",
         SortOrder = 9,
         SupportsBindings = true,
         Group = "Advanced")]

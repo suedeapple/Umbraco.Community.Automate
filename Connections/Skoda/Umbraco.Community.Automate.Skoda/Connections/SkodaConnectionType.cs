@@ -1,5 +1,6 @@
 ﻿using Umbraco.Automate.Core.Connections;
 using Umbraco.Community.Automate.Skoda.Api;
+using Umbraco.Community.Automate.Skoda.Configuration;
 
 namespace Umbraco.Community.Automate.Skoda.Connections;
 
@@ -30,7 +31,7 @@ public sealed class SkodaConnectionType(ConnectionTypeInfrastructure infrastruct
         if (skodaSettings.ApiKey.TrimStart().StartsWith('$'))
         {
             return ConnectionValidationResult.Failure(
-                $"The API key reference '{skodaSettings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Automate:Secrets:Skoda:ApiKey, or enter the key itself on the connection.");
+                $"The API key reference '{skodaSettings.ApiKey}' could not be resolved. Add the key to configuration at {SkodaConfiguration.SecretsPath}:ApiKey, or enter the key itself on the connection.");
         }
 
         if (!skodaSettings.ValidateConnection)

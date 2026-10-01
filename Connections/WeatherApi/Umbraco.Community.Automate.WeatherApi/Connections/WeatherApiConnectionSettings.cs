@@ -1,4 +1,5 @@
 using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.WeatherApi.Configuration;
 
 namespace Umbraco.Community.Automate.WeatherApi.Connections;
 
@@ -8,8 +9,8 @@ namespace Umbraco.Community.Automate.WeatherApi.Connections;
 public sealed class WeatherApiConnectionSettings
 {
     /// <summary>
-    /// The WeatherAPI.com API key used by this connection. Defaults to a reference to
-    /// <c>Umbraco:Automate:Secrets:WeatherApi:ApiKey</c>, so a key stored in
+    /// The WeatherAPI.com API key used by this connection. Defaults to
+    /// <see cref="WeatherApiConfiguration.ApiKeyReference"/>, so a key stored in
     /// configuration works without typing it into the backoffice.
     /// </summary>
     [Field(
@@ -17,5 +18,5 @@ public sealed class WeatherApiConnectionSettings
         Description = "The WeatherAPI.com API key.",
         IsSensitive = true,
         SortOrder = 1)]
-    public string ApiKey { get; set; } = "$Umbraco:Automate:Secrets:WeatherApi:ApiKey";
+    public string ApiKey { get; set; } = WeatherApiConfiguration.ApiKeyReference;
 }

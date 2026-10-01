@@ -1,15 +1,15 @@
-namespace Umbraco.Community.Automate.DevTo.Configuration;
+namespace Umbraco.Community.Automate.Skoda.Configuration;
 
 /// <summary>
 /// Where this package's values live in configuration. They sit under Umbraco Automate's shared
 /// <c>Umbraco:Automate:Secrets</c> and <c>Umbraco:Automate:Variables</c> sections, which Automate
 /// resolves <c>$</c> references from by default, so nothing needs registering. Nesting under
-/// <c>DevTo</c> keeps this package's keys together and avoids clashes with other packages.
+/// <c>Skoda</c> keeps this package's keys together and avoids clashes with other packages.
 /// </summary>
-public static class DevToConfiguration
+public static class SkodaConfiguration
 {
-    public const string VariablesPath = "Umbraco:Automate:Variables:DevTo";
-    public const string SecretsPath = "Umbraco:Automate:Secrets:DevTo";
+    public const string VariablesPath = "Umbraco:Automate:Variables:Skoda";
+    public const string SecretsPath = "Umbraco:Automate:Secrets:Skoda";
 
     /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";

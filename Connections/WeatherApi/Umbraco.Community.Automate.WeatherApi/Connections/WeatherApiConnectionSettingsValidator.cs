@@ -1,3 +1,5 @@
+using Umbraco.Community.Automate.WeatherApi.Configuration;
+
 namespace Umbraco.Community.Automate.WeatherApi.Connections;
 
 /// <summary>
@@ -15,7 +17,7 @@ public static class WeatherApiConnectionSettingsValidator
         // Automate resolves $-references before settings reach this code, and reports a missing
         // key itself; this is a safety net for a reference that arrives unresolved anyway.
         if (settings.ApiKey.TrimStart().StartsWith('$'))
-            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at Umbraco:Automate:Secrets:WeatherApi:ApiKey, or enter the key itself on the connection.";
+            return $"The API key reference '{settings.ApiKey}' could not be resolved. Add the key to configuration at {WeatherApiConfiguration.SecretsPath}:ApiKey, or enter the key itself on the connection.";
 
         return null;
     }
