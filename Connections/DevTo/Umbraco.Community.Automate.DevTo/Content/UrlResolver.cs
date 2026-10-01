@@ -47,7 +47,9 @@ internal static partial class UrlResolver
         });
 
     [GeneratedRegex(
-        """(?<code>^(?<fence>`{3,}|~{3,})[^\n]*\n.*?^\k<fence>[ \t]*$|`[^`\n]+`)"""
+        // \r? lets the closing fence match CRLF line endings too: in multiline mode $ only
+        // matches before \n, so "```\r\n" would otherwise not close the block.
+        """(?<code>^(?<fence>`{3,}|~{3,})[^\n]*\n.*?^\k<fence>[ \t]*\r?$|`[^`\n]+`)"""
         + """|(?<inlinePrefix>\]\()(?<inlineUrl>/(?!/)[^)\s]*)"""
         + """|(?<referencePrefix>^[ \t]{0,3}\[[^\]\n]+\]:[ \t]*)(?<referenceUrl>/(?!/)\S*)"""
         + """|(?<attributePrefix>\b(?:src|href)=["'])(?<attributeUrl>/(?!/)[^"']*)""",
