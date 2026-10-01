@@ -9,10 +9,11 @@ Monorepo for community-created [Umbraco Automate](https://github.com/umbraco/Umb
 | [Umbraco.Community.Automate.DevTo](Connections/DevTo/Umbraco.Community.Automate.DevTo/README.md) | DEV Community (dev.to) connection and action — cross-post Umbraco content to DEV, converting Markdown, Rich Text, Block List and Block Grid to Markdown with a canonical URL back to your site |
 | [Umbraco.Community.Automate.GoogleSheets](Connections/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/README.md) | Google Sheets connection and actions (append/find/update/delete/upsert rows, read/clear ranges, create spreadsheets and tabs) |
 | [Umbraco.Community.Automate.Mastodon](Connections/Mastodon/Umbraco.Community.Automate.Mastodon/README.md) | Mastodon connection and action — post statuses to any Mastodon instance, with visibility, content warnings, and appended URLs |
+| [Umbraco.Community.Automate.Skoda](Connections/Skoda/Umbraco.Community.Automate.Skoda/README.md) | Škoda connection and actions — read vehicle status and control charging, air conditioning, auxiliary heating and ventilation via the MyŠkoda Public API (in development) |
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to build, test, and submit changes.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for how to build, test, and submit changes.
 
 ## License
 

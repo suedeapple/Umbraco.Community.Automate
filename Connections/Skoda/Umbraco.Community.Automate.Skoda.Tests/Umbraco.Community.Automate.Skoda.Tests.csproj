@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Umbraco.Community.Automate.Skoda\Umbraco.Community.Automate.Skoda.csproj" />
+    <ProjectReference Include="..\Umbraco.Community.Automate.Skoda\Umbraco.Community.Automate.Skoda.csproj" />
   </ItemGroup>
 
 </Project>
