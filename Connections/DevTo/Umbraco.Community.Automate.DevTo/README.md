@@ -62,7 +62,7 @@ Reference these values from the backoffice with a `$` prefix, e.g. `$Umbraco:Aut
 
 Posting to a different [Forem](https://forem.com) community? Change **Instance URL** under *Advanced*.
 
-> **Reference not resolving?** Umbraco Automate reports *Configuration key '...' not found* when the key isn't in configuration. Earlier versions of this package read from `Umbraco:Community:Automate:DevTo:Variables` / `:Secrets`; move those values to `Umbraco:Automate:Variables:DevTo` / `Umbraco:Automate:Secrets:DevTo` and update any connection or step that still references the old paths. The Markdown preview only resolves references under `Umbraco:Automate:Variables:DevTo`, and never secrets.
+> **Reference not resolving?** Umbraco Automate reports *Configuration key '...' not found* when the key isn't in configuration. The Markdown preview only resolves references under `Umbraco:Automate:Variables:DevTo`, and never secrets.
 
 ## Cross-posting blog posts
 
@@ -194,13 +194,6 @@ DEV needs absolute URLs for the canonical link, links and images. By default the
 ## Errors and retries
 
 API failures are classified so Automate can decide what to do: rate limiting (429), timeouts and DEV being unavailable (5xx) are transient and retried according to the step's error behaviour; an invalid API key, a rejected article (422) or missing settings fail straight away with the DEV error message.
-
-## Upgrading from an earlier beta
-
-Two things changed after `1.0.0-beta.3`, both needing a one-off update:
-
-- **Aliases.** Every connection in this repo now uses a `community.` prefix: the connection type is `community.devto` (was `devto`) and the action is `community.devto.publishContent` (was `devto.publishContent`). Saved connections and steps refer to these, so recreate your **DEV Community** connection, then in each automation remove the old **Publish Content to DEV** step, add it again with the new connection and the same settings, and publish the automation. Links to articles already posted keep working.
-- **Configuration.** Values moved from `Umbraco:Community:Automate:DevTo:Variables` / `:Secrets` to `Umbraco:Automate:Variables:DevTo` / `Umbraco:Automate:Secrets:DevTo` (see [step 2](#2-store-the-key-as-a-secret)).
 
 ## Compatibility
 

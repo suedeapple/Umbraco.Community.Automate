@@ -133,10 +133,10 @@ To bring in a connection that already lives in its own repo (as WeatherApi did f
 
 - Work from the source repo's latest `origin/main`, not a possibly stale local checkout.
 - Move the files into the standard folders and rename namespaces to `Umbraco.Community.Automate.<Area>.*`; the package ID becomes `Umbraco.Community.Automate.<Area>`.
-- **Rename aliases to the `community.<area>` convention** as part of the import. That breaks connections and steps saved with the old package, so it happens once, here, and the README tells users exactly what to recreate.
+- Give every alias the `community.<area>` convention as part of the import.
 - Replace hard-coded package versions with central ones, add `Directory.Build.props`, MinVer and tests, and drop files this repo handles centrally (release workflow, `umbraco-marketplace.json`, `NuGet.config`, separate licence/icon copies).
 - Apply the conventions here (configuration class, pre-filled references under the shared sections, error categories, validators) and note any behaviour change in the README. If the old package used a different config path (WeatherApi used `Umbraco:Automate:Secrets:WeatherApiKey`), say that existing connections keep their saved values and only new ones get the new default.
-- Add a **Migrating from <old package>** README section with the `dotnet remove`/`dotnet add` commands, a table of old and new aliases, and the steps to recreate connections and automation steps (see the Mastodon and WeatherApi READMEs).
+- Add a **Migrating from <old package>** README section with the `dotnet remove`/`dotnet add` commands and any configuration that moved (see the Mastodon and WeatherApi READMEs). Document changes against the old package only; don't describe intermediate states from before a package is released from this repo.
 
 ## Working notes
 
@@ -145,5 +145,4 @@ This skill is a living document. Add new conventions and lessons learned here (o
 - Front-end packages pin Playwright to the version Google Sheets uses (`"overrides": { "playwright": "1.61.0", "playwright-core": "1.61.0" }` in `Client/package.json`), so every `Client/` shares one downloaded browser.
 - Registering icons and editors: a package with a `Client/` lists them in `Client/src/manifests.ts`, loaded by `Client/public/umbraco-package.json` (Example, Google Sheets); one with only hand-written icons uses an `IPackageManifestReader` (Mastodon, DevTo; see the template). Skoda's static `wwwroot/umbraco-package.json` also works but isn't the pattern to copy.
 - Automate also discovers `[ConnectionType]` and `[Action]` classes on its own: Skoda's composer registers neither, and both still appear. Register them explicitly in the composer anyway, so a reader can see everything the package adds in one place.
-- Config references went through a few designs before settling: per-package `Umbraco:Community:Automate:<Area>` sections needed allow-list registration in every composer, so they moved under Automate's shared sections (nested by area, no registration); and the paths live in one `<Area>Configuration` class rather than being hard-coded, so there's one place to change them.
 - .NET accepts any well-formed culture name (e.g. `xx-YY`), so `CultureInfo.GetCultureInfo` only throws for malformed input. Don't rely on it to reject unknown cultures.

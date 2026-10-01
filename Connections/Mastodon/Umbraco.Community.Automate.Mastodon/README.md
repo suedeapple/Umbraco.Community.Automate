@@ -92,17 +92,6 @@ dotnet remove package OC.Automate.Mastodon
 dotnet add package Umbraco.Community.Automate.Mastodon
 ```
 
-### Aliases
-Every connection in this repo now uses a `community.` prefix, so the aliases changed:
-
-| | Old | New |
-|---|---|---|
-| Connection type | `mastodon` | `community.mastodon` |
-| Send Mastodon Post action | `mastodonSendPost` | `community.mastodon.sendPost` |
-
-Saved connections and automation steps refer to these aliases, so ones created with an earlier
-version stop working after the upgrade and need recreating (steps below).
-
 ### Configuration Structure
 - **Old (1.x)**: `OC:Automate:Mastodon:AccessTokens:connectionName` or `Umbraco:Automate:Providers:OCAutomateMastodon:AccessTokens:connectionName`
 - **New (2.x)**: a `Mastodon` key under Umbraco Automate's shared `Variables` and `Secrets` sections:
@@ -116,7 +105,6 @@ version stop working after the upgrade and need recreating (steps below).
 ### Steps to migrate:
 1. Move your access token to `Umbraco:Automate:Secrets:Mastodon:AccessToken` (and optionally the instance URL to `Umbraco:Automate:Variables:Mastodon:InstanceUrl`) in `appsettings.json` or environment variables
 2. Recreate your Mastodon connections in the backoffice (select the **Mastodon** connection type in the **Social Networks** group); both fields come pre-filled with the references above
-3. In each automation that posted to Mastodon, remove the old step, add **Send Mastodon Post** again, choose the new connection and re-enter its settings, then publish the automation
 
 ## Troubleshooting
 
@@ -129,11 +117,6 @@ and regenerate the token if needed.
 
 **"Configuration key '...' not found"** — the field references a key that isn't in configuration.
 Add it (see [step 2](#2-add-your-settings-to-configuration-recommended)), or enter the value directly in the field.
-
-**Upgrading from an earlier 2.x and references stopped resolving?** Earlier 2.x versions read from
-`Umbraco:Community:Automate:Mastodon:Variables` / `:Secrets`. Move those values to
-`Umbraco:Automate:Variables:Mastodon` / `Umbraco:Automate:Secrets:Mastodon`, and update any connection
-that still references the old `$Umbraco:Community:Automate:Mastodon:...` paths.
 
 **The action fails but the connection tests fine** — most instances cap posts at 500 characters,
 counting spoiler text and counting each link as 23. Posts over the cap are rejected by the API.
