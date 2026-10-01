@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Demo/">
+    <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
+  </Folder>
   <Folder Name="/Packages/DevTo/">
     <Project Path="Packages/DevTo/Umbraco.Community.Automate.DevTo.Tests/Umbraco.Community.Automate.DevTo.Tests.csproj" />
     <Project Path="Packages/DevTo/Umbraco.Community.Automate.DevTo/Umbraco.Community.Automate.DevTo.csproj" />
@@ -22,8 +25,5 @@
   <Folder Name="/Examples/Example/">
     <Project Path="Examples/Example/Umbraco.Community.Automate.Example.Tests/Umbraco.Community.Automate.Example.Tests.csproj" />
     <Project Path="Examples/Example/Umbraco.Community.Automate.Example/Umbraco.Community.Automate.Example.csproj" />
-  </Folder>
-  <Folder Name="/Demo/">
-    <Project Path="Demo/Umbraco.Community.Automate.Demo.csproj" />
   </Folder>
 </Solution>

@@ -25,7 +25,7 @@ You can contribute in several ways: report a bug, improve a README, add an actio
 | A trusted HTTPS dev certificate | The Demo site. Run `dotnet dev-certs https --trust` once per machine. |
 | [Node.js 22.x](https://nodejs.org/) | Only for connections with a backoffice front end (a `Client/` folder), currently Google Sheets |
 
-Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.Demo.slnx`.
+Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.Demo.slnx` at the repo root. The Demo site is the only runnable project, so starting the solution (F5) runs it.
 
 ## Getting the code
 
@@ -107,7 +107,7 @@ cd Examples/Example/Umbraco.Community.Automate.Example/Client
 npm ci && npm run build
 cd ../../../..
 
-dotnet run --project Demo --launch-profile Umbraco.Web.UI
+dotnet run --project Demo
 ```
 
 Then open <https://localhost:44343/umbraco> and log in:

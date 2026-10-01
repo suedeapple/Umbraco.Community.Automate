@@ -102,7 +102,7 @@ cd Examples/Example/Umbraco.Community.Automate.Example/Client
 npm ci && npm run build
 cd ../../../..
 
-dotnet run --project Demo --launch-profile Umbraco.Web.UI
+dotnet run --project Demo
 ```
 
 Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. The **Automation** section is in the top navigation.

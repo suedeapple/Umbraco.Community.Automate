@@ -37,7 +37,7 @@ The Demo site references this package and already has a placeholder key at `Umbr
 cd Examples/Example/Umbraco.Community.Automate.Example/Client
 npm ci && npm run build
 cd ../../../..
-dotnet run --project Demo --launch-profile Umbraco.Web.UI
+dotnet run --project Demo
 ```
 
 1. In **Automation → Settings → Connections**, create an **Example (httpbin.org)** connection. The API key is already filled in; click **Test connection**.
