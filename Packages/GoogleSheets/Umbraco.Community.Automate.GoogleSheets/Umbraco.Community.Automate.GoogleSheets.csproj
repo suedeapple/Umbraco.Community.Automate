@@ -9,7 +9,6 @@
         <PackageTags>umbraco automate automation google sheets umbraco-marketplace</PackageTags>
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
         <StaticWebAssetBasePath>App_Plugins/UmbracoCommunityAutomateGoogleSheets</StaticWebAssetBasePath>
-        <EnableDefaultContentItems>false</EnableDefaultContentItems>
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,7 +30,7 @@
         <PackageReference Include="MinVer" PrivateAssets="All" />
     </ItemGroup>
 
-    <!-- Ship buildTransitive props so consuming sites' CopyUmbracoJsonSchemaFiles target
+    <!-- Ship buildTransitive targets so consuming sites' CopyUmbracoJsonSchemaFiles target
          (from Umbraco.Cms.Targets) discovers the schema and copies it into the project. -->
     <ItemGroup>
         <Content Include="buildTransitive\**" PackagePath="buildTransitive" />
@@ -41,7 +40,7 @@
          Not auto-generated on build (no JsonSchema.Net.Generation dependency) — update by hand
          alongside GoogleSheetsComposer/GoogleSheetsConnectionType if the config shape changes. -->
     <ItemGroup>
-        <Content Include="appsettings-schema.Umbraco.Community.Automate.GoogleSheets.json" PackagePath="" Visible="false" />
+        <Content Update="appsettings-schema.Umbraco.Community.Automate.GoogleSheets.json" Pack="true" PackagePath="" Visible="false" />
     </ItemGroup>
 
     <!-- Ships as the NuGet package README (see PackageReadmeFile in Directory.Build.props) and

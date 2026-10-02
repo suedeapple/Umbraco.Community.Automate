@@ -79,7 +79,6 @@ Packages/Example/
     <!-- Serves wwwroot/ (built from Client/ by npm) as static web assets under this path. -->
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <StaticWebAssetBasePath>App_Plugins/UmbracoCommunityAutomateExample</StaticWebAssetBasePath>
-    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -111,8 +110,10 @@ Packages/Example/
 ```
 
 Variations:
-- **Custom icon but no `Client/`** (Mastodon, Skoda): drop `EnableDefaultContentItems` and the `Client\` item group, and put `umbraco-package.json` and `icons/` straight in `wwwroot/`, committed.
-- **No static files at all** (WeatherApi, the Simple example): use `Microsoft.NET.Sdk` and drop `AddRazorSupportForMvc`, `StaticWebAssetBasePath`, `EnableDefaultContentItems` and the `Client\` item group.
+- **Custom icon but no `Client/`** (Mastodon, Skoda): drop the `Client\` item group, and put `umbraco-package.json` and `icons/` straight in `wwwroot/`, committed.
+- **No static files at all** (WeatherApi, the Simple example): use `Microsoft.NET.Sdk` and drop `AddRazorSupportForMvc`, `StaticWebAssetBasePath` and the `Client\` item group.
+
+Don't set `EnableDefaultContentItems` to `false`: the static web assets that carry `wwwroot/` into the package are found through default content items, so the package would ship without its icons and editors. `Content Remove="Client\**"` is what keeps the front-end source out. If you also ship a hand-written `buildTransitive` file, name it `<PackageId>.targets`: the build generates its own `<PackageId>.props` there and would replace yours.
 
 No `Version` attributes anywhere: versions live in the root `Directory.Packages.props`. Copy `community-automate-128.png` from another package.
 

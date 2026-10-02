@@ -9,7 +9,6 @@
     <!-- Serves wwwroot/ (built from Client/ by npm) as static web assets under this path. -->
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <StaticWebAssetBasePath>App_Plugins/UmbracoCommunityAutomateExamplesKitchenSink</StaticWebAssetBasePath>
-    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
