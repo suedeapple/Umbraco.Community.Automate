@@ -1,5 +1,7 @@
 # Secret Leak Prevention Implementation Plan
 
+> **Current state:** the hooks now live in `.githooks/` (`pre-commit` and `pre-push` run gitleaks with `.gitleaks.toml`), enabled with `./.githooks/setup.sh` or `.\.githooks\setup.ps1`. Lefthook and the root `package.json` described below were replaced by these; see [CONTRIBUTING](../../CONTRIBUTING.md#preventing-secret-leaks). The user-secrets approach is unchanged.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Prevent real secrets (specifically Google OAuth `ClientId`/`ClientSecret`) from ever being committed to this repo, via a structural fix (move real credentials out of the tracked file entirely) plus two local git-hook layers that catch anything anyway.
@@ -13,7 +15,7 @@
 - No CI/server-side scanning layer, and no `gitleaks/gitleaks-action` wrapper — deliberately out of scope per the design.
 - `Umbraco.Community.Automate.Demo/appsettings.Development.json`'s tracked placeholder values (`"e2e-test"` for `ClientId`/`ClientSecret`) must not change — CI needs a non-empty string there.
 - **Every commit in every task must stage files explicitly by path — never `git add -A` or `git add .`.** There is an uncommitted, untracked local modification to `Umbraco.Community.Automate.Demo/appsettings.Development.json` on this branch containing real Google OAuth credentials the repo owner uses for manual testing. It must never be staged or committed by any step in this plan.
-- Root-level `package.json` is deliberately separate from `Umbraco.Community.Automate.GoogleSheets/Client/package.json` (repo-wide tooling vs. one package's frontend).
+- Root-level `package.json` is deliberately separate from `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client/package.json` (repo-wide tooling vs. one package's frontend).
 - `SetupRepo.sh`/`SetupRepo.ps1` stay narrow in scope: prerequisite checks + `npm install` + `npx lefthook install`. Not a general bootstrap script.
 
 **Deliberate deviation from the design spec, flagged here for visibility:** the spec's `SetupRepo.sh`/`SetupRepo.ps1` only check for Node.js before running `npm install`/`npx lefthook install`. `npm install` only installs Lefthook itself — it does not install `gitleaks`, which is a standalone Go binary with no npm distribution. Without a Node **and** gitleaks check, a contributor could run the setup script successfully, believe hooks are active, then have their very first commit fail with a cryptic "gitleaks: command not found" instead of the friendly failure the whole design is about. Task 3 below adds a second prerequisite check for `gitleaks`, structurally identical to the Node check (same `command -v`/`Get-Command` pattern), with an install pointer per platform. This is a narrow, same-shape addition to the already-agreed "check prerequisites, fail with a clear message if missing" pattern — not new scope.

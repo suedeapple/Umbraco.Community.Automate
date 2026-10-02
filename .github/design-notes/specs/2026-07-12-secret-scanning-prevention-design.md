@@ -1,5 +1,7 @@
 # Secret Leak Prevention Design
 
+> **Current state:** the hooks now live in `.githooks/` (`pre-commit` and `pre-push` run gitleaks with `.gitleaks.toml`), enabled with `./.githooks/setup.sh` or `.\.githooks\setup.ps1`. Lefthook and the root `package.json` described below were replaced by these; see [CONTRIBUTING](../../CONTRIBUTING.md#preventing-secret-leaks). The user-secrets approach is unchanged.
+
 ## Context
 
 While reviewing the Umbraco.Community.Automate repo's git history (as part of investigating a security note raised during a prior code review), a real Google OAuth `ClientId`/`ClientSecret` pair was found to have been staged and gotten as far as a local `git stash` entry on 2026-06-27, before being caught. Investigation (`git ls-remote`, GitHub's commit API, GitHub's commit search API) confirmed this specific incident never reached the public GitHub remote — but the near-miss exposed a real gap: `Umbraco.Community.Automate.Demo/appsettings.Development.json` is tracked in git with placeholder values (`"e2e-test"` for `ClientId`/`ClientSecret`, needed so CI's OpenIddict registration doesn't throw), but developers need real OAuth credentials in that same file locally to manually test the actual Google OAuth consent flow — meaning every local testing session carries a live risk of a real secret ending up staged, committed, and pushed to this public repo.
@@ -30,7 +32,7 @@ This doesn't make a leak impossible (a developer could still, in theory, paste a
 
 ## 2. Local hooks — Lefthook + gitleaks, distributed via npm
 
-**Why Lefthook:** it's a compiled Go binary (fast, no interpreter startup cost), genuinely cross-platform (Windows/macOS/Linux behave identically), and is installed via `npm install` — which is not a new dependency class for this repo, since `Umbraco.Community.Automate.GoogleSheets/Client` already requires Node for its property-editor frontend and Playwright tests. Verified there is no `.NET`/NuGet-native distribution for Lefthook (checked current install docs) — npm, gem, pipx, Go, and OS package managers (Homebrew/winget/apt/scoop) are the real options — so npm is the lowest-friction choice given this repo's existing tooling.
+**Why Lefthook:** it's a compiled Go binary (fast, no interpreter startup cost), genuinely cross-platform (Windows/macOS/Linux behave identically), and is installed via `npm install` — which is not a new dependency class for this repo, since `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client` already requires Node for its property-editor frontend and Playwright tests. Verified there is no `.NET`/NuGet-native distribution for Lefthook (checked current install docs) — npm, gem, pipx, Go, and OS package managers (Homebrew/winget/apt/scoop) are the real options — so npm is the lowest-friction choice given this repo's existing tooling.
 
 **Why gitleaks:** verified current GitHub activity across the realistic options (gitleaks, trufflehog, betterleaks, detect-secrets) via the GitHub API rather than assuming from memory:
 

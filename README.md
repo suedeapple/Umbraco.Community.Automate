@@ -115,9 +115,9 @@ Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `pass
 
 ## Contributing
 
-Bug reports, fixes and new connections are all welcome. [CONTRIBUTING.md](.github/CONTRIBUTING.md) covers the repo layout, building, testing, the Demo site, adding a new connection and how releases work.
+Bug reports, fixes and new packages are all welcome. [CONTRIBUTING.md](.github/CONTRIBUTING.md) covers the repo layout, building, testing, the Demo site, adding a new package and how releases work.
 
-Found a problem? [Open an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues).
+Found a problem, or have an idea for a package? [Open an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues/new/choose). For a security problem, please follow [SECURITY.md](.github/SECURITY.md) and report it privately instead.
 
 ## License
 

@@ -13,7 +13,7 @@ This design covers the versioning scheme and the release pipeline only. Three re
 
 ## Versioning — MinVer, per package
 
-Each provider package gets a [MinVer](https://github.com/adamralph/minver) package reference added to its own `Directory.Build.props` (this file already exists per-package today — e.g. `Umbraco.Community.Automate.GoogleSheets/Directory.Build.props` — and MSBuild's `Directory.Build.props` cascade means it only governs that package's own project tree, not the whole repo):
+Each provider package gets a [MinVer](https://github.com/adamralph/minver) package reference added to its own `Directory.Build.props` (this file already exists per-package today — e.g. `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Directory.Build.props` — and MSBuild's `Directory.Build.props` cascade means it only governs that package's own project tree, not the whole repo):
 
 ```xml
 <PropertyGroup>

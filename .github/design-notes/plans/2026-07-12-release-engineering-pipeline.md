@@ -24,25 +24,25 @@
 
 **Files:**
 - Modify: `Directory.Packages.props`
-- Modify: `Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj`
-- Modify: `Umbraco.Community.Automate.GoogleSheets/Directory.Build.props`
+- Modify: `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj`
+- Modify: `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Directory.Build.props`
 
 **Interfaces:**
-- Produces: after this task, `dotnet pack Umbraco.Community.Automate.GoogleSheets` at a commit with an ancestor tag `googlesheets-v<semver>` produces `Umbraco.Community.Automate.GoogleSheets.<semver>.nupkg` and a matching `.snupkg`. Task 2 and Task 3 both invoke `dotnet pack` on this project and rely on this behavior.
+- Produces: after this task, `dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets` at a commit with an ancestor tag `googlesheets-v<semver>` produces `Umbraco.Community.Automate.GoogleSheets.<semver>.nupkg` and a matching `.snupkg`. Task 2 and Task 3 both invoke `dotnet pack` on this project and rely on this behavior.
 
 - [ ] **Step 1: Add the MinVer package reference**
 
 Run from the repo root:
 
 ```bash
-dotnet add Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj package MinVer
+dotnet add Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj package MinVer
 ```
 
 Expected: this repo uses central package management (`ManagePackageVersionsCentrally=true` in `Directory.Packages.props`), so the command adds a `<PackageVersion Include="MinVer" Version="X.Y.Z" />` line to `Directory.Packages.props` (X.Y.Z will be whatever the latest stable MinVer version is at the time — that's correct, do not hardcode an older version) and a versionless `<PackageReference Include="MinVer" />` to the GoogleSheets csproj's existing `PackageReference` `ItemGroup`.
 
 - [ ] **Step 2: Mark the MinVer reference as build-only**
 
-Open `Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj` and find the `<PackageReference Include="MinVer" />` line Step 1 just added. Change it to:
+Open `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj` and find the `<PackageReference Include="MinVer" />` line Step 1 just added. Change it to:
 
 ```xml
 <PackageReference Include="MinVer" PrivateAssets="All" />
@@ -52,13 +52,13 @@ Open `Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleS
 
 - [ ] **Step 3: Add MinVer configuration and symbol-package properties**
 
-Open `Umbraco.Community.Automate.GoogleSheets/Directory.Build.props`. It currently looks like:
+Open `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Directory.Build.props`. It currently looks like:
 
 ```xml
 <Project>
   <PropertyGroup>
     <Authors>Warren Buckley &amp; Umbraco Community</Authors>
-    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Umbraco.Community.Automate.GoogleSheets</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets</PackageProjectUrl>
     <RepositoryUrl>https://github.com/umbraco-community/Umbraco.Community.Automate</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -73,7 +73,7 @@ Replace it with:
 <Project>
   <PropertyGroup>
     <Authors>Warren Buckley &amp; Umbraco Community</Authors>
-    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Umbraco.Community.Automate.GoogleSheets</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets</PackageProjectUrl>
     <RepositoryUrl>https://github.com/umbraco-community/Umbraco.Community.Automate</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -101,12 +101,12 @@ Replace it with:
 </Project>
 ```
 
-Note: this file lives at `Umbraco.Community.Automate.GoogleSheets/Directory.Build.props`, and MSBuild's `Directory.Build.props` cascade walks *up* from each project's own directory — since `Umbraco.Community.Automate.GoogleSheets.Tests` is a sibling directory, not a child of `Umbraco.Community.Automate.GoogleSheets`, these properties correctly apply only to the main package project, not its test project.
+Note: this file lives at `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Directory.Build.props`, and MSBuild's `Directory.Build.props` cascade walks *up* from each project's own directory — since `Umbraco.Community.Automate.GoogleSheets.Tests` is a sibling directory, not a child of `Umbraco.Community.Automate.GoogleSheets`, these properties correctly apply only to the main package project, not its test project.
 
 - [ ] **Step 4: Verify the build still succeeds**
 
 ```bash
-dotnet build Umbraco.Community.Automate.GoogleSheets
+dotnet build Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets
 ```
 
 Expected: `Build succeeded.` with 0 errors (warnings about other unrelated NuGet advisories are pre-existing and fine).
@@ -115,7 +115,7 @@ Expected: `Build succeeded.` with 0 errors (warnings about other unrelated NuGet
 
 ```bash
 git tag googlesheets-v9.9.9-planverify
-dotnet pack Umbraco.Community.Automate.GoogleSheets --configuration Release --output /tmp/minver-verify
+dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets --configuration Release --output /tmp/minver-verify
 ls /tmp/minver-verify
 ```
 
@@ -131,7 +131,7 @@ rm -rf /tmp/minver-verify
 - [ ] **Step 6: Verify version derivation *without* a tag present (the CI/no-tag case)**
 
 ```bash
-dotnet pack Umbraco.Community.Automate.GoogleSheets --configuration Release --output /tmp/minver-verify-notag
+dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets --configuration Release --output /tmp/minver-verify-notag
 ls /tmp/minver-verify-notag
 rm -rf /tmp/minver-verify-notag
 ```
@@ -141,7 +141,7 @@ Expected: pack still succeeds and produces a `.nupkg` with some `0.0.0-alpha.*`-
 - [ ] **Step 7: Commit**
 
 ```bash
-git add Directory.Packages.props Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj Umbraco.Community.Automate.GoogleSheets/Directory.Build.props
+git add Directory.Packages.props Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Umbraco.Community.Automate.GoogleSheets.csproj Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Directory.Build.props
 git commit -m "add(build): version GoogleSheets via MinVer, produce .snupkg symbol packages"
 ```
 
@@ -174,10 +174,10 @@ Open `.github/workflows/ci.yml`. Find the `backend-tests` job's steps (currently
 
       - run: dotnet build --no-restore --configuration Release
 
-      - run: dotnet test Umbraco.Community.Automate.GoogleSheets.Tests --no-build --configuration Release
+      - run: dotnet test Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets.Tests --no-build --configuration Release
 
       - name: Verify the package still packs
-        run: dotnet pack Umbraco.Community.Automate.GoogleSheets --no-build --configuration Release --output ./pack-check
+        run: dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets --no-build --configuration Release --output ./pack-check
 ```
 
 This doesn't publish anywhere and doesn't upload the output anywhere — its only purpose is to fail the PR check if a packaging-metadata change (missing file, bad `<PackageReadmeFile>` reference, etc.) would break `dotnet pack` at release time.
@@ -216,8 +216,8 @@ Expected: `VALID` printed, no exception.
 - [ ] **Step 4: Verify the pack-check step works locally**
 
 ```bash
-dotnet build Umbraco.Community.Automate.GoogleSheets --configuration Release
-dotnet pack Umbraco.Community.Automate.GoogleSheets --no-build --configuration Release --output ./pack-check
+dotnet build Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets --configuration Release
+dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets --no-build --configuration Release --output ./pack-check
 ls ./pack-check
 rm -rf ./pack-check
 ```
@@ -392,14 +392,14 @@ Expected output:
 ```
 PREFIX=googlesheets-v
 VERSION=1.0.0
-MATCHES=./Umbraco.Community.Automate.GoogleSheets/Directory.Build.props
+MATCHES=./Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Directory.Build.props
 COUNT=1
 ```
 
 - [ ] **Step 4: Verify the title extraction**
 
 ```bash
-grep -ohP '(?<=<Title>).*(?=</Title>)' Umbraco.Community.Automate.GoogleSheets/*.csproj | head -1
+grep -ohP '(?<=<Title>).*(?=</Title>)' Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/*.csproj | head -1
 ```
 
 Expected: `Umbraco Community Automate Google Sheets`
