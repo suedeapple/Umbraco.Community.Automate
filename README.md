@@ -4,6 +4,32 @@ Community-built packages for [Umbraco Automate](https://github.com/umbraco/Umbra
 
 Umbraco Automate adds an **Automation** section to the Umbraco backoffice where you build workflows: a *trigger* (for example "content published") followed by a series of *actions* (for example "append a row to a Google Sheet", "post to Mastodon"). Each package in this repo adds one service. Install the package, configure its credentials, and its actions show up in the workflow builder.
 
+## Quick start
+
+**Use a package in your site.** Pick one from [Packages](#packages), then:
+
+```bash
+dotnet add package Umbraco.Community.Automate.DevTo --prerelease
+```
+
+Add its credentials to configuration, and create a connection under **Automation → Settings → Connections**. [Getting started](#getting-started) walks through it, and each package's README has the details.
+
+**Try everything locally.** Clone the repo and run the Demo site, a throwaway Umbraco site with every package installed:
+
+```bash
+git clone https://github.com/umbraco-community/Umbraco.Community.Automate.git
+cd Umbraco.Community.Automate
+dotnet run --project Umbraco.Community.Automate.Demo
+```
+
+Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. See [Trying everything in the Demo site](#trying-everything-in-the-demo-site) for real credentials and front-end builds.
+
+**Build your own package.** The repo includes a [Claude Code](https://claude.com/claude-code) skill, [`umbraco-automate`](.claude/skills/umbraco-automate/SKILL.md), that knows this repo's layout and conventions. Open the repo in Claude Code and ask for what you want, for example:
+
+> Create me an Automate package for the PokéAPI, with an action that looks up a Pokémon by name.
+
+It researches the service first, then walks you through the choices one at a time, with a recommended option each time: which actions and triggers, how it connects, the names, and the settings for each action. Once you confirm a summary, it builds the package with tests and wires it into the solution and the Demo site. It can also migrate a package you already publish elsewhere into this repo. Not using Claude Code? [CONTRIBUTING](.github/CONTRIBUTING.md#adding-a-new-package) has the same process as a checklist, and the [examples](#examples) are there to copy.
+
 ## Packages
 
 | Package | What it does | Status |
