@@ -58,7 +58,7 @@ All actions are in the **Skoda** group and act on the vehicle set on the connect
 | **Start Charging** / **Stop Charging** | None. |
 | **Set Charge Mode** | **Charge mode**, chosen from a list: Manual, Timer, Timer with climatisation, Preferred charging times, Only own current, Immediate discharging or Home storage charging. |
 | **Set Charging Limit** | **Target state of charge** in percent, from 50 to 100 in steps of 10. |
-| **Update Charging Profile** | **Charging profile ID** (from *Get Vehicle Status*), plus any of **Name**, **Target state of charge**, **Max charging current (AC)** (Reduced or Maximum) and **Auto unlock plug when charged** (Permanently or Off). Empty fields, and **Keep current setting** in the lists, keep the profile's current value. |
+| **Update Charging Profile** | **Charging profile ID** (the profile's `id` under `chargingProfiles.profiles` in the MyŠkoda Public API's vehicle response, `GET /api/v1/vehicles/{vin}`), plus any of **Name**, **Target state of charge**, **Max charging current (AC)** (Reduced or Maximum) and **Auto unlock plug when charged** (Permanently or Off). Empty fields, and **Keep current setting** in the lists, keep the profile's current value. |
 | **Start Air Conditioning** | **Target temperature**, **Temperature unit** (Celsius or Fahrenheit), **Allow without external power**. |
 | **Stop Air Conditioning** | None. |
 | **Start Auxiliary Heating** | **Target temperature**, **Temperature unit**, **S-PIN** (required; pre-filled with `$Umbraco:Automate:Secrets:Skoda:Spin`, stored encrypted and masked in run logs), **Duration in seconds** (1 to 3,600, default 1,800), **Start mode** (Heating or Ventilation). |

@@ -7,7 +7,7 @@ public sealed class UpdateChargingProfileSettings
 {
     [Field(
         Label = "Charging profile ID",
-        Description = "Identifier of the charging profile to update, as returned by Get Vehicle Status.")]
+        Description = "The ID of the charging profile to update. It's the profile's id in chargingProfiles.profiles in the MyŠkoda Public API's vehicle response (GET /api/v1/vehicles/{vin}).")]
     public long ProfileId { get; set; }
 
     [Field(Label = "Name", Description = "Leave empty to keep the profile's current name.", SupportsBindings = true)]
