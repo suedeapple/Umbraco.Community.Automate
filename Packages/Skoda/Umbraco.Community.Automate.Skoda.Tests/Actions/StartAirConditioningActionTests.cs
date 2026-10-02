@@ -1,5 +1,4 @@
 using Moq;
-using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
@@ -35,11 +34,11 @@ public class StartAirConditioningActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        result.Status.ShouldBe(ActionResultStatus.Success);
-        sentConfiguration.ShouldNotBeNull();
-        sentConfiguration.TargetTemperature.Value.ShouldBe(22.5);
-        sentConfiguration.TargetTemperature.Unit.ShouldBe("FAHRENHEIT");
-        sentConfiguration.AirConditioningWithoutExternalPower.ShouldBeTrue();
-        ((VehicleCommandOutput)result.OutputData!).Vin.ShouldBe(Vin);
+        Assert.Equal(ActionResultStatus.Success, result.Status);
+        Assert.NotNull(sentConfiguration);
+        Assert.Equal(22.5, sentConfiguration.TargetTemperature.Value);
+        Assert.Equal("FAHRENHEIT", sentConfiguration.TargetTemperature.Unit);
+        Assert.True(sentConfiguration.AirConditioningWithoutExternalPower);
+        Assert.Equal(Vin, ((VehicleCommandOutput)result.OutputData!).Vin);
     }
 }

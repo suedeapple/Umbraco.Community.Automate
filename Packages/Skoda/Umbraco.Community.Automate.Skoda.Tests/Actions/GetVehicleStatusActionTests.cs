@@ -1,5 +1,4 @@
 using Moq;
-using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
@@ -49,23 +48,23 @@ public class GetVehicleStatusActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        result.Status.ShouldBe(ActionResultStatus.Success);
+        Assert.Equal(ActionResultStatus.Success, result.Status);
         var output = (GetVehicleStatusOutput)result.OutputData!;
-        output.Vin.ShouldBe(Vin);
-        output.Name.ShouldBe("My Car");
-        output.LicensePlate.ShouldBe("AB123CD");
-        output.MileageInKm.ShouldBe(12345);
-        output.StateOfChargeInPercent.ShouldBe(65);
-        output.RemainingCruisingRangeInMeters.ShouldBe(150000);
-        output.ChargingState.ShouldBe("CHARGING");
-        output.AirConditioningState.ShouldBe("COOLING");
-        output.ParkingState.ShouldBe("PARKED");
-        output.Latitude.ShouldBe(52.1);
-        output.Longitude.ShouldBe(5.1);
-        output.FormattedAddress.ShouldBe("Some Street 1, Prague");
-        output.Errors.ShouldHaveSingleItem();
-        output.Errors.Single().Type.ShouldBe("SOME_ERROR");
-        output.Errors.Single().Description.ShouldBe("Something could not be retrieved.");
+        Assert.Equal(Vin, output.Vin);
+        Assert.Equal("My Car", output.Name);
+        Assert.Equal("AB123CD", output.LicensePlate);
+        Assert.Equal(12345, output.MileageInKm);
+        Assert.Equal(65, output.StateOfChargeInPercent);
+        Assert.Equal(150000, output.RemainingCruisingRangeInMeters);
+        Assert.Equal("CHARGING", output.ChargingState);
+        Assert.Equal("COOLING", output.AirConditioningState);
+        Assert.Equal("PARKED", output.ParkingState);
+        Assert.Equal(52.1, output.Latitude);
+        Assert.Equal(5.1, output.Longitude);
+        Assert.Equal("Some Street 1, Prague", output.FormattedAddress);
+        Assert.Single(output.Errors);
+        Assert.Equal("SOME_ERROR", output.Errors.Single().Type);
+        Assert.Equal("Something could not be retrieved.", output.Errors.Single().Description);
     }
 
     [Fact]
@@ -88,17 +87,17 @@ public class GetVehicleStatusActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        result.Status.ShouldBe(ActionResultStatus.Success);
+        Assert.Equal(ActionResultStatus.Success, result.Status);
         var output = (GetVehicleStatusOutput)result.OutputData!;
-        output.MileageInKm.ShouldBeNull();
-        output.StateOfChargeInPercent.ShouldBeNull();
-        output.RemainingCruisingRangeInMeters.ShouldBeNull();
-        output.ChargingState.ShouldBeNull();
-        output.AirConditioningState.ShouldBeNull();
-        output.ParkingState.ShouldBeNull();
-        output.Latitude.ShouldBeNull();
-        output.Longitude.ShouldBeNull();
-        output.FormattedAddress.ShouldBeNull();
-        output.Errors.ShouldBeEmpty();
+        Assert.Null(output.MileageInKm);
+        Assert.Null(output.StateOfChargeInPercent);
+        Assert.Null(output.RemainingCruisingRangeInMeters);
+        Assert.Null(output.ChargingState);
+        Assert.Null(output.AirConditioningState);
+        Assert.Null(output.ParkingState);
+        Assert.Null(output.Latitude);
+        Assert.Null(output.Longitude);
+        Assert.Null(output.FormattedAddress);
+        Assert.Empty(output.Errors);
     }
 }

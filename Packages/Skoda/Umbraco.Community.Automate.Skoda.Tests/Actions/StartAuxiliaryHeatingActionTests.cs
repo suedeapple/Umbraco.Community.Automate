@@ -1,5 +1,4 @@
 using Moq;
-using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
@@ -37,13 +36,13 @@ public class StartAuxiliaryHeatingActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        result.Status.ShouldBe(ActionResultStatus.Success);
-        sentConfiguration.ShouldNotBeNull();
-        sentConfiguration.Spin.ShouldBe("1234");
-        sentConfiguration.DurationInSeconds.ShouldBe(900);
-        sentConfiguration.StartMode.ShouldBe("VENTILATION");
-        sentConfiguration.TargetTemperature.Value.ShouldBe(23);
-        ((VehicleCommandOutput)result.OutputData!).Vin.ShouldBe(Vin);
+        Assert.Equal(ActionResultStatus.Success, result.Status);
+        Assert.NotNull(sentConfiguration);
+        Assert.Equal("1234", sentConfiguration.Spin);
+        Assert.Equal(900, sentConfiguration.DurationInSeconds);
+        Assert.Equal("VENTILATION", sentConfiguration.StartMode);
+        Assert.Equal(23, sentConfiguration.TargetTemperature.Value);
+        Assert.Equal(Vin, ((VehicleCommandOutput)result.OutputData!).Vin);
     }
 
     [Fact]
@@ -57,7 +56,7 @@ public class StartAuxiliaryHeatingActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        result.Status.ShouldBe(ActionResultStatus.Failed);
+        Assert.Equal(ActionResultStatus.Failed, result.Status);
         client.Verify(
             c => c.StartAuxiliaryHeatingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<StartAuxiliaryHeatingConfiguration>(), It.IsAny<CancellationToken>()),
             Times.Never);

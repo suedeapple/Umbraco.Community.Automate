@@ -1,5 +1,4 @@
 using Moq;
-using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
@@ -25,8 +24,8 @@ public class StopActiveVentilationActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        result.Status.ShouldBe(ActionResultStatus.Success);
+        Assert.Equal(ActionResultStatus.Success, result.Status);
         client.Verify(c => c.StopActiveVentilationAsync(ApiKey, Vin, It.IsAny<CancellationToken>()), Times.Once);
-        ((VehicleCommandOutput)result.OutputData!).Vin.ShouldBe(Vin);
+        Assert.Equal(Vin, ((VehicleCommandOutput)result.OutputData!).Vin);
     }
 }
