@@ -24,11 +24,11 @@ dotnet run --project Umbraco.Community.Automate.Demo
 
 Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. See [Trying everything in the Demo site](#trying-everything-in-the-demo-site) for real credentials and front-end builds.
 
-**Build your own package.** The repo includes a [Claude Code](https://claude.com/claude-code) skill, [`umbraco-automate`](.claude/skills/umbraco-automate/SKILL.md), that knows this repo's layout and conventions. Open the repo in Claude Code and ask for what you want, for example:
+**Build your own package, or bring one in.** The repo includes a [Claude Code](https://claude.com/claude-code) skill, [`umbraco-automate`](.claude/skills/umbraco-automate/SKILL.md), that knows this repo's layout and conventions. **We recommend using it to create every new package and to migrate existing ones**: it builds them all the same way, so every package has the same structure, naming, configuration and tests, and anyone who knows one package can find their way around the rest. Open the repo in Claude Code and ask for what you want, for example:
 
 > Create me an Automate package for the PokéAPI, with an action that looks up a Pokémon by name.
 
-It researches the service first, then walks you through the choices one at a time, with a recommended option each time: which actions and triggers, how it connects, the names, and the settings for each action. Once you confirm a summary, it builds the package with tests and wires it into the solution and the Demo site. It can also migrate a package you already publish elsewhere into this repo. Not using Claude Code? [CONTRIBUTING](.github/CONTRIBUTING.md#adding-a-new-package) has the same process as a checklist, and the [examples](#examples) are there to copy.
+It researches the service first, then walks you through the choices one at a time, with a recommended option each time: which actions and triggers, how it connects, the names, and the settings for each action. Once you confirm a summary, it builds the package with tests and wires it into the solution and the Demo site. To bring in a package you already publish, ask it to "migrate my package from `<path or repo URL>`": it reads your code, asks the questions that affect your existing users, then reshapes it to match the others. Not using Claude Code? [CONTRIBUTING](.github/CONTRIBUTING.md#adding-a-new-package) has the same process as a checklist, and the [examples](#examples) are there to copy.
 
 ## Packages
 
