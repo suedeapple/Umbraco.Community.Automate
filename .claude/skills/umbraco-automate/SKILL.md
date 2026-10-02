@@ -9,7 +9,19 @@ This repo is a monorepo of community packages for [Umbraco Automate](https://git
 
 Every connection follows the same shape on purpose: contributors and reviewers should be able to open any package and know where everything is, and CI discovers packages purely from the folder layout. Follow this skill so a new connection looks like the existing ones. When in doubt, copy one of the two reference connections in `Packages/_Examples/` (both talk to httpbin.org, are built and tested by CI, and are never published): **`Packages/_Examples/Simple/`** is an API key and one action, the shape most connections need; **`Packages/_Examples/KitchenSink/`** uses every folder here, including a trigger, outcomes, an API client, a custom field editor in `Client/`, and xUnit-only tests. Among the real connections, **WeatherApi** is the simplest; **Google Sheets** shows OAuth; **DevTo** shows content conversion in depth.
 
-Code templates for every file below are in [references/templates.md](references/templates.md). Read it before writing code.
+## Choose a shape first
+
+Most community connections are simple: an API key and an action or two. Build that unless the package needs more, and grow it later; never add folders "just in case".
+
+| | **Simple** (most packages) | **Full** (only what's needed from it) |
+|---|---|---|
+| Use when | an API key (or token) and actions that each make one call | a trigger, outcomes, several actions sharing request and error handling, a custom icon, or a custom field editor |
+| Folders | `Actions/`, `Composers/`, `Configuration/`, `Connections/` | any of the standard folders below, including `Api/`, `Models/`, `Triggers/`, `Client/`, `wwwroot/` |
+| Icon | a built-in Umbraco icon, no files | built-in, or custom files in `umbraco-package.json` + `icons/` |
+| Reference code | `Packages/_Examples/Simple/` | `Packages/_Examples/KitchenSink/` |
+| Every file, ready to copy | [references/simple.md](references/simple.md) | [references/full.md](references/full.md) |
+
+Read the matching reference before writing code. Both are complete (project files, every class, tests and wiring) and are checked by generating a package from them and running its tests. If the user hasn't said, ask what the package should do, and pick Simple unless an answer needs something from the Full column. When a Simple package later needs one Full feature, add just that section from `full.md`: the files are written to fit together.
 
 ## Layout
 
@@ -49,17 +61,17 @@ Keep the structure flat: these packages are small, so standard folders sit direc
 
 Work through these in order and tick them off. For a package with no connection, skip the connection steps (3, 4 and the connection validation) and the `ConnectionTypeAlias` on actions; everything else applies. Ask the user for the service name, what it should do (which actions), and how it authenticates (API key/token, OAuth, none) before starting.
 
-1. **Projects.** Create the package and `.Tests` projects under `Packages/<Area>/` from the templates. If the package has a `wwwroot/` (custom icons), use `Microsoft.NET.Sdk.Razor` with `StaticWebAssetBasePath` `App_Plugins/UmbracoCommunityAutomate<Area>` so it's served as static web assets; otherwise plain `Microsoft.NET.Sdk` is enough (see WeatherApi).
+1. **Projects.** Create the package and `.Tests` projects under `Packages/<Area>/` from [simple.md](references/simple.md) or [full.md](references/full.md). If the package has a `wwwroot/` (custom icons), use `Microsoft.NET.Sdk.Razor` with `StaticWebAssetBasePath` `App_Plugins/UmbracoCommunityAutomate<Area>` so it's served as static web assets; otherwise plain `Microsoft.NET.Sdk` is enough (see WeatherApi).
 2. **`Directory.Build.props`** in the package folder, with `MinVerTagPrefix` `<area-lowercase>-v` and `MinVerIgnoreHeight` true. This file is also the marker that makes CI find the package; without it the package is silently skipped.
 3. **Configuration class** `Configuration/<Area>Configuration.cs` holding the config paths, each credential's default reference and the service's fixed values such as its base URL (see Configuration and secrets).
 4. **Connection type and settings** in `Connections/`, with credential fields defaulting to those references.
-5. **Actions** in `Actions/`, each with its settings (and output, if it returns data).
+5. **Actions** in `Actions/`, each with its settings (and output, if it returns data). Full: an `Api/` client shared by the actions, outcomes, and **triggers** in `Triggers/`.
 6. **Composer** in `Composers/`: register the connection type, actions, triggers and any services. Icons and configuration references references need no registration.
-7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from the templates.
+7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from [full.md](references/full.md#tests).
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
 9. **Wire it in**: add both projects to `Umbraco.Community.Automate.Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`.
 10. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Umbraco.Community.Automate.Demo/appsettings.Development.json`. Real credentials go in user secrets only.
-11. **Tests** for every action and the connection validation (see Testing).
+11. **Tests** for every action, outcome and trigger and the connection validation (see Testing). Full with a `Client/`: front-end tests too, and build it (`npm ci && npm run build`) before running the Demo site or packing.
 12. **README.md** in the package (see README), and a row in the root `README.md` connections table.
 13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Umbraco.Community.Automate.Demo/appsettings.Development.json` or user secrets).
 
@@ -114,7 +126,7 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 
 - **xUnit only**: use xUnit's `Assert`, and don't add assertion or mocking libraries (no Shouldly, FluentAssertions, Moq or NSubstitute). One framework keeps tests readable for every contributor and the dependency list short. Some older packages still use Shouldly or Moq; don't copy that into new code.
 - Umbraco's own `Umbraco.Automate.Testing` package is fine (it's the official harness, not a mocking library): `ActionTestHarness.For<TAction>().WithService(...).WithSettings(...).WithConnection(alias, settings).ExecuteAsync()` runs an action end to end and returns its `ActionResult`.
-- Instead of a mocking library, write small hand-written fakes: a stub `HttpMessageHandler` that returns canned responses and records requests, behind a tiny `IHttpClientFactory` implementation (see the templates).
+- Instead of a mocking library, write small hand-written fakes: a stub `HttpMessageHandler` that returns canned responses and records requests, behind a tiny `IHttpClientFactory` implementation (see `Fakes/StubHttp.cs` in either reference).
 - To unit test a connection type's `ValidateAsync`, construct it with `new ConnectionTypeInfrastructure(fakeResolver)`, where the fake implements `IEditableModelResolver` with explicit interface members that throw (validation never uses it). Explicit implementation avoids having to repeat the interface's generic constraint.
 - Test each action's success path, each outcome, missing or invalid settings (including an unresolved `$` reference), and how API errors map to categories. Never call the real service.
 - Group tests in the same folders as the package (`Actions/`, `Connections/`, `Api/`).
