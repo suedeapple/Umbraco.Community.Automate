@@ -1,6 +1,6 @@
 ---
 name: umbraco-automate
-description: The house rules for building anything for Umbraco Automate in the Umbraco.Community.Automate repo: connections, actions, triggers, outcomes and outputs, API clients, configuration and secrets ($-references in Umbraco:Automate:Secrets/Variables), backoffice front ends (Client/, Vite + Lit), tests (xUnit only), the Demo site, CI and releases. Covers the Packages/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Models, Configuration, Client), community.<area> aliases and project wiring, with Packages/_Examples/Simple and Packages/_Examples/KitchenSink as the references to copy. Use it whenever someone wants to create or change a connection, action or trigger (e.g. "add a Slack connection", "add a trigger to Mastodon", "build a Bluesky integration"), import an existing Automate package, write tests or a front end for one, wire something into the Demo site, or asks where something goes or how something is done in this repo, even if they don't mention Automate or the skill.
+description: The house rules for building anything for Umbraco Automate in the Umbraco.Community.Automate repo: connections, actions, triggers, outcomes and outputs, API clients, configuration and secrets ($-references in Umbraco:Automate:Secrets/Variables), backoffice front ends (Client/, Vite + Lit), tests (xUnit only), the Demo site, CI and releases. Covers the Packages/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Models, Configuration, Client), community.<area> aliases and project wiring, with Packages/_Examples/Simple and Packages/_Examples/KitchenSink as the references to copy. Use it whenever someone wants to create or change a package, connection, action or trigger (e.g. "build me an Automate package for Facebook", "add a Slack connection", "add a trigger to Mastodon"), migrate or import an existing Automate package into the repo or bring one up to the current conventions, write tests or a front end for one, wire something into the Demo site, or asks where something goes or how something is done in this repo, even if they don't mention Automate or the skill.
 ---
 
 # Building for Umbraco Automate
@@ -8,6 +8,17 @@ description: The house rules for building anything for Umbraco Automate in the U
 This repo is a monorepo of community packages for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate). Each connection is one NuGet package that adds a **connection type** (credentials for an external service), **actions** and **triggers** that automations can use. This skill covers anything built here: new connections, new actions or triggers on existing ones, front ends, configuration, tests and the Demo site.
 
 Every connection follows the same shape on purpose: contributors and reviewers should be able to open any package and know where everything is, and CI discovers packages purely from the folder layout. Follow this skill so a new connection looks like the existing ones. When in doubt, copy one of the two reference connections in `Packages/_Examples/` (both talk to httpbin.org, are built and tested by CI, and are never published): **`Packages/_Examples/Simple/`** is an API key and one action, the shape most connections need; **`Packages/_Examples/KitchenSink/`** uses every folder here, including a trigger, outcomes, an API client, a custom field editor in `Client/`, and xUnit-only tests. Among the real connections, **WeatherApi** is the simplest; **Google Sheets** shows OAuth; **DevTo** shows content conversion in depth.
+
+## Start here
+
+Work out which kind of request this is, because each has its own process:
+
+- **A new package** ("build me a package for Facebook", "I want a Slack integration"): don't start coding. Follow [references/new-package.md](references/new-package.md): research the service, then take the user through multiple-choice decisions (what it does, how it connects, shape, names, settings) and build only after they confirm a summary.
+- **Migrating an existing package into this repo**, or **bringing a package here up to the current conventions**: follow [references/migrating.md](references/migrating.md), which reads the source, asks about anything that affects existing users (aliases, configuration, package ID), then reshapes it.
+- **A change to an existing package** (a new action, a fix, a new setting): no interview needed. Follow "Adding to an existing connection" below and the conventions.
+- **A question** about where something goes or how something is done: answer it from this skill and the repo.
+
+When you do need the user to choose, ask multiple-choice questions with a recommended option first (the `AskUserQuestion` tool when available), rather than open questions or silent assumptions.
 
 ## Choose a shape first
 
@@ -21,7 +32,7 @@ Most community connections are simple: an API key and an action or two. Build th
 | Reference code | `Packages/_Examples/Simple/` | `Packages/_Examples/KitchenSink/` |
 | Every file, ready to copy | [references/simple.md](references/simple.md) | [references/full.md](references/full.md) |
 
-Read the matching reference before writing code, and [references/fields.md](references/fields.md) for every settings class. Both are complete (project files, every class, tests and wiring) and are checked by generating a package from them and running its tests. If the user hasn't said, ask what the package should do, and pick Simple unless an answer needs something from the Full column. When a Simple package later needs one Full feature, add just that section from `full.md`: the files are written to fit together.
+Read the matching reference before writing code, and [references/fields.md](references/fields.md) for every settings class. Both are complete (project files, every class, tests and wiring) and are checked by generating a package from them and running its tests. The guided process in [references/new-package.md](references/new-package.md) settles the shape with the user: recommend Simple unless their answers need something from the Full column. When a Simple package later needs one Full feature, add just that section from `full.md`: the files are written to fit together.
 
 ## Layout
 
@@ -59,7 +70,7 @@ Keep the structure flat: these packages are small, so standard folders sit direc
 
 ## Creating a new connection
 
-Work through these in order and tick them off. For a package with no connection, skip the connection steps (3, 4 and the connection validation) and the `ConnectionTypeAlias` on actions; everything else applies. Ask the user for the service name, what it should do (which actions), and how it authenticates (API key/token, OAuth, none) before starting.
+Work through these in order and tick them off. For a package with no connection, skip the connection steps (3, 4 and the connection validation) and the `ConnectionTypeAlias` on actions; everything else applies. Before starting, settle the service, its actions, authentication, shape and names with the user through the guided process in [references/new-package.md](references/new-package.md).
 
 1. **Projects.** Create the package and `.Tests` projects under `Packages/<Area>/` from [simple.md](references/simple.md) or [full.md](references/full.md). If the package has a `wwwroot/` (custom icons), use `Microsoft.NET.Sdk.Razor` with `StaticWebAssetBasePath` `App_Plugins/UmbracoCommunityAutomate<Area>` so it's served as static web assets; otherwise plain `Microsoft.NET.Sdk` is enough (see WeatherApi).
 2. **`Directory.Build.props`** in the package folder, with `MinVerTagPrefix` `<area-lowercase>-v` and `MinVerIgnoreHeight` true. This file is also the marker that makes CI find the package; without it the package is silently skipped.
@@ -147,16 +158,13 @@ The package README ships inside the NuGet package and is what nuget.org and the 
 - **New trigger**: same, in `Triggers/`.
 - Keep existing aliases, namespaces and public types stable. They're used by people's saved automations and code.
 
-## Importing an existing package
+## Migrating an existing package
 
-To bring in a connection that already lives in its own repo (as WeatherApi did from `SA.Automate.WeatherApi`):
+To bring in a package that lives in its own repo (as WeatherApi did from `SA.Automate.WeatherApi`), or to bring a package already here up to the current conventions, follow [references/migrating.md](references/migrating.md). The essentials:
 
-- Work from the source repo's latest `origin/main`, not a possibly stale local checkout.
-- Move the files into the standard folders and rename namespaces to `Umbraco.Community.Automate.<Area>.*`; the package ID becomes `Umbraco.Community.Automate.<Area>`.
-- Give every alias the `community.<area>` convention as part of the import.
-- Replace hard-coded package versions with central ones, add `Directory.Build.props`, MinVer and tests, and drop files this repo handles centrally (release workflow, `umbraco-marketplace.json`, `NuGet.config`, separate licence/icon copies).
-- Apply the conventions here (configuration class, pre-filled references under the shared sections, error categories, validators) and note any behaviour change in the README. If the old package used a different config path (WeatherApi used `Umbraco:Automate:Secrets:WeatherApiKey`), say that existing connections keep their saved values and only new ones get the new default.
-- Add a **Migrating from <old package>** README section with the `dotnet remove`/`dotnet add` commands and any configuration that moved (see the Mastodon and WeatherApi READMEs). Document changes against the old package only; don't describe intermediate states from before a package is released from this repo.
+- Work from the source's latest default branch, and inventory it against these conventions before changing anything.
+- If the package has been released, ask before renaming aliases, moving configuration or changing the package ID, because saved automations depend on them, and document every such change in a **Migrating from <old package>** README section (see the Mastodon and WeatherApi READMEs).
+- Reshape it to the layout and conventions here, keep its behaviour, keep its tests passing, and drop what the repo handles centrally (release workflows, `umbraco-marketplace.json`, `NuGet.config`, licence and icon copies).
 
 ## Working notes
 
