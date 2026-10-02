@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Moq;
 using Moq.Protected;
+using Shouldly;
 using Umbraco.Community.Automate.Skoda.Configuration;
 using Umbraco.Community.Automate.Skoda;
 using Xunit;
@@ -27,11 +28,11 @@ public class SkodaClientTests
 
         var result = await sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Get, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}", captured.RequestUri.ToString());
-        Assert.Contains(ApiKey, captured.Headers.GetValues("X-API-Key"));
-        Assert.Equal(Vin, result.Vehicle.Vin);
-        Assert.Equal("My Car", result.Vehicle.Name);
+        captured!.Method.ShouldBe(HttpMethod.Get);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}");
+        captured.Headers.GetValues("X-API-Key").ShouldContain(ApiKey);
+        result.Vehicle.Vin.ShouldBe(Vin);
+        result.Vehicle.Name.ShouldBe("My Car");
     }
 
     [Fact]
@@ -48,7 +49,7 @@ public class SkodaClientTests
         // Uri.ToString() unescapes characters that aren't structurally significant (like a
         // space) for display, but keeps a reserved character like '/' percent-encoded since
         // decoding it would change how the path is parsed - AbsoluteUri shows the wire form.
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/AB%2FCD%20EF", captured!.RequestUri.AbsoluteUri);
+        captured!.RequestUri.AbsoluteUri.ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/AB%2FCD%20EF");
     }
 
     [Fact]
@@ -56,10 +57,10 @@ public class SkodaClientTests
     {
         var sut = CreateSut(HttpStatusCode.OK, "null", _ => { });
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Should.ThrowAsync<InvalidOperationException>(
             () => sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None));
 
-        Assert.Equal("The Škoda API returned an empty vehicle response.", ex.Message);
+        ex.Message.ShouldBe("The Škoda API returned an empty vehicle response.");
     }
 
     [Fact]
@@ -70,12 +71,12 @@ public class SkodaClientTests
             """{"type":"about:blank","title":"Not Found","status":404,"detail":"Vehicle not found","instance":"/api/v1/vehicles/x"}""",
             _ => { });
 
-        var ex = await Assert.ThrowsAsync<SkodaClientException>(
+        var ex = await Should.ThrowAsync<SkodaClientException>(
             () => sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None));
 
-        Assert.Equal("Vehicle not found", ex.Message);
-        Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
-        Assert.Equal("Not Found", ex.Problem!.Title);
+        ex.Message.ShouldBe("Vehicle not found");
+        ex.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        ex.Problem!.Title.ShouldBe("Not Found");
     }
 
     [Fact]
@@ -83,11 +84,11 @@ public class SkodaClientTests
     {
         var sut = CreateSut(HttpStatusCode.InternalServerError, "Internal Server Error", _ => { });
 
-        var ex = await Assert.ThrowsAsync<SkodaClientException>(
+        var ex = await Should.ThrowAsync<SkodaClientException>(
             () => sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None));
 
-        Assert.Equal("Škoda API request failed with status code 500.", ex.Message);
-        Assert.Equal("Internal Server Error", ex.Response);
+        ex.Message.ShouldBe("Škoda API request failed with status code 500.");
+        ex.Response.ShouldBe("Internal Server Error");
     }
 
     [Fact]
@@ -102,11 +103,11 @@ public class SkodaClientTests
         var handler = StubHandlerWithContent(HttpStatusCode.NotFound, content);
         var sut = new SkodaClient(CreateHttpClient(handler));
 
-        var ex = await Assert.ThrowsAsync<SkodaClientException>(
+        var ex = await Should.ThrowAsync<SkodaClientException>(
             () => sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None));
 
-        Assert.Equal("Vehicle not found", ex.Message);
-        Assert.Contains("Vehicle not found", ex.Response!);
+        ex.Message.ShouldBe("Vehicle not found");
+        ex.Response!.ShouldContain("Vehicle not found");
     }
 
     [Fact]
@@ -117,9 +118,9 @@ public class SkodaClientTests
 
         await sut.StartChargingAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Post, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/start", captured.RequestUri.ToString());
-        Assert.Equal("{}", captured.Body);
+        captured!.Method.ShouldBe(HttpMethod.Post);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/start");
+        captured.Body.ShouldBe("{}");
     }
 
     [Fact]
@@ -130,8 +131,8 @@ public class SkodaClientTests
 
         await sut.StopChargingAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Post, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/stop", captured.RequestUri.ToString());
+        captured!.Method.ShouldBe(HttpMethod.Post);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/stop");
     }
 
     [Fact]
@@ -142,9 +143,9 @@ public class SkodaClientTests
 
         await sut.SetChargingLimitAsync(ApiKey, Vin, 80, CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Put, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/limit", captured.RequestUri.ToString());
-        Assert.Equal("""{"targetStateOfChargeInPercent":80}""", captured.Body);
+        captured!.Method.ShouldBe(HttpMethod.Put);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/limit");
+        captured.Body.ShouldBe("""{"targetStateOfChargeInPercent":80}""");
     }
 
     [Fact]
@@ -155,9 +156,9 @@ public class SkodaClientTests
 
         await sut.SetChargeModeAsync(ApiKey, Vin, "TIMER", CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Put, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/mode", captured.RequestUri.ToString());
-        Assert.Equal("""{"chargeMode":"TIMER"}""", captured.Body);
+        captured!.Method.ShouldBe(HttpMethod.Put);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging/mode");
+        captured.Body.ShouldBe("""{"chargeMode":"TIMER"}""");
     }
 
     [Fact]
@@ -175,10 +176,10 @@ public class SkodaClientTests
 
         await sut.UpdateChargingProfileAsync(ApiKey, Vin, 123456, profile, CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Put, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging-profiles/123456", captured.RequestUri.ToString());
-        Assert.Contains("\"name\":\"Home\"", captured.Body!);
-        Assert.Contains("\"targetStateOfChargeInPercent\":80", captured.Body!);
+        captured!.Method.ShouldBe(HttpMethod.Put);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/charging-profiles/123456");
+        captured.Body!.ShouldContain("\"name\":\"Home\"");
+        captured.Body!.ShouldContain("\"targetStateOfChargeInPercent\":80");
     }
 
     [Fact]
@@ -193,9 +194,9 @@ public class SkodaClientTests
             new StartAirConditioningConfiguration(new TargetTemperature(21.5, "CELSIUS"), true),
             CancellationToken.None);
 
-        Assert.Equal(HttpMethod.Post, captured!.Method);
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/start", captured.RequestUri.ToString());
-        Assert.Equal("""{"targetTemperature":{"value":21.5,"unit":"CELSIUS"},"airConditioningWithoutExternalPower":true}""", captured.Body);
+        captured!.Method.ShouldBe(HttpMethod.Post);
+        captured.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/start");
+        captured.Body.ShouldBe("""{"targetTemperature":{"value":21.5,"unit":"CELSIUS"},"airConditioningWithoutExternalPower":true}""");
     }
 
     [Fact]
@@ -206,7 +207,7 @@ public class SkodaClientTests
 
         await sut.StopAirConditioningAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/stop", captured!.RequestUri.ToString());
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/air-conditioning/stop");
     }
 
     [Fact]
@@ -221,8 +222,8 @@ public class SkodaClientTests
             new StartAuxiliaryHeatingConfiguration(new TargetTemperature(21, "CELSIUS"), "1234", 1800, "HEATING"),
             CancellationToken.None);
 
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/start", captured!.RequestUri.ToString());
-        Assert.Equal("""{"targetTemperature":{"value":21,"unit":"CELSIUS"},"spin":"1234","durationInSeconds":1800,"startMode":"HEATING"}""", captured.Body);
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/start");
+        captured.Body.ShouldBe("""{"targetTemperature":{"value":21,"unit":"CELSIUS"},"spin":"1234","durationInSeconds":1800,"startMode":"HEATING"}""");
     }
 
     [Fact]
@@ -233,7 +234,7 @@ public class SkodaClientTests
 
         await sut.StopAuxiliaryHeatingAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/stop", captured!.RequestUri.ToString());
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/auxiliary-heating/stop");
     }
 
     [Fact]
@@ -244,7 +245,7 @@ public class SkodaClientTests
 
         await sut.StartActiveVentilationAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/start", captured!.RequestUri.ToString());
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/start");
     }
 
     [Fact]
@@ -255,7 +256,7 @@ public class SkodaClientTests
 
         await sut.StopActiveVentilationAsync(ApiKey, Vin, CancellationToken.None);
 
-        Assert.Equal($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/stop", captured!.RequestUri.ToString());
+        captured!.RequestUri.ToString().ShouldBe($"{SkodaConfiguration.BaseUrl}api/v1/vehicles/{Vin}/active-ventilation/stop");
     }
 
     private static SkodaClient CreateSut(HttpStatusCode statusCode, string json, Action<CapturedRequest> capture) =>

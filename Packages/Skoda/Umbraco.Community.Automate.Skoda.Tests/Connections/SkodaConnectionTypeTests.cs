@@ -1,5 +1,6 @@
 using System.Net;
 using Moq;
+using Shouldly;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.Skoda.Connections;
@@ -18,7 +19,7 @@ public class SkodaConnectionTypeTests
 
         var result = await sut.ValidateAsync(new object(), CancellationToken.None);
 
-        Assert.Equal(ConnectionValidationStatus.Failure, result.Status);
+        result.Status.ShouldBe(ConnectionValidationStatus.Failure);
     }
 
     [Fact]
@@ -30,7 +31,7 @@ public class SkodaConnectionTypeTests
             new SkodaConnectionSettings { ApiKey = "", Vin = Vin },
             CancellationToken.None);
 
-        Assert.Equal(ConnectionValidationStatus.Failure, result.Status);
+        result.Status.ShouldBe(ConnectionValidationStatus.Failure);
     }
 
     [Fact]
@@ -42,7 +43,7 @@ public class SkodaConnectionTypeTests
             new SkodaConnectionSettings { ApiKey = ApiKey, Vin = "" },
             CancellationToken.None);
 
-        Assert.Equal(ConnectionValidationStatus.Failure, result.Status);
+        result.Status.ShouldBe(ConnectionValidationStatus.Failure);
     }
 
     [Fact]
@@ -73,7 +74,7 @@ public class SkodaConnectionTypeTests
             new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin, ValidateConnection = false },
             CancellationToken.None);
 
-        Assert.Equal(ConnectionValidationStatus.Warning, result.Status);
+        result.Status.ShouldBe(ConnectionValidationStatus.Warning);
         client.Verify(
             c => c.GetVehicleAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -92,7 +93,7 @@ public class SkodaConnectionTypeTests
             new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin, ValidateConnection = true },
             CancellationToken.None);
 
-        Assert.Equal(ConnectionValidationStatus.Success, result.Status);
+        result.Status.ShouldBe(ConnectionValidationStatus.Success);
     }
 
     [Fact]
@@ -123,8 +124,8 @@ public class SkodaConnectionTypeTests
             new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin, ValidateConnection = true },
             CancellationToken.None);
 
-        Assert.Equal(ConnectionValidationStatus.Failure, result.Status);
-        Assert.Contains("Vehicle not found", result.Message!);
+        result.Status.ShouldBe(ConnectionValidationStatus.Failure);
+        result.Message!.ShouldContain("Vehicle not found");
     }
 
     private const string ApiKey = "test-api-key";

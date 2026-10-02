@@ -1,4 +1,5 @@
 using Moq;
+using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
@@ -37,14 +38,14 @@ public class UpdateChargingProfileActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        Assert.Equal(ActionResultStatus.Success, result.Status);
-        Assert.NotNull(sentProfile);
-        Assert.Equal("Home", sentProfile.Name);
-        Assert.Equal(90, sentProfile.Settings.TargetStateOfChargeInPercent);
-        Assert.Equal("REDUCED", sentProfile.Settings.MaxChargingCurrent);
-        Assert.Equal("OFF", sentProfile.Settings.AutoUnlockPlugWhenCharged);
-        Assert.Equal(existingProfile.PreferredChargingTimes, sentProfile.PreferredChargingTimes);
-        Assert.Equal(existingProfile.Timers, sentProfile.Timers);
+        result.Status.ShouldBe(ActionResultStatus.Success);
+        sentProfile.ShouldNotBeNull();
+        sentProfile.Name.ShouldBe("Home");
+        sentProfile.Settings.TargetStateOfChargeInPercent.ShouldBe(90);
+        sentProfile.Settings.MaxChargingCurrent.ShouldBe("REDUCED");
+        sentProfile.Settings.AutoUnlockPlugWhenCharged.ShouldBe("OFF");
+        sentProfile.PreferredChargingTimes.ShouldBe(existingProfile.PreferredChargingTimes);
+        sentProfile.Timers.ShouldBe(existingProfile.Timers);
     }
 
     [Fact]
@@ -76,11 +77,11 @@ public class UpdateChargingProfileActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        Assert.Equal(ActionResultStatus.Success, result.Status);
-        Assert.Equal("Work", sentProfile!.Name);
-        Assert.Equal(100, sentProfile.Settings.TargetStateOfChargeInPercent);
-        Assert.Equal("MAXIMUM", sentProfile.Settings.MaxChargingCurrent);
-        Assert.Equal("PERMANENT", sentProfile.Settings.AutoUnlockPlugWhenCharged);
+        result.Status.ShouldBe(ActionResultStatus.Success);
+        sentProfile!.Name.ShouldBe("Work");
+        sentProfile.Settings.TargetStateOfChargeInPercent.ShouldBe(100);
+        sentProfile.Settings.MaxChargingCurrent.ShouldBe("MAXIMUM");
+        sentProfile.Settings.AutoUnlockPlugWhenCharged.ShouldBe("PERMANENT");
     }
 
     [Fact]
@@ -99,8 +100,8 @@ public class UpdateChargingProfileActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        Assert.Equal(ActionResultStatus.Failed, result.Status);
-        Assert.Equal(StepRunErrorCategory.Validation, result.ErrorCategory);
+        result.Status.ShouldBe(ActionResultStatus.Failed);
+        result.ErrorCategory.ShouldBe(StepRunErrorCategory.Validation);
         client.Verify(
             c => c.UpdateChargingProfileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<ChargingProfile>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -120,8 +121,8 @@ public class UpdateChargingProfileActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        Assert.Equal(ActionResultStatus.Failed, result.Status);
-        Assert.Equal(StepRunErrorCategory.Validation, result.ErrorCategory);
+        result.Status.ShouldBe(ActionResultStatus.Failed);
+        result.ErrorCategory.ShouldBe(StepRunErrorCategory.Validation);
         client.Verify(
             c => c.UpdateChargingProfileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<ChargingProfile>(), It.IsAny<CancellationToken>()),
             Times.Never);

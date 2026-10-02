@@ -1,4 +1,5 @@
 using Moq;
+using Shouldly;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Testing;
 using Umbraco.Community.Automate.Skoda.Actions;
@@ -25,8 +26,8 @@ public class SetChargeModeActionTests
             .WithConnection("community.skoda", new SkodaConnectionSettings { ApiKey = ApiKey, Vin = Vin })
             .ExecuteAsync();
 
-        Assert.Equal(ActionResultStatus.Success, result.Status);
+        result.Status.ShouldBe(ActionResultStatus.Success);
         client.Verify(c => c.SetChargeModeAsync(ApiKey, Vin, "TIMER", It.IsAny<CancellationToken>()), Times.Once);
-        Assert.Equal(Vin, ((VehicleCommandOutput)result.OutputData!).Vin);
+        ((VehicleCommandOutput)result.OutputData!).Vin.ShouldBe(Vin);
     }
 }
