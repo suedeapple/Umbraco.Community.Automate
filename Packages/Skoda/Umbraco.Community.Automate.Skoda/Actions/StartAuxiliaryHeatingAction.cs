@@ -19,7 +19,7 @@ public sealed class StartAuxiliaryHeatingAction(ActionInfrastructure infrastruct
         var connection = context.Connection ?? throw new InvalidOperationException("A Škoda connection is required.");
         var connectionSettings = connection.GetSettings<SkodaConnectionSettings>();
         if (string.IsNullOrWhiteSpace(settings.Spin))
-            return ActionResult.Failed(new ArgumentException("S-PIN is required."));
+            return ActionResult.Failed(new ArgumentException("S-PIN is required."), StepRunErrorCategory.Validation);
 
         var configuration = new StartAuxiliaryHeatingConfiguration(
             new TargetTemperature(settings.TargetTemperature, settings.TemperatureUnit),

@@ -14,6 +14,9 @@ public static class SkodaConfiguration
     /// <summary>The reference new connections start with, so a key in configuration is used without any typing.</summary>
     public const string ApiKeyReference = "$" + SecretsPath + ":ApiKey";
 
+    /// <summary>The reference the Start Auxiliary Heating action's S-PIN starts with.</summary>
+    public const string SpinReference = "$" + SecretsPath + ":Spin";
+
     // Fixed values: they're the same for every site, so they're constants here, not configuration.
     /// <summary>The MyŠkoda Public API.</summary>
     public const string BaseUrl = "https://public.api.connect.skoda-auto.cz/";

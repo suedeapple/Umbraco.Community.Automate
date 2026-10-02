@@ -22,7 +22,7 @@ Generate an API key in the **MyŠkoda** app. You'll also need the vehicle's VIN 
 
 ### 2. Store the key in configuration
 
-Add the key under `Umbraco:Automate:Secrets:Skoda`, in Umbraco Automate's shared Secrets section (locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)):
+Add the key under `Umbraco:Automate:Secrets:Skoda`, in Umbraco Automate's shared Secrets section (locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)). If you'll use **Start Auxiliary Heating**, add the vehicle's S-PIN there too:
 
 ```json
 {
@@ -30,7 +30,8 @@ Add the key under `Umbraco:Automate:Secrets:Skoda`, in Umbraco Automate's shared
     "Automate": {
       "Secrets": {
         "Skoda": {
-          "ApiKey": "your-api-key"
+          "ApiKey": "your-api-key",
+          "Spin": "your-s-pin"
         }
       }
     }
@@ -38,7 +39,7 @@ Add the key under `Umbraco:Automate:Secrets:Skoda`, in Umbraco Automate's shared
 }
 ```
 
-In production, use an environment variable instead: `Umbraco__Automate__Secrets__Skoda__ApiKey=your-api-key`. Umbraco Automate resolves references from this shared section out of the box, so there's nothing to register.
+In production, use environment variables instead: `Umbraco__Automate__Secrets__Skoda__ApiKey=your-api-key` and `Umbraco__Automate__Secrets__Skoda__Spin=your-s-pin`. Umbraco Automate resolves references from this shared section out of the box, so there's nothing to register.
 
 ### 3. Create the connection
 
@@ -55,16 +56,16 @@ All actions are in the **Skoda** group and act on the vehicle set on the connect
 |---|---|
 | **Get Vehicle Status** | None. Returns the vehicle's details and current state (see [Outputs](#outputs)). |
 | **Start Charging** / **Stop Charging** | None. |
-| **Set Charge Mode** | **Charge mode**: `MANUAL`, `TIMER`, `TIMER_CHARGING_WITH_CLIMATISATION`, `PREFERRED_CHARGING_TIMES`, `ONLY_OWN_CURRENT`, `IMMEDIATE_DISCHARGING` or `HOME_STORAGE_CHARGING`. |
-| **Set Charging Limit** | **Target state of charge** in percent. Vehicles typically accept 50–100 in steps of 10. |
-| **Update Charging Profile** | **Charging profile ID** (from *Get Vehicle Status*), plus any of **Name**, **Target state of charge**, **Max charging current (AC)** (`REDUCED` or `MAXIMUM`) and **Auto unlock plug when charged** (`PERMANENT` or `OFF`). Empty fields keep their current value. |
-| **Start Air Conditioning** | **Target temperature**, **Temperature unit** (`CELSIUS` or `FAHRENHEIT`), **Allow without external power**. |
+| **Set Charge Mode** | **Charge mode**, chosen from a list: Manual, Timer, Timer with climatisation, Preferred charging times, Only own current, Immediate discharging or Home storage charging. |
+| **Set Charging Limit** | **Target state of charge** in percent, from 50 to 100 in steps of 10. |
+| **Update Charging Profile** | **Charging profile ID** (from *Get Vehicle Status*), plus any of **Name**, **Target state of charge**, **Max charging current (AC)** (Reduced or Maximum) and **Auto unlock plug when charged** (Permanently or Off). Empty fields, and **Keep current setting** in the lists, keep the profile's current value. |
+| **Start Air Conditioning** | **Target temperature**, **Temperature unit** (Celsius or Fahrenheit), **Allow without external power**. |
 | **Stop Air Conditioning** | None. |
-| **Start Auxiliary Heating** | **Target temperature**, **Temperature unit**, **S-PIN** (required), **Duration in seconds** (default 1800), **Start mode** (`HEATING` or `VENTILATION`). |
+| **Start Auxiliary Heating** | **Target temperature**, **Temperature unit**, **S-PIN** (required; pre-filled with `$Umbraco:Automate:Secrets:Skoda:Spin`, stored encrypted and masked in run logs), **Duration in seconds** (1 to 3,600, default 1,800), **Start mode** (Heating or Ventilation). |
 | **Stop Auxiliary Heating** | None. |
 | **Start Active Ventilation** / **Stop Active Ventilation** | None. |
 
-Settings support `${ binding }` expressions, so values can come from the trigger or earlier steps.
+Choices such as the charge mode or temperature unit are picked from a list. The charging profile **Name** supports `${ binding }` expressions, so it can come from the trigger or an earlier step.
 
 ### Outputs
 

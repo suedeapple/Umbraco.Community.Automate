@@ -53,7 +53,7 @@ public string Priority { get; set; } = "Normal";          // the initializer is 
 
 Two rules come before the table:
 
-1. **If the value should come from the trigger or an earlier step, keep it a text field with `SupportsBindings = true`.** Bindings (`${ trigger.contentName }`) are text, so they can only be typed into a text box or text area. A dropdown, toggle or number input can't hold one. When a value is usually bound but has a fixed format (a number, a choice), keep it a `string`, say the expected format in the description, and parse it in the action with a clear `Validation` error.
+1. **If the value should come from the trigger or an earlier step, keep it a text field with `SupportsBindings = true`.** For a text box or text area with `SupportsBindings`, Automate swaps in its own binding-aware version, which offers the trigger's and earlier steps' values to pick from. Every other editor is rendered as it is and ignores `SupportsBindings`, so a dropdown, toggle or number input can't take a binding. When a value is usually bound but has a fixed format (a number, a choice), keep it a `string`, say the expected format in the description, and parse it in the action with a clear `Validation` error.
 2. **For a fixed set of values, use a list editor, never free text.** Users can't mistype a dropdown, and you don't need to validate the spelling.
 
 ## Editor reference
@@ -111,7 +111,9 @@ public string Priority { get; set; } = "Default";
 public string Visibility { get; set; } = "PUBLIC";
 ```
 
-Bind it to a `string`, even though the editor works with a list internally; Automate handles the conversion, as its own steps rely on. To use the value as an enum, keep the property a `string` and parse it in the action (`Enum.TryParse<QrCodeOutputFormat>(settings.Format, ignoreCase: true, out var format)`), failing with `StepRunErrorCategory.Validation` if it doesn't parse. That keeps the stored value a plain string that round-trips through the editor, and a renamed enum member can't break saved automations.
+Bind it to a `string`. The dropdown stores a list (`["High"]`), which Automate's `SingleValueArrayConverter` turns into `"High"`; an empty list becomes `null`.
+
+**An optional choice** ("leave as it is") gets an explicit first item with an empty value, e.g. `{ "name": "Keep current setting", "value": "" }`, on a `string?` property. Picking it stores an empty list, so the action receives `null`: treat null or blank as "not set" (`string.IsNullOrWhiteSpace`), not just null. Skoda's Update Charging Profile does this. To use the value as an enum, keep the property a `string` and parse it in the action (`Enum.TryParse<QrCodeOutputFormat>(settings.Format, ignoreCase: true, out var format)`), failing with `StepRunErrorCategory.Validation` if it doesn't parse. That keeps the stored value a plain string that round-trips through the editor, and a renamed enum member can't break saved automations.
 
 ### Radio button list
 
