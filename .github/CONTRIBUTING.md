@@ -136,7 +136,11 @@ npm run watch
 
 ### Using real credentials
 
-The Demo site's `appsettings.Development.json` contains placeholder credentials (`e2e-test`) so that everything boots. To test against the real services, override those values with user secrets. **Never edit the tracked config files with real values.**
+The Demo site's `appsettings.Development.json` contains placeholder credentials (`e2e-test`) so that everything boots. To test against the real services, override those values in one of two ways. **Never edit the tracked config files with real values.**
+
+**A local settings file** (simplest): copy `Umbraco.Community.Automate.Demo/appsettings.Local.example.json` to `appsettings.Local.json` in the same folder and replace the values for the services you want to try. The file is git-ignored, so it can't be committed, and the Demo site loads it after everything else, so it overrides the placeholders. Restart the site after changing it: some packages, like Google Sheets, read their settings at startup.
+
+**User secrets**, stored outside the repo altogether:
 
 ```bash
 dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<client-id>" --project Umbraco.Community.Automate.Demo

@@ -492,3 +492,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Local credential overrides for the Demo site (see appsettings.Local.example.json). Never commit.
+appsettings.Local.json
