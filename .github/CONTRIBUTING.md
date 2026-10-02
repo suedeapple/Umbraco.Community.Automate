@@ -235,7 +235,7 @@ If you use [Claude Code](https://claude.com/claude-code), the repo includes an `
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
 5. **Add package versions to `Directory.Packages.props`.** Projects don't specify versions themselves.
 6. **Write the package `README.md`**: installation, setup, every setting, outcomes and outputs, troubleshooting and compatibility. Add a row for it to the table in the root `README.md`.
-7. **Use placeholder settings only.** If the Demo site needs settings to boot, put obviously fake values in `Umbraco.Community.Automate.Demo/appsettings.Development.json`.
+7. **Add the package's configuration to the Demo site.** Every key the package reads goes in two files, under the same paths it uses: obviously fake placeholders (`"e2e-test"`) in `Umbraco.Community.Automate.Demo/appsettings.Development.json`, so the site boots and connections resolve, and `your-...` values in `appsettings.Local.example.json`, the template for trying it with real credentials. Never put real values in either file.
 
 Before the first release, follow [Adding a new package to this scheme](#adding-a-new-package-to-this-scheme) below.
 
@@ -262,7 +262,7 @@ A pull request that adds or changes a package should only change that package. P
 
 - everything under its own `Packages/<Area>/` folder;
 - its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
-- placeholder settings under its own name in `Umbraco.Community.Automate.Demo/appsettings.Development.json`;
+- its configuration keys, under its own name, in `Umbraco.Community.Automate.Demo/appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (the template for real values);
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 

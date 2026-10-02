@@ -547,7 +547,7 @@ public class ExampleConnectionTypeTests
 
 ## Wiring into the repo
 
-The same for every package; see [full.md](full.md#wiring-into-the-repo) for the solution, Demo site and root README snippets, and the [README skeleton](full.md#readme-skeleton). For this package, also add a placeholder key to `Umbraco.Community.Automate.Demo/appsettings.Development.json` under `Umbraco:Automate:Secrets:Example:ApiKey` (an obviously fake value; real keys go in user secrets).
+The same for every package; see [full.md](full.md#wiring-into-the-repo) for the solution, Demo site and root README snippets, and the [README skeleton](full.md#readme-skeleton). That includes adding the package's configuration to the Demo site: `Umbraco:Automate:Secrets:Example:ApiKey` with a fake placeholder (`"e2e-test"`) in `Umbraco.Community.Automate.Demo/appsettings.Development.json`, and with a `your-...` value in `appsettings.Local.example.json`, the template for real credentials.
 
 ## Adding a second action
 

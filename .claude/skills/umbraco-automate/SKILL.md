@@ -81,7 +81,10 @@ Work through these in order and tick them off. For a package with no connection,
 7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from [full.md](references/full.md#tests).
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
 9. **Wire it in**: add both projects to `Umbraco.Community.Automate.Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
-10. **Demo placeholders**: if the Demo site needs settings to boot, add obviously fake values (e.g. `"e2e-test"`) to `Umbraco.Community.Automate.Demo/appsettings.Development.json`. Real credentials go in user secrets only.
+10. **Demo configuration**: add **every** configuration key the package reads (each credential reference, any variables, OAuth provider settings) to the Demo site, in two files, under the same paths as `<Area>Configuration`:
+    - `Umbraco.Community.Automate.Demo/appsettings.Development.json`: obviously fake placeholders (`"e2e-test"`), so the site boots, new connections' references resolve, and CI's end-to-end runs work without real credentials.
+    - `Umbraco.Community.Automate.Demo/appsettings.Local.example.json`: the same keys with `your-...` values, so a contributor copies it to the git-ignored `appsettings.Local.json` and fills in real credentials to try the package live. Use non-empty values: an empty one overrides the placeholder and can stop the site starting.
+    Real credentials never go in either tracked file; they go in `appsettings.Local.json` or user secrets.
 11. **Tests** for every action, outcome and trigger and the connection validation (see Testing). Full with a `Client/`: front-end tests too, and build it (`npm ci && npm run build`) before running the Demo site or packing.
 12. **README.md** in the package (see README), and a row in the root `README.md` connections table.
 13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Umbraco.Community.Automate.Demo/appsettings.Development.json` or user secrets).
@@ -92,7 +95,7 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 
 ### Aliases, names and groups
 - **Aliases are permanent once released.** Saved connections and automations store the connection type, action and trigger aliases, so renaming one breaks them. Pick them carefully up front.
-- Prefix every alias with `community.`: `community.<area>` for the connection type and `community.<area>.<name>` (camelCase) for actions and triggers, e.g. `community.bluesky` and `community.bluesky.createPost`. The prefix keeps community packages apart from Umbraco's own step types. Every connection in this repo follows it.
+- Prefix every alias with `community.`: `community.<area>` for the connection type and `community.<area>.<name>` (camelCase) for actions and triggers, e.g. `community.bluesky` and `community.bluesky.createPost`. The prefix keeps community packages apart from Umbraco's own step types. Every new package uses it, with the `Umbraco.Community.Automate.<Area>` package ID and namespaces. The only exception is a migrated package whose author chooses to keep their own package ID, namespaces and aliases (see [references/migrating.md](references/migrating.md)); the rest of the conventions still apply to it.
 - Set `ConnectionTypeAlias` on every action to the connection type alias, so the action only offers matching connections.
 - Write the alias, name, group and icon directly on each `[ConnectionType]`, `[Action]` and `[Trigger]` attribute, as Umbraco Automate's own step types do. Don't gather them into an `<Area>Constants` class: the attribute is where a reader looks for them.
 - Use a shared `Group` where one fits (`Social Networks`, `Productivity`) so related connections sit together in the pickers.
@@ -176,7 +179,7 @@ Packages are independent: work on one package must never change how another buil
 
 - everything under its own `Packages/<Area>/` folder;
 - its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
-- placeholder settings under its own name in `Umbraco.Community.Automate.Demo/appsettings.Development.json`;
+- its configuration keys, under its own name, in `Umbraco.Community.Automate.Demo/appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (the template for real values);
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 
@@ -193,6 +196,7 @@ Don't change other packages, the examples, `.github/workflows/`, `.githooks/`, r
 To bring in a package that lives in its own repo (as WeatherApi did from `SA.Automate.WeatherApi`), or to bring a package already here up to the current conventions, follow [references/migrating.md](references/migrating.md). The essentials:
 
 - Work from the source's latest default branch, and inventory it against these conventions before changing anything.
+- Ask first whether it adopts the community naming (recommended) or keeps the author's own package ID, namespaces and aliases. Either way it follows every other convention.
 - If the package has been released, ask before renaming aliases, moving configuration or changing the package ID, because saved automations depend on them, and document every such change in a **Migrating from <old package>** README section (see the Mastodon and WeatherApi READMEs).
 - Reshape it to the layout and conventions here, keep its behaviour, keep its tests passing, and drop what the repo handles centrally (release workflows, `umbraco-marketplace.json`, `NuGet.config`, licence and icon copies).
 

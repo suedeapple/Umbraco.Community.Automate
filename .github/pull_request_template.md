@@ -20,6 +20,7 @@
 
 - [ ] Projects under `Packages/<Area>/`, with a `Directory.Build.props` and its own `MinVerTagPrefix`
 - [ ] Added to `Umbraco.Community.Automate.Demo.slnx` and referenced from the Demo site
+- [ ] Every configuration key it reads is in the Demo's `appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (template)
 - [ ] Row added to the packages table in the root `README.md`
 - [ ] Added to the package list in `.github/ISSUE_TEMPLATE/bug-report.yml` and to `.github/CODEOWNERS`
 - [ ] Aliases chosen carefully: they're stored in people's automations and can't change once released

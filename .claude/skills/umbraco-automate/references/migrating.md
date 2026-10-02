@@ -19,17 +19,22 @@ Like building a new package, take the user through choices before changing anyth
 
 Present the inventory and the list of differences briefly, then ask.
 
-## Step 1: Scope
+## Step 1: Identity and scope
 
 Ask, in one round:
 
-1. **How far to go**: "Full migration to the conventions (Recommended)", or "Move it as it is first, align it in a follow-up". Recommend full unless the package is large and the user wants a quick first PR.
-2. **Area name**: propose one (the service name, PascalCase), which sets `Packages/<Area>/`, the package ID `Umbraco.Community.Automate.<Area>` and the tag prefix.
-3. **Credits**: who goes in `<Authors>` and in `CODEOWNERS` (default: the original author, plus "Umbraco Community").
+1. **Identity: community naming or the author's own?** Ask this first, and challenge it: it decides most of what follows. A migrated package can either adopt this repo's identity (package ID `Umbraco.Community.Automate.<Area>`, namespaces `Umbraco.Community.Automate.<Area>.*`, aliases `community.<area>...`) or keep its own "signature" (e.g. `SA.Automate.Pushover`, `SA.Automate.Pushover.*`, `pushover...`). Options:
+   - **"Adopt the community naming (Recommended)"**: it matches every other package, so contributors and users find it the same way, and it's published and maintained as part of the community set.
+   - **"Keep my own package ID, namespaces and aliases"**: existing users upgrade in place with no reinstall and no broken automations, and the author's name stays on the package. Explain the cost: it'll be the odd one out in the repo, and contributors have to learn a second naming scheme.
+
+   Recommend the community naming, but respect the author's choice: some will want to keep their own signature. If they keep it, everything else still follows the conventions (layout, folders, configuration class, error categories, settings editors, tests, wiring); only the names stay theirs, and Step 2's alias and package ID questions fall away. The folder is still `Packages/<Area>/`, and the tag prefix is still `<area>-v`.
+2. **How far to go**: "Full migration to the conventions (Recommended)", or "Move it as it is first, align it in a follow-up". Recommend full unless the package is large and the user wants a quick first PR.
+3. **Area name**: propose one (the service name, PascalCase), which sets `Packages/<Area>/` and the tag prefix (and, with the community naming, the package ID `Umbraco.Community.Automate.<Area>`).
+4. **Credits**: who goes in `<Authors>` and in `CODEOWNERS` (default: the original author, plus "Umbraco Community").
 
 ## Step 2: Decisions that affect existing users
 
-Only ask these if the package has been released. If it hasn't, apply the conventions and say so.
+Only ask these if the package has been released and is adopting the community naming. If it hasn't been released, apply the conventions and say so. If it keeps its own identity, the aliases and package ID stay as they are; only ask about the configuration path.
 
 1. **Aliases**: saved connections and automations store the connection type and action aliases, so renaming them to `community.<area>` breaks every existing automation. Options: "Adopt `community.<area>` and document the breaking change (Recommended)", or "Keep the old aliases". (WeatherApi and Mastodon adopted the new aliases; their READMEs explain the move.)
 2. **Configuration path**: if the package read credentials from somewhere else (WeatherApi used `Umbraco:Automate:Secrets:WeatherApiKey`), moving to `Umbraco:Automate:Secrets:<Area>:<Key>` only changes the default for new connections; existing connections keep their saved values or references. Options: "Move to the shared section and document it (Recommended)", "Keep the old path".
@@ -47,7 +52,7 @@ Present the planned changes as a checklist and ask "Make these changes (Recommen
 - **Icons**: a built-in icon, or custom icons as static `umbraco-package.json` + `icons/` files (replacing any `IPackageManifestReader`).
 - **Packaging**: central package versions in `Directory.Packages.props` (no versions in the `.csproj`), a `Directory.Build.props` with `MinVerTagPrefix`, and the repo's README/icon packing. Remove what the repo handles centrally: release workflows, `umbraco-marketplace.json`, `NuGet.config`, separate licence and icon copies.
 - **Tests**: keep the existing tests passing. New tests use xUnit's `Assert` and hand-written fakes; converting existing Shouldly or Moq tests is optional and the user's call (ask).
-- **Wiring**: solution, Demo site reference, Demo placeholder settings, root README table, `CODEOWNERS`, the bug report's package list.
+- **Wiring**: solution, Demo site reference, the package's configuration keys in the Demo's `appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (template for real values), root README table, `CODEOWNERS`, the bug report's package list.
 - **README**: rewrite to the repo's structure (see SKILL.md), with a **Migrating from <old package>** section if it was released: the `dotnet remove package <OldId>` / `dotnet add package Umbraco.Community.Automate.<Area>` commands, what moved (aliases, configuration keys) and what users must do. Describe changes against the old package only, not intermediate states.
 
 ## Step 4: Migrate, then verify

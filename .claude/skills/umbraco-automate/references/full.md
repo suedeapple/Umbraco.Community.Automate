@@ -1435,12 +1435,20 @@ The same for every package, simple or full.
     <ProjectReference Include="..\Packages\Example\Umbraco.Community.Automate.Example\Umbraco.Community.Automate.Example.csproj" />
 ```
 
-`Umbraco.Community.Automate.Demo/appsettings.Development.json`, under `Umbraco:Automate:Secrets`, an obviously fake placeholder so the Demo site's connection resolves (real keys go in user secrets only):
+Every configuration key the package reads goes into the Demo site twice, under the same paths as `ExampleConfiguration`.
+
+`Umbraco.Community.Automate.Demo/appsettings.Development.json`, under `Umbraco:Automate:Secrets` (and `Variables` for any non-secret values): obviously fake placeholders, so the site boots and new connections' references resolve without real credentials:
 
 ```json
 "Example": {
   "ApiKey": "e2e-test"
 }
+```
+
+`Umbraco.Community.Automate.Demo/appsettings.Local.example.json`, in the same place: the template contributors copy to the git-ignored `appsettings.Local.json` to try the package with real credentials. Use a non-empty `your-...` value, since an empty one would override the placeholder:
+
+```json
+"Example": { "ApiKey": "your-example-api-key" }
 ```
 
 Root `README.md` packages table:

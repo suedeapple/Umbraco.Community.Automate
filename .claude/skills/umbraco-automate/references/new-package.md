@@ -45,6 +45,8 @@ Ask, in one round:
 Propose, don't ask open-endedly:
 
 - **Area name** (`Facebook`), which sets the folder `Packages/Facebook/`, the package ID `Umbraco.Community.Automate.Facebook`, the configuration path `Umbraco:Automate:Secrets:Facebook`, and the tag prefix `facebook-v`.
+
+A new package always starts with the community naming: the `Umbraco.Community.Automate.<Area>` package ID and namespaces, and `community.` aliases. Don't offer a personal prefix (`SA.`, `OC.`) as an option. If the user asks for one, recommend the community naming and explain why: it matches every other package, and it's published and maintained as part of the community set. Only someone migrating a package that's already released under their own name has a reason to keep it (see [migrating.md](migrating.md)).
 - **Aliases**: `community.facebook` and `community.facebook.<action>`, e.g. `community.facebook.createPagePost`. Point out that aliases are permanent once released.
 - **Display names** for the connection and each action, as they'll appear in the backoffice ("Facebook Page", "Post to Facebook Page").
 
