@@ -14,6 +14,7 @@
 - [ ] Package README updated: settings, outcomes and outputs, troubleshooting
 - [ ] Checked in the Demo site: the connection, action or trigger appears with its icon and works
 - [ ] No real credentials anywhere in the change (placeholders only; real values in user secrets)
+- [ ] Only changes this package's folder and its wiring ([what a package's pull request may change](https://github.com/umbraco-community/Umbraco.Community.Automate/blob/main/.github/CONTRIBUTING.md#what-a-packages-pull-request-may-change)); anything else is explained below
 
 ### For a new package
 
@@ -22,3 +23,4 @@
 - [ ] Row added to the packages table in the root `README.md`
 - [ ] Added to the package list in `.github/ISSUE_TEMPLATE/bug-report.yml` and to `.github/CODEOWNERS`
 - [ ] Aliases chosen carefully: they're stored in people's automations and can't change once released
+- [ ] Doesn't duplicate a step Umbraco Automate already includes, or an existing package here

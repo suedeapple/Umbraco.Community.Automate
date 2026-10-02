@@ -21,7 +21,7 @@ Look up the service's API, using web search and its developer documentation, and
 - **What can trigger an automation from it**: webhooks the service sends, or nothing (in which case triggers come from Umbraco, not the service).
 - **How it authenticates**: API key or token, OAuth (and whether OAuth tokens expire and need refreshing), or none.
 - **Hurdles a site owner will hit**: app review or approval (Facebook, Instagram and LinkedIn require an app and often review for posting permissions), business verification, paid tiers, rate limits, required scopes, deprecations.
-- **Whether a package already exists**: in this repo (`Packages/`), as an open pull request, or on NuGet. If one exists, suggest extending it instead (see "Adding to an existing connection" in SKILL.md).
+- **Whether it already exists**: in this repo (`Packages/`), as an open pull request, on NuGet, or as one of Umbraco Automate's built-in steps (listed in SKILL.md under "Packages without a provider"). If a package exists, suggest extending it instead (see "Adding to an existing connection"); if a built-in step already does it, say so before going further. For a general-purpose step with no service, suggest an existing general package that fits before a new one.
 
 Tell the user what you found in a few sentences before the first question, especially any hurdle that could stop the package being useful ("Posting to a Facebook Page needs a Meta app with the `pages_manage_posts` permission, which requires App Review"). If a hurdle makes the package impractical, say so and let them decide whether to continue.
 
@@ -67,7 +67,7 @@ Options: "Looks right (Recommended)", "Change something". Settings are where mos
 
 Summarise every decision in a short list: what it does, how it connects, shape, names, settings per action, icon, and anything the site owner will have to do at the service (create an app, request permissions). Ask "Build it (Recommended)" or "Change something".
 
-Then build it, following the checklist under "Creating a new connection" in SKILL.md and [simple.md](simple.md) or [full.md](full.md). Don't ask further questions during the build unless something you found contradicts an earlier answer; if it does, explain and ask. At the end, report what you built, what you verified (build, tests, the Demo site), and what the user needs to do next (set up the app at the service, add the key to user secrets, open a pull request).
+Then build it, following the checklist under "Creating a new connection" in SKILL.md and [simple.md](simple.md) or [full.md](full.md). Only change the files listed under "What a change may touch" in SKILL.md: the package's own folder and its wiring. Don't ask further questions during the build unless something you found contradicts an earlier answer; if it does, explain and ask. At the end, report what you built, what you verified (build, tests, the Demo site), and what the user needs to do next (set up the app at the service, add the key to user secrets, open a pull request).
 
 ## Shortcuts
 

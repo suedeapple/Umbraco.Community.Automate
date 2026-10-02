@@ -52,7 +52,7 @@ Present the planned changes as a checklist and ask "Make these changes (Recommen
 
 ## Step 4: Migrate, then verify
 
-- Make the changes, preserving behaviour: the package should do exactly what it did before, apart from the decisions above. Where behaviour changes on purpose, note it in the README's migration section.
+- Make the changes, touching only the package's own folder and its wiring ("What a change may touch" in SKILL.md), and preserving behaviour: the package should do exactly what it did before, apart from the decisions above. Where behaviour changes on purpose, note it in the README's migration section.
 - Bring the history across only if the user wants it (ask; `git subtree` or a fresh copy noting the source commit in the PR description are both fine).
 - Verify: `dotnet build`, `dotnet test`, `dotnet pack` (check the front end lands in `staticwebassets/` if there is one), then run the Demo site and check the connection type, actions and icon appear and **Test connection** works with placeholder values.
 - Report what changed, anything you couldn't migrate or verify, and the follow-ups for the author (deprecate the old package, update links, tell users).

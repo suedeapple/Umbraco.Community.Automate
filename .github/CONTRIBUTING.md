@@ -13,6 +13,8 @@ You can contribute in several ways: report a bug, improve a README, add an actio
 - [Building and testing](#building-and-testing)
 - [Making a change](#making-a-change)
 - [Adding a new package](#adding-a-new-package)
+  - [Packages without a provider](#packages-without-a-provider)
+  - [What a package's pull request may change](#what-a-packages-pull-request-may-change)
 - [Preventing secret leaks](#preventing-secret-leaks)
 - [Releasing a package](#releasing-a-package)
 
@@ -223,7 +225,7 @@ git push --force-with-lease
 
 If you use [Claude Code](https://claude.com/claude-code), the repo includes an `umbraco-automate` skill ([`.claude/skills/umbraco-automate/`](../.claude/skills/umbraco-automate/SKILL.md)). It loads automatically when you work in this repo. Ask it to "build a package for <service>" and it researches the service, then walks you through the choices (what the package does, how it connects, names, settings) before building it. It can also migrate a package from its own repository into this one, or bring an existing package up to the current conventions. For anything else Automate-related ("add a trigger to Mastodon"), it follows the layout and conventions here. The checklist below is the same process by hand.
 
-1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from the [Simple example](../_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md) for an API key and an action, or the [Kitchen Sink](../_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md) when you need a trigger, outcomes or a front end; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
+1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from the [Simple example](../Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md) for an API key and an action, or the [Kitchen Sink](../Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md) when you need a trigger, outcomes or a front end; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a package](#inside-a-package): `Composers/`, plus `Actions/`, `Triggers/` and `Connections/` for whichever of those the package adds, and `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
@@ -232,6 +234,35 @@ If you use [Claude Code](https://claude.com/claude-code), the repo includes an `
 7. **Use placeholder settings only.** If the Demo site needs settings to boot, put obviously fake values in `Umbraco.Community.Automate.Demo/appsettings.Development.json`.
 
 Before the first release, follow [Adding a new package to this scheme](#adding-a-new-package-to-this-scheme) below.
+
+### Packages without a provider
+
+Not every package connects to a service. Triggers and actions that work on Umbraco itself, or general-purpose steps that need no connection, are just as welcome. They go in `Packages/` like any other package, with the same layout and no `Connections/` folder. There are no separate top-level folders for triggers, actions or connections, because the thing people install, version and release is a package, and most packages contain more than one kind.
+
+- **Name it after what it's for**, e.g. `Packages/ContentTools/` for extra content triggers and actions, or `Packages/Text/` for steps that format text and dates. Keep each package to one purpose.
+- **Don't make a catch-all package** (`Common`, `Utilities`). Everyone would install every step to get one, and any change would release them all. If a step fits an existing general package, add it there; if not, start a new focused one.
+- **Don't duplicate what Umbraco Automate already does.** Umbraco Automate 17 already includes these, so check the list before building something general-purpose:
+
+| | Built in |
+|---|---|
+| Content | Triggers: Content Published, Saved and Unpublished (and their batch versions). Actions: Find Content, Get Content, Get Content Property, Update Content Property, Publish Content, Unpublish Content, Notify Editor |
+| Media | Triggers: Media Saved, Deleted and Trashed (and batch versions). Action: Update Media Property |
+| Members and users | Triggers: Member Saved and Deleted; User Saved, Deleted, Locked, Login Success, Login Failed and Password Changed |
+| General | Triggers: Manual, Scheduled, Webhook. Actions: HTTP Request, Send Email, Log Message, Delay, Request Approval, Set Variable, plus the If, Switch, While and For Each steps |
+
+- **Don't share code between packages yet.** A shared library would be a dependency every package has to keep in step with. A few small duplicated classes are cheaper; we'll revisit it if the same substantial code turns up in several packages.
+
+### What a package's pull request may change
+
+A pull request that adds or changes a package should only change that package. Packages are independent: a change for one must never alter how another builds, behaves or is released. A package's pull request may touch:
+
+- everything under its own `Packages/<Area>/` folder;
+- its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
+- placeholder settings under its own name in `Umbraco.Community.Automate.Demo/appsettings.Development.json`;
+- **new** entries in `Directory.Packages.props` for libraries no package uses yet;
+- its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
+
+It shouldn't change other packages, the examples, the CI and release workflows (`.github/workflows/`), `.githooks/`, the root `.editorconfig` or `.gitattributes`, the skill in `.claude/`, or the version of a library other packages already use. If one of those really is necessary (a shared library needs an upgrade, CI can't build your package), open an issue or a separate pull request for it and explain why, so it can be reviewed on its own. `CODEOWNERS` asks the owners of anything outside your package to review changes to it.
 
 ## Preventing secret leaks
 

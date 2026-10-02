@@ -64,7 +64,7 @@ Why these names:
 
 Don't create empty folders: add `Triggers/`, `Api/`, `Models/`, `Configuration/`, `Client/` or `wwwroot/` only when there's something to put in them.
 
-A package doesn't have to be a connection. One that only adds a trigger or an action (for example an Umbraco-side trigger, or an action that needs no external service) is just as welcome: it uses the same layout with only the folders it needs, say `Triggers/` and `Composers/`, and no `Connections/`. Name its `<Area>` after what it does when there's no service to name it after.
+A package doesn't have to be a connection. One that only adds a trigger or an action (for example an Umbraco-side trigger, or an action that needs no external service) is just as welcome: it uses the same layout with only the folders it needs, say `Triggers/` and `Composers/`, and no `Connections/`. See **Packages without a provider** below.
 
 Keep the structure flat: these packages are small, so standard folders sit directly in the package root (models in a root `Models/`, not `Api/Models/`), which makes everything easy to find.
 
@@ -151,6 +151,35 @@ Pick the right editor for every setting rather than leaving everything a text bo
 ## README
 
 The package README ships inside the NuGet package and is what nuget.org and the Umbraco Marketplace show, so write it for site developers installing the package. Sections, in order: one-line summary; **Installation** (`dotnet add package`); **Setup** (getting credentials from the service; storing them under `Umbraco:Automate:Secrets:<Area>` / `Umbraco:Automate:Variables:<Area>` with an appsettings example and the environment-variable equivalents, e.g. `Umbraco__Automate__Secrets__<Area>__ApiKey`; creating the connection under **Automation → Settings → Connections** and noting the fields come pre-filled with references); **Actions** (a table of every setting); **Outcomes and outputs**; **Troubleshooting** (the error messages users will actually see, including Automate's *Configuration key '...' not found* for a missing key); **Compatibility**; **Links**. Use absolute URLs for anything outside the package folder, because relative links break on nuget.org.
+
+## Packages without a provider
+
+Triggers and actions with no external service (extra content steps, text and date helpers) are packages in `Packages/` like the rest; there are no top-level folders per kind, because the unit people install and release is a package and most contain several kinds.
+
+- Name the package after its purpose (`Packages/ContentTools/`, `Packages/Text/`) and keep it to one purpose. Never create a catch-all (`Common`, `Utilities`): users would install every step to get one, and every change would release them all.
+- Before building a general-purpose step, check it isn't already in Umbraco Automate or in an existing package here; if a step fits an existing general package, add it there.
+- Don't create a shared library between packages; duplicate small helpers instead.
+
+Umbraco Automate 17 already includes these, so check the list before building something general-purpose:
+
+| | Built in |
+|---|---|
+| Content | Triggers: Content Published, Saved and Unpublished (and their batch versions). Actions: Find Content, Get Content, Get Content Property, Update Content Property, Publish Content, Unpublish Content, Notify Editor |
+| Media | Triggers: Media Saved, Deleted and Trashed (and batch versions). Action: Update Media Property |
+| Members and users | Triggers: Member Saved and Deleted; User Saved, Deleted, Locked, Login Success, Login Failed and Password Changed |
+| General | Triggers: Manual, Scheduled, Webhook. Actions: HTTP Request, Send Email, Log Message, Delay, Request Approval, Set Variable, plus the If, Switch, While and For Each steps |
+
+## What a change may touch
+
+Packages are independent: work on one package must never change how another builds, behaves or is released. When creating or changing a package, only change:
+
+- everything under its own `Packages/<Area>/` folder;
+- its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
+- placeholder settings under its own name in `Umbraco.Community.Automate.Demo/appsettings.Development.json`;
+- **new** entries in `Directory.Packages.props` for libraries no package uses yet;
+- its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
+
+Don't change other packages, the examples, `.github/workflows/`, `.githooks/`, root build or editor settings, this skill, or the version of a library other packages already use. If one of those is genuinely necessary (the package can't build without it), stop and tell the user what and why, and suggest a separate issue or pull request, rather than changing it as part of the package. The exception is when the user explicitly asks for a repo-wide change.
 
 ## Adding to an existing connection
 
