@@ -11,14 +11,19 @@ namespace Umbraco.Community.Automate.Examples.Simple.Tests.Actions;
 public class SendMessageActionTests
 {
     [Fact]
-    public async Task Posts_the_message_with_the_api_key()
+    public async Task Posts_the_message_and_returns_what_the_service_received()
     {
-        var handler = new StubHttpMessageHandler(StubHttpMessageHandler.Json(HttpStatusCode.OK, "{}"));
+        var response = StubHttpMessageHandler.Json(HttpStatusCode.OK, """{ "json": { "message": "Hello" }, "url": "https://httpbin.org/anything" }""");
+        response.Headers.Date = new DateTimeOffset(2026, 10, 2, 15, 32, 50, TimeSpan.Zero);
+        var handler = new StubHttpMessageHandler(response);
 
         var result = await Run(handler, "Hello");
 
         Assert.Equal(ActionResultStatus.Success, result.Status);
-        Assert.Equal(200, Assert.IsType<SendMessageOutput>(result.OutputData).StatusCode);
+        var output = Assert.IsType<SendMessageOutput>(result.OutputData);
+        Assert.Equal("Hello", output.Message);
+        Assert.Equal("https://httpbin.org/anything", output.Url);
+        Assert.Equal(new DateTimeOffset(2026, 10, 2, 15, 32, 50, TimeSpan.Zero), output.ReceivedAt);
 
         var request = handler.Requests.Single();
         Assert.Equal(HttpMethod.Post, request.Method);

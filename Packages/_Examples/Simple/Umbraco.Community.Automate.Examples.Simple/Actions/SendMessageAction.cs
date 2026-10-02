@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Community.Automate.Examples.Simple.Configuration;
 using Umbraco.Community.Automate.Examples.Simple.Connections;
@@ -49,7 +50,18 @@ public sealed class SendMessageAction(ActionInfrastructure infrastructure, IHttp
         using (response)
         {
             if (response.IsSuccessStatusCode)
-                return Success(new SendMessageOutput { StatusCode = (int)response.StatusCode });
+            {
+                // httpbin.org echoes the request back; a real service would return what it created.
+                var echoed = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
+                return Success(new SendMessageOutput
+                {
+                    Message = echoed.TryGetProperty("json", out var json) && json.TryGetProperty("message", out var message)
+                        ? message.GetString() ?? string.Empty
+                        : string.Empty,
+                    Url = echoed.TryGetProperty("url", out var url) ? url.GetString() ?? string.Empty : string.Empty,
+                    ReceivedAt = response.Headers.Date,
+                });
+            }
 
             var category = (int)response.StatusCode switch
             {

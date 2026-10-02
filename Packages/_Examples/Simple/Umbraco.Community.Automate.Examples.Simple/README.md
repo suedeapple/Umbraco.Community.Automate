@@ -11,7 +11,7 @@ When you need more (a trigger, outcomes, a shared API client, custom icons or a 
 | | Name | Shows |
 |---|---|---|
 | Connection | **Simple Example (httpbin.org)** | An API key pre-filled with a configuration reference; **Test connection** making one cheap authenticated call |
-| Action | **Send Message (Simple Example)** | A setting that accepts `${ bindings }`, a typed output, and error categories that tell Automate whether to retry |
+| Action | **Send Message (Simple Example)** | A setting that accepts `${ bindings }`, a typed output (the message as the service received it, the URL it went to, and when it arrived, which httpbin.org echoes back), and error categories that tell Automate whether to retry |
 
 It uses Umbraco's built-in `icon-paper-plane`, so there are no front-end files.
 
@@ -38,7 +38,7 @@ dotnet run --project Umbraco.Community.Automate.Demo
 
 1. In **Automation → Settings → Connections**, create a **Simple Example (httpbin.org)** connection. The API key is already filled in; click **Test connection**.
 2. Create an automation with any trigger (for example **Content Published**) and a **Send Message (Simple Example)** step, with a message such as `Published ${ trigger.contentName }`.
-3. Publish some content and check **Automation → Runs**.
+3. Publish some content and check **Automation → Runs**: the step's output shows your message as httpbin.org received it, the URL it was posted to, and when it arrived. A later step can use them as `${ steps.<alias>.message }`, `${ steps.<alias>.url }` and `${ steps.<alias>.receivedAt }`.
 
 ## Run the tests
 
