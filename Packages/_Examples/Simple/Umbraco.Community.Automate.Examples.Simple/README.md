@@ -43,5 +43,5 @@ dotnet run --project Umbraco.Community.Automate.Demo
 ## Run the tests
 
 ```bash
-dotnet test _Examples/Simple/Umbraco.Community.Automate.Examples.Simple.Tests
+dotnet test Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple.Tests
 ```

@@ -18,10 +18,10 @@ Each package's README has the full setup guide, all its settings, and troublesho
 
 ### Examples
 
-`_Examples/` holds two small, working reference connections to copy when you start a new one. Both talk to [httpbin.org](https://httpbin.org), so they work in the Demo site with no signup, and both are built and tested by CI but never published.
+`Packages/_Examples/` holds two small, working reference connections to copy when you start a new one. Both talk to [httpbin.org](https://httpbin.org), so they work in the Demo site with no signup, and both are built and tested by CI but never published.
 
-- [**Simple**](_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): an API key and one action, the shape most connections start with.
-- [**Kitchen Sink**](_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
+- [**Simple**](Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): an API key and one action, the shape most connections start with.
+- [**Kitchen Sink**](Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
 
 ## Requirements
 
@@ -101,9 +101,9 @@ For Google Sheets, build its backoffice front end first (`npm ci && npm run buil
 cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci && npm run build
 cd ../../../..
-cd _Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
+cd Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm run build
-cd ../../../..
+cd ../../../../..
 
 dotnet run --project Umbraco.Community.Automate.Demo
 ```

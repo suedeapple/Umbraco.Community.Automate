@@ -1,12 +1,12 @@
 <Solution>
   <Project Path="Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj" />
-  <Folder Name="/_Examples/KitchenSink/">
-    <Project Path="_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink.Tests/Umbraco.Community.Automate.Examples.KitchenSink.Tests.csproj" />
-    <Project Path="_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink.csproj" />
+  <Folder Name="/Packages/_Examples/KitchenSink/">
+    <Project Path="Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink.Tests/Umbraco.Community.Automate.Examples.KitchenSink.Tests.csproj" />
+    <Project Path="Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink.csproj" />
   </Folder>
-  <Folder Name="/_Examples/Simple/">
-    <Project Path="_Examples/Simple/Umbraco.Community.Automate.Examples.Simple.Tests/Umbraco.Community.Automate.Examples.Simple.Tests.csproj" />
-    <Project Path="_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/Umbraco.Community.Automate.Examples.Simple.csproj" />
+  <Folder Name="/Packages/_Examples/Simple/">
+    <Project Path="Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple.Tests/Umbraco.Community.Automate.Examples.Simple.Tests.csproj" />
+    <Project Path="Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/Umbraco.Community.Automate.Examples.Simple.csproj" />
   </Folder>
   <Folder Name="/Packages/DevTo/">
     <Project Path="Packages/DevTo/Umbraco.Community.Automate.DevTo.Tests/Umbraco.Community.Automate.DevTo.Tests.csproj" />

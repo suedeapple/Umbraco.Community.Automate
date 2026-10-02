@@ -5,7 +5,7 @@ name: CI
 #
 # Packages are discovered from the folder layout rather than listed here, so a new package
 # needs no change to this file at all: drop it in following the existing convention
-# (<Category>/<Area>/Umbraco.Community.Automate.<Area>/ with a sibling .Tests project, e.g.
+# (Packages/<Area>/Umbraco.Community.Automate.<Area>/ with a sibling .Tests project, e.g.
 # Packages/Mastodon/) and it is picked up on the next run.
 
 on:
@@ -34,9 +34,10 @@ jobs:
 
           # A package is any directory with its own Directory.Build.props — the same marker
           # release.yml already relies on to map a tag back to a package. Packages sit at
-          # <Category>/<Area>/<Project>/, e.g. Packages/Mastodon/Umbraco.Community.Automate.Mastodon.
+          # Packages/<Area>/<Project>/, e.g. Packages/Mastodon/Umbraco.Community.Automate.Mastodon,
+          # and the reference examples one level deeper, e.g. Packages/_Examples/Simple/<Project>.
           mapfile -t PROJECT_DIRS < <(
-            find . -mindepth 4 -maxdepth 4 -name Directory.Build.props -not -path './.git/*' \
+            find . -mindepth 4 -maxdepth 5 -name Directory.Build.props -not -path './.git/*' -not -path '*/node_modules/*' \
               | xargs -r -n1 dirname | sed 's#^\./##' | sort
           )
 

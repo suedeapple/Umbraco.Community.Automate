@@ -56,10 +56,10 @@ git push origin main
 ## Repo layout
 
 ```
-_Examples/                                    reference packages to copy (built and tested, never published)
-  Simple/                                     an API key and one action
-  KitchenSink/                                every convention, including a trigger and a front end
 Packages/                                     one folder per package
+  _Examples/                                  reference packages to copy (built and tested, never published)
+    Simple/                                   an API key and one action
+    KitchenSink/                              every convention, including a trigger and a front end
   <Area>/                                     e.g. Mastodon
     Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
     Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
@@ -70,7 +70,7 @@ Directory.Packages.props                      central NuGet versions for every p
 Umbraco.Community.Automate.Demo.slnx          the solution: every package, the examples and the Demo site
 ```
 
-Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `_Examples/` holds two reference packages laid out the same way (the underscore keeps them at the top of the tree): **Simple**, an API key and one action, and **KitchenSink**, which uses every folder below, including a trigger and a front end. Neither has a release tag prefix and both are marked not packable, so they're never published.
+Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Packages/_Examples/` holds two reference packages laid out the same way, one level deeper (the underscore keeps them at the top of the list): **Simple**, an API key and one action, and **KitchenSink**, which uses every folder below, including a trigger and a front end. Neither has a release tag prefix and both are marked not packable, so they're never published.
 
 ### Inside a package
 
@@ -105,9 +105,9 @@ cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci
 npm run build
 cd ../../../..
-cd _Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
+cd Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm run build
-cd ../../../..
+cd ../../../../..
 
 dotnet run --project Umbraco.Community.Automate.Demo
 ```

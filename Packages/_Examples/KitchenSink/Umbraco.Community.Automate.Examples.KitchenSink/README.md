@@ -34,9 +34,9 @@ The tests in `Umbraco.Community.Automate.Examples.KitchenSink.Tests/` use the sa
 The Demo site references this package and already has a placeholder key at `Umbraco:Automate:Secrets:KitchenSink:ApiKey`.
 
 ```bash
-cd _Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
+cd Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm run build
-cd ../../../..
+cd ../../../../..
 dotnet run --project Umbraco.Community.Automate.Demo
 ```
 
@@ -47,8 +47,8 @@ dotnet run --project Umbraco.Community.Automate.Demo
 ## Run the tests
 
 ```bash
-dotnet test _Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink.Tests
+dotnet test Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink.Tests
 
-cd _Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
+cd Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm test
 ```

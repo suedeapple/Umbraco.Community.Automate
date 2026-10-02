@@ -457,7 +457,7 @@ wwwroot/                    or Client/public/ in a package with a Client/ (Vite 
 }
 ```
 
-The `/App_Plugins/UmbracoCommunityAutomateExample` prefix must match `StaticWebAssetBasePath` in the csproj. Leave out `version`, since nothing would keep it in step with the package version. Other hand-written backoffice extensions (property editor UIs, modals, localization; see DevTo) go in the same `extensions` array. A package with a `Client/` adds a `bundle` extension for what Vite builds (see `_Examples/KitchenSink/`), but keeps its icons as these plain files rather than in `Client/src/`.
+The `/App_Plugins/UmbracoCommunityAutomateExample` prefix must match `StaticWebAssetBasePath` in the csproj. Leave out `version`, since nothing would keep it in step with the package version. Other hand-written backoffice extensions (property editor UIs, modals, localization; see DevTo) go in the same `extensions` array. A package with a `Client/` adds a `bundle` extension for what Vite builds (see `Packages/_Examples/KitchenSink/`), but keeps its icons as these plain files rather than in `Client/src/`.
 
 `wwwroot/icons/icons.js`
 
@@ -585,7 +585,7 @@ private sealed class UnusedModelResolver : IEditableModelResolver
 var connectionType = new ExampleConnectionType(new ConnectionTypeInfrastructure(new UnusedModelResolver()), client);
 ```
 
-`ExampleIconTests.cs`, for a package with custom icons. Nothing else checks that the manifest path, the icon files and the attributes' `Icon` agree, and a mismatch just shows a blank icon. In a package with a `Client/`, read `Client/public` instead of `wwwroot` (see `_Examples/KitchenSink/`).
+`ExampleIconTests.cs`, for a package with custom icons. Nothing else checks that the manifest path, the icon files and the attributes' `Icon` agree, and a mismatch just shows a blank icon. In a package with a `Client/`, read `Client/public` instead of `wwwroot` (see `Packages/_Examples/KitchenSink/`).
 
 ```csharp
 using System.Reflection;
