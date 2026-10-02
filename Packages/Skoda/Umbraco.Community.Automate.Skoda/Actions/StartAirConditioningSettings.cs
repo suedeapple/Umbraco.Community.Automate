@@ -9,6 +9,7 @@ public sealed class StartAirConditioningSettings
 
     [Field(
         Label = "Temperature unit",
+        Description = "The unit the target temperature is in.",
         EditorUiAlias = "Umb.PropertyEditorUi.RadioButtonList",
         EditorConfig = """[{ "alias": "items", "value": [{ "name": "Celsius", "value": "CELSIUS" }, { "name": "Fahrenheit", "value": "FAHRENHEIT" }] }]""",
         SortOrder = 1)]

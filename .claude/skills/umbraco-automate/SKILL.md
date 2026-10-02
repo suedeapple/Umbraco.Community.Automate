@@ -107,6 +107,7 @@ Pick the right editor for every setting rather than leaving everything a text bo
 - **Longer text?** `Umb.PropertyEditorUi.TextArea` with `rows`. **A number?** `Integer` or `Decimal` with `min`/`max`, plus `[Range]`. `bool` gets a toggle and `DateTime` a date picker automatically. Media folders and items use `MediaPicker`; content, media type and member group filters use the type pickers.
 - Give every option a default in the property initializer, so a new step works without changes.
 - Use data annotations (`[Required]`, `[Range]`, `[StringLength]`) for single-field rules: Automate checks them before `ExecuteAsync` and fails the step as `Validation`.
+- Every field needs a `Label` and a `Description`: without them the backoffice shows a raw `#uaFields_...` localization key. A `Group` other than `Advanced` needs a localization file for its heading (see DevTo), so prefer `Advanced`.
 - Mark credentials `IsSensitive = true`, and put rarely-changed options in `Group = "Advanced"`.
 - Build a custom editor in `Client/` only when no built-in editor can express the value (Google Sheets' column list is the model).
 

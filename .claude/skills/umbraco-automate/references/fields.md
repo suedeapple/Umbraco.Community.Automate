@@ -29,6 +29,8 @@ This file covers the editors that Umbraco's backoffice provides, the configurati
 public string Priority { get; set; } = "Normal";          // the initializer is the default value shown
 ```
 
+- **Always set `Label` and `Description`.** Without them Automate falls back to a localization key (`#uaFields_<settings><property>Label` / `Description`), and since only Automate's own fields have translations, the backoffice shows that raw key. Nothing fails, so add a test that checks every field (see Skoda's `SkodaFieldTests`).
+- **`Group`** works the same way: the heading is the key `#uaFieldGroups_<group>Label`, and Automate only translates `Advanced`. Use `Group = "Advanced"`, or ship a localization file that defines your group's label (DevTo's `wwwroot/lang/en.js`, registered in its `umbraco-package.json`, adds `uaFieldGroups: { optionalLabel: "Optional" }`).
 - **No `EditorUiAlias`?** Automate infers one from the type: `string` → text box, `int`/`long` → integer, `decimal`/`double` → decimal, `bool` → toggle, `DateTime` → date picker. Set it only when you want something else, or to add configuration.
 - **`EditorConfig`** is a JSON array of `{ "alias": ..., "value": ... }` pairs, the same shape as a data type's configuration in Umbraco. Use a C# raw string literal (`"""..."""`) so the JSON needs no escaping. An alias the editor doesn't know is ignored silently, so check it against the reference below.
 - **The default value** comes from the property initializer (`= "Normal"`). Give every option-type field a sensible default, so a new step works without the user touching it.
@@ -242,7 +244,8 @@ Automate has its own custom editors for its steps (`Umb.Automate.UserGroupPicker
 
 For every settings property:
 
-- [ ] Label, description and sort order set. The description says what the value is, any range or format, and the default.
+- [ ] Label, description and sort order set (a missing label or description shows a raw `#uaFields_...` key). The description says what the value is, any range or format, and the default.
+- [ ] A `Group` other than `Advanced` has a localization file defining its label.
 - [ ] Could the value come from the trigger? Then it's text with `SupportsBindings = true`.
 - [ ] A fixed set of values? Dropdown, radio or checkbox list, with label/value pairs if the stored values aren't readable.
 - [ ] A long text? Text area with `rows`.
