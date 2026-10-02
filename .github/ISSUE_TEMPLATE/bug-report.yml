@@ -15,6 +15,7 @@ body:
         - DevTo
         - Google Sheets
         - Mastodon
+        - Pushover
         - Skoda
         - WeatherApi
         - Examples (Simple / Kitchen Sink)
