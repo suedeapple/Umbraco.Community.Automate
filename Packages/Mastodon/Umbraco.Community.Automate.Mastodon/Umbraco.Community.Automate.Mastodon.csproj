@@ -25,6 +25,10 @@
     <PackageReference Include="MinVer" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Umbraco.Community.Automate.Mastodon.Tests" />
+  </ItemGroup>
+
   <!-- Ships as the NuGet package README (see PackageReadmeFile in Directory.Build.props) and
        drives the Umbraco Marketplace listing's description, since this repo relies on the
        auto-sourced NuGet metadata rather than a hosted umbraco-marketplace.json override. -->
