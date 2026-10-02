@@ -11,6 +11,8 @@ public sealed class SendMessageSettings
         Label = "Message",
         Description = "The message to send. Supports ${ binding } expressions.",
         SupportsBindings = true,
+        EditorUiAlias = "Umb.PropertyEditorUi.TextArea",
+        EditorConfig = """[{ "alias": "rows", "value": 4 }]""",
         SortOrder = 0)]
     public string Message { get; set; } = string.Empty;
 }

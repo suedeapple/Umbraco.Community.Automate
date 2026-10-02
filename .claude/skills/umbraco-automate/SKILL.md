@@ -21,7 +21,7 @@ Most community connections are simple: an API key and an action or two. Build th
 | Reference code | `Packages/_Examples/Simple/` | `Packages/_Examples/KitchenSink/` |
 | Every file, ready to copy | [references/simple.md](references/simple.md) | [references/full.md](references/full.md) |
 
-Read the matching reference before writing code. Both are complete (project files, every class, tests and wiring) and are checked by generating a package from them and running its tests. If the user hasn't said, ask what the package should do, and pick Simple unless an answer needs something from the Full column. When a Simple package later needs one Full feature, add just that section from `full.md`: the files are written to fit together.
+Read the matching reference before writing code, and [references/fields.md](references/fields.md) for every settings class. Both are complete (project files, every class, tests and wiring) and are checked by generating a package from them and running its tests. If the user hasn't said, ask what the package should do, and pick Simple unless an answer needs something from the Full column. When a Simple package later needs one Full feature, add just that section from `full.md`: the files are written to fit together.
 
 ## Layout
 
@@ -89,10 +89,15 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 - Register backoffice extensions (icons, editors, modals) in a static `umbraco-package.json`, which Umbraco discovers under `App_Plugins/` by itself. Don't use an `IPackageManifestReader` or list icons in `Client/src/`: one pattern everywhere means a contributor adding an icon only ever touches the same three files.
 
 ### Settings fields
-- Use `[Field(Label = ..., Description = ..., SortOrder = ...)]` on every setting; the description is the user's only help text in the backoffice.
-- Mark credentials `IsSensitive = true`.
-- Set `SupportsBindings = true` on action settings that should accept `${ ... }` values from the trigger or earlier steps (content, titles, IDs).
-- Put rarely-changed options in `Group = "Advanced"`.
+Pick the right editor for every setting rather than leaving everything a text box: **read [references/fields.md](references/fields.md) whenever you write a settings class.** It lists Umbraco's editors, their `EditorConfig`, the C# type each binds to, and examples. In short:
+- Use `[Field(Label = ..., Description = ..., SortOrder = ...)]` on every setting; the description is the user's only help text, so say what the value is, its range or format, and the default.
+- **Could the value come from the trigger or an earlier step?** Keep it text with `SupportsBindings = true` (titles, messages, IDs, URLs). Bindings are text, so they can't go in a dropdown, toggle or number input.
+- **One of a fixed set?** `Umb.PropertyEditorUi.Dropdown`, or `RadioButtonList` for two to five options, bound to `string` (or `CheckBoxList` and `List<string>` for several). Use `{ "name": "Friendly label", "value": "STORED_VALUE" }` items when the service's values aren't readable; the stored value can never change once released.
+- **Longer text?** `Umb.PropertyEditorUi.TextArea` with `rows`. **A number?** `Integer` or `Decimal` with `min`/`max`, plus `[Range]`. `bool` gets a toggle and `DateTime` a date picker automatically. Media folders and items use `MediaPicker`; content, media type and member group filters use the type pickers.
+- Give every option a default in the property initializer, so a new step works without changes.
+- Use data annotations (`[Required]`, `[Range]`, `[StringLength]`) for single-field rules: Automate checks them before `ExecuteAsync` and fails the step as `Validation`.
+- Mark credentials `IsSensitive = true`, and put rarely-changed options in `Group = "Advanced"`.
+- Build a custom editor in `Client/` only when no built-in editor can express the value (Google Sheets' column list is the model).
 
 ### Configuration and secrets
 - Never commit real credentials, not even temporarily. The repo's gitleaks hooks (`.githooks/`) block commits and pushes that contain them.

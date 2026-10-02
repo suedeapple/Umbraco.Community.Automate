@@ -210,7 +210,7 @@ Pick the icon from Umbraco's built-in set (`icon-paper-plane`, `icon-message`, `
 
 ## Action, settings and output
 
-`Actions/SendMessageSettings.cs`. The fields shown in the automation editor. `SupportsBindings` lets a value come from the trigger or an earlier step.
+`Actions/SendMessageSettings.cs`. The fields shown in the automation editor. `SupportsBindings` lets a value come from the trigger or an earlier step, and a text area suits a message better than the default one-line box. See [fields.md](fields.md) for choosing the editor for each setting.
 
 ```csharp
 using Umbraco.Automate.Core.Settings;
@@ -223,6 +223,8 @@ public sealed class SendMessageSettings
         Label = "Message",
         Description = "The message to send. Supports ${ binding } expressions.",
         SupportsBindings = true,
+        EditorUiAlias = "Umb.PropertyEditorUi.TextArea",
+        EditorConfig = """[{ "alias": "rows", "value": 4 }]""",
         SortOrder = 0)]
     public string Message { get; set; } = string.Empty;
 }
