@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Automate.Core.Settings;
@@ -96,17 +96,23 @@ public class DemoSetupHandler(
     /// community.weatherApi becomes weatherApi) so its test automation can find it. Its settings
     /// are the settings class's defaults: the configuration references the package pre-fills, which
     /// resolve to the placeholders in appsettings.Development.json, or your appsettings.Local.json.
+    /// Required settings with no default (Skoda's VIN) get a placeholder, and existing connections
+    /// missing one are given it: Automate validates every connection in a workspace when a step
+    /// leaves it to pick the connection, so one invalid connection would fail unrelated steps.
     /// </summary>
     private async Task EnsureConnectionsAsync(CancellationToken cancellationToken)
     {
         var existing = (await connectionService.GetAllConnectionsAsync(cancellationToken))
-            .Select(c => c.Alias).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            .ToDictionary(c => c.Alias, StringComparer.OrdinalIgnoreCase);
 
         foreach (var type in connectionTypes.Where(t => t.Alias.StartsWith("community.", StringComparison.Ordinal)))
         {
             var alias = type.Alias["community.".Length..].Replace('.', '-');
-            if (existing.Contains(alias))
+            if (existing.TryGetValue(alias, out var connection))
+            {
+                await FillMissingRequiredSettingsAsync(connection, type.SettingsType, cancellationToken);
                 continue;
+            }
 
             await connectionService.CreateConnectionAsync(
                 new Connection { Alias = alias, Name = type.Name, Type = type.Alias, Settings = type.SettingsType is { } settingsType ? DefaultSettings(settingsType) : [] },
@@ -116,20 +122,51 @@ public class DemoSetupHandler(
         }
     }
 
+    private async Task FillMissingRequiredSettingsAsync(Connection connection, Type? settingsType, CancellationToken cancellationToken)
+    {
+        if (settingsType is null)
+            return;
+
+        var missing = Fields(settingsType)
+            .Where(IsRequiredText)
+            .Select(p => JsonNamingPolicy.CamelCase.ConvertName(p.Name))
+            .Where(key => connection.Settings.GetValueOrDefault(key)?.ToString() is null or "")
+            .ToList();
+        if (missing.Count == 0)
+            return;
+
+        foreach (var key in missing)
+            connection.Settings[key] = RequiredPlaceholder;
+        await connectionService.UpdateConnectionAsync(connection, Constants.Security.SuperUserKey, cancellationToken);
+        logger.LogInformation("Gave the {Alias} connection placeholder values for {Settings}", connection.Alias, string.Join(", ", missing));
+    }
+
     private static Dictionary<string, object?> DefaultSettings(Type settingsType)
     {
         var defaults = Activator.CreateInstance(settingsType);
         var settings = new Dictionary<string, object?>();
-        foreach (var property in settingsType.GetProperties().Where(p => p.GetCustomAttribute<EditableModelFieldAttribute>() is not null))
+        foreach (var property in Fields(settingsType))
         {
             var value = property.GetValue(defaults);
             var unset = value is null or "" || (property.PropertyType.IsValueType && value.Equals(Activator.CreateInstance(property.PropertyType)));
             if (!unset)
                 settings[JsonNamingPolicy.CamelCase.ConvertName(property.Name)] = value;
+            else if (IsRequiredText(property))
+                settings[JsonNamingPolicy.CamelCase.ConvertName(property.Name)] = RequiredPlaceholder;
         }
 
         return settings;
     }
+
+    // The same placeholder as appsettings.Development.json, so it's obvious it isn't a real value.
+    private const string RequiredPlaceholder = "e2e-test";
+
+    private static IEnumerable<PropertyInfo> Fields(Type settingsType)
+        => settingsType.GetProperties().Where(p => p.GetCustomAttribute<EditableModelFieldAttribute>() is not null);
+
+    // Automate treats a non-nullable string setting as required, as if it had [Required].
+    private static bool IsRequiredText(PropertyInfo property)
+        => property.PropertyType == typeof(string) && new NullabilityInfoContext().Create(property).WriteState != NullabilityState.Nullable;
 
 #if USYNC
     /// <summary>
