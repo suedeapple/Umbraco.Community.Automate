@@ -3,7 +3,7 @@
 # When you add a package, add a line for it with its maintainers.
 
 # Default: the repo maintainers review anything not listed below.
-*                       @suedeapple @warrenbuckley
+*                       @suedeapple @warrenbuckley @OwainWilliams
 
 # Packages, reviewed by their authors.
 /Packages/DevTo/        @OwainWilliams
@@ -14,7 +14,7 @@
 /Packages/WeatherApi/   @suedeapple
 
 # Shared files every package depends on.
-/Packages/_Development/    @suedeapple @warrenbuckley
-/.github/               @suedeapple @warrenbuckley
-/.claude/               @suedeapple @warrenbuckley
-/Directory.Packages.props @suedeapple @warrenbuckley
+/Packages/_Development/   @suedeapple @warrenbuckley @OwainWilliams
+/.github/                 @suedeapple @warrenbuckley @OwainWilliams
+/.claude/                 @suedeapple @warrenbuckley @OwainWilliams
+/Directory.Packages.props @suedeapple @warrenbuckley @OwainWilliams
