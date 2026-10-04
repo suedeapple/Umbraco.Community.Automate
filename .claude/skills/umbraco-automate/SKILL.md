@@ -85,6 +85,8 @@ Work through these in order and tick them off. For a package with no connection,
     - `Umbraco.Community.Automate.Demo/appsettings.Development.json`: obviously fake placeholders (`"e2e-test"`), so the site boots, new connections' references resolve, and CI's end-to-end runs work without real credentials.
     - `Umbraco.Community.Automate.Demo/appsettings.Local.example.json`: the same keys with `your-...` values, so a contributor copies it to the git-ignored `appsettings.Local.json` and fills in real credentials to try the package live. Use non-empty values: an empty one overrides the placeholder and can stop the site starting.
     Real credentials never go in either tracked file; they go in `appsettings.Local.json` or user secrets.
+
+    The Demo creates the package's connection by itself. Give it a test page too, so publishing it proves the trigger is wired up: copy the Pushover files in `Umbraco.Community.Automate.Demo/uSync/v17/` and change the name, alias, icon and every `Key` and step `Id` (a new GUID each): `ContentTypes/automatetestpushover.config` (the page type), `Content/pushover.config` (the page; its `ContentType` is the new type's alias), and `Automate-Automations/testpushover.config` (its trigger's `contentTypes` is the new type's key, and its `Notify Editor` step names the package). Then add the new type to the `<Structure>` list in `ContentTypes/automatetests.config`, so it's allowed under *Automate tests*.
 11. **Tests** for every action, outcome and trigger and the connection validation (see Testing). Full with a `Client/`: front-end tests too, and build it (`npm ci && npm run build`) before running the Demo site or packing.
 12. **README.md** in the package (see README), and a row in the root `README.md` connections table.
 13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, `tools/test-umbraco-compat.sh Packages/<Area>/Umbraco.Community.Automate.<Area>` (bash; checks Umbraco 17 and 18), then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Umbraco.Community.Automate.Demo/appsettings.Development.json` or user secrets).
@@ -181,6 +183,7 @@ Packages are independent: work on one package must never change how another buil
 - everything under its own `Packages/<Area>/` folder;
 - its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
 - its configuration keys, under its own name, in `Umbraco.Community.Automate.Demo/appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (the template for real values);
+- its test page's three new files in `Umbraco.Community.Automate.Demo/uSync/v17/`, and its line in `ContentTypes/automatetests.config`;
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 

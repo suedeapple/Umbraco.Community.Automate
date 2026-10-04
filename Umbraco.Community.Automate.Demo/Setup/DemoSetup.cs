@@ -23,8 +23,8 @@ namespace Umbraco.Community.Automate.Demo.Setup;
 /// <list type="number">
 ///   <item>an API user for workspaces to run as (a workspace's Service Account Key only accepts API users);</item>
 ///   <item>one connection per package in the repo, pre-filled with its configuration references;</item>
-///   <item>the sample workspace and automations in uSync/, imported once these exist (Umbraco 17 only,
-///   as uSync.Automate has no 18 release yet).</item>
+///   <item>the Demo workspace, sample automations and test pages in uSync/, imported once these exist
+///   (Umbraco 17 only, as uSync.Automate has no 18 release yet).</item>
 /// </list>
 /// Each step only adds what's missing, so it never touches anything you've changed.
 /// </summary>
@@ -133,9 +133,11 @@ public class DemoSetupHandler(
 
 #if USYNC
     /// <summary>
-    /// Imports the sample workspace and automations from uSync/ into a database that has no
-    /// workspaces yet. Done here rather than with uSync's own ImportOnFirstBoot, because they refer
-    /// to the API user and connections above, which have to exist first.
+    /// Imports everything in uSync/ into a database that has no workspaces yet: the Demo workspace,
+    /// its sample automations, and an "Automate tests" page per connection, each with its own
+    /// document type and a "Test: ..." automation that fires when that page is published. Done here
+    /// rather than with uSync's own ImportOnFirstBoot, because the workspace and automations refer to
+    /// the API user and connections above, which have to exist first.
     /// </summary>
     private async Task ImportSamplesAsync(CancellationToken cancellationToken)
     {
@@ -143,8 +145,8 @@ public class DemoSetupHandler(
             return;
 
         var result = await syncService.StartupImportAsync(
-            syncConfig.GetFolders(), false, new SyncHandlerOptions { Group = "Automate" }, null);
-        logger.LogInformation("Imported the sample workspace and automations: {Count} item(s)", result.Count());
+            syncConfig.GetFolders(), false, new SyncHandlerOptions(), null);
+        logger.LogInformation("Imported the Demo workspace, samples and test pages: {Count} item(s)", result.Count());
     }
 #endif
 }
