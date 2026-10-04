@@ -121,7 +121,7 @@ Then open <https://localhost:44343/umbraco> and log in:
 | Email | `admin@example.com` |
 | Password | `password1234` |
 
-The connections are under the **Automation** section in the top navigation. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
+The connections are under the **Automation** section in the top navigation. The site also creates an **Automate (Demo)** API user on startup: a workspace's **Service Account Key** only accepts API users, so pick that one when you create a workspace. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
 
 In Visual Studio or Rider, set `Umbraco.Community.Automate.Demo` as the startup project and choose the `Umbraco.Web.UI` launch profile.
 
