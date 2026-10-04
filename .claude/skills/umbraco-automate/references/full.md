@@ -579,7 +579,7 @@ public sealed class FindPostAction(ActionInfrastructure infrastructure, ExampleC
 
 ## Trigger
 
-A trigger starts an automation. The simplest kind is a **notification trigger**: Umbraco raises a notification, `MapEvent` turns it into trigger events, and `CanHandle` lets each automation filter them with its own settings. Automate subscribes to the notification for you. A trigger needs no connection, so a trigger-only package has no `Connections/`.
+A trigger starts an automation. The simplest kind is a **notification trigger**: Umbraco raises a notification, `MapEvent` turns it into trigger events, and `CanHandle` lets each automation filter them with its own settings. Automate finds the trigger from its attribute and subscribes to the notification for you, so nothing needs registering. A trigger needs no connection, so a trigger-only package has no `Connections/`.
 
 Other kinds exist (`ScheduledTriggerBase` for CRON, `WebhookTriggerBase`, or raising events yourself with `ITriggerDispatcher`); reach for them only when a notification trigger can't do the job.
 
@@ -651,19 +651,13 @@ public sealed class DictionaryItemSavedTrigger(TriggerInfrastructure infrastruct
 
 ## Composer
 
-`Composers/ExampleComposer.cs`. Registers everything the package adds, so a reader sees it all in one place. Umbraco finds the composer on its own.
+`Composers/ExampleComposer.cs`. Registers the package's services. Umbraco finds the composer on its own, and Automate finds the connection type, actions and triggers from their attributes.
 
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Automate.Core.Actions;
-using Umbraco.Automate.Core.Connections;
-using Umbraco.Automate.Core.Triggers;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Community.Automate.Example.Actions;
 using Umbraco.Community.Automate.Example.Api;
-using Umbraco.Community.Automate.Example.Connections;
-using Umbraco.Community.Automate.Example.Triggers;
 
 namespace Umbraco.Community.Automate.Example.Composers;
 
@@ -674,16 +668,8 @@ public class ExampleComposer : IComposer
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton<ExampleClient>();
 
-        builder.WithCollectionBuilder<ConnectionTypeCollectionBuilder>()
-            .Add<ExampleConnectionType>();
-
-        builder.WithCollectionBuilder<ActionCollectionBuilder>()
-            .Add<CreatePostAction>()
-            .Add<FindPostAction>();
-
-        builder.WithCollectionBuilder<TriggerCollectionBuilder>()
-            .Add<DictionaryItemSavedTrigger>();
-
+        // No connection type, action or trigger registration: Automate discovers classes with
+        // [ConnectionType], [Action] and [Trigger] attributes on its own. Only services go here.
         // No icon or editor registration: Umbraco finds umbraco-package.json on its own.
         // No configuration registration: the default references live under Automate's shared
         // Umbraco:Automate:Secrets / Variables sections, which it resolves out of the box.

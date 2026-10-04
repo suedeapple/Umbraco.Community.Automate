@@ -1,24 +1,20 @@
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Automate.Core.Actions;
-using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Community.Automate.Examples.Simple.Actions;
-using Umbraco.Community.Automate.Examples.Simple.Connections;
 
 namespace Umbraco.Community.Automate.Examples.Simple.Composers;
 
-/// <summary>Registers the connection type and action. Umbraco finds this composer on its own.</summary>
+/// <summary>
+/// Registers the package's services. Umbraco finds this composer on its own, and Automate finds
+/// the connection type, actions and triggers from their attributes, so sites only install the package.
+/// </summary>
 public class SimpleComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
         builder.Services.AddHttpClient();
 
-        builder.WithCollectionBuilder<ConnectionTypeCollectionBuilder>()
-            .Add<SimpleConnectionType>();
-
-        builder.WithCollectionBuilder<ActionCollectionBuilder>()
-            .Add<SendMessageAction>();
+        // No connection type, action or trigger registration: Automate discovers classes with
+        // [ConnectionType], [Action] and [Trigger] attributes on its own. Only services go here.
     }
 }

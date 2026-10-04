@@ -20,7 +20,7 @@ It talks to [httpbin.org](https://httpbin.org), a free service that echoes reque
 | `Actions/` | Each action with its settings and output class. [`SendMessageAction`](Actions/SendMessageAction.cs) is the pattern for "create something" actions; [`CheckStatusAction`](Actions/CheckStatusAction.cs) for "look something up". |
 | `Triggers/` | [`DictionaryItemSavedTrigger`](Triggers/DictionaryItemSavedTrigger.cs): `MapEvent` turns an Umbraco notification into trigger events, `CanHandle` filters them per automation. Automate subscribes to the notification for you. |
 | `Connections/` | The connection type, its settings (the API key defaults to `$Umbraco:Automate:Secrets:KitchenSink:ApiKey`), and a validator shared with the actions. |
-| `Composers/` | One composer registering the client, connection type, actions and trigger. |
+| `Composers/` | One composer registering the API client. Automate discovers the connection type, actions and trigger from their attributes, so they aren't registered. |
 | `Api/` | [`KitchenSinkClient`](Api/KitchenSinkClient.cs), the only class that talks HTTP: it sends requests and maps every failure to a `StepRunErrorCategory`, which decides whether Automate retries. |
 | `Models/` | Request and response models for the service. |
 | `Configuration/` | `KitchenSinkConfiguration`: the one place the configuration path, default reference and the service's base URL are defined. |

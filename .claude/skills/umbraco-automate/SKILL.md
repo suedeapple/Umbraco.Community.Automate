@@ -77,7 +77,7 @@ Work through these in order and tick them off. For a package with no connection,
 3. **Configuration class** `Configuration/<Area>Configuration.cs` holding the config paths, each credential's default reference and the service's fixed values such as its base URL (see Configuration and secrets).
 4. **Connection type and settings** in `Connections/`, with credential fields defaulting to those references.
 5. **Actions** in `Actions/`, each with its settings (and output, if it returns data). Full: an `Api/` client shared by the actions, outcomes, and **triggers** in `Triggers/`.
-6. **Composer** in `Composers/`: register the connection type, actions, triggers and any services. Icons and configuration references need no registration.
+6. **Composer** in `Composers/`: register the package's **services** only (HTTP clients, an API client). Don't register the connection type, actions or triggers: Automate discovers them from their `[ConnectionType]`, `[Action]` and `[Trigger]` attributes. Icons and configuration references need no registration either.
 7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from [full.md](references/full.md#tests).
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions.
 9. **Wire it in**: add both projects to `Umbraco.Community.Automate.Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
@@ -135,7 +135,7 @@ Pick the right editor for every setting rather than leaving everything a text bo
 - The simplest trigger is a **notification trigger**: derive from `NotificationTriggerBase<TSettings, TOutput, TNotification>` (note the order: settings, output, then the Umbraco notification) and put `[Trigger("<area>.<name>", "Display Name", Group = ..., Icon = ...)]` on it. See `Packages/_Examples/KitchenSink/.../Triggers/`.
 - Override `MapEvent(notification)` to return one `TriggerEvent<TOutput>` per affected item, with `TriggerAlias = Alias`, the output, and `IdempotencyKey = GenerateIdempotencyKey(item.Key, 0, item.UpdateDate)` so a duplicate notification doesn't run the automation twice.
 - Override `CanHandle(output, settings)` (it's `protected`, and `settings` can be null) to apply each automation's own filters, such as a key prefix.
-- Automate subscribes to the notification for you; just register the trigger with `TriggerCollectionBuilder` in the composer. Output properties reach steps in camelCase as `${ trigger.<property> }`.
+- Automate discovers the trigger from its attribute and subscribes to the notification for you; there's nothing to register. Output properties reach steps in camelCase as `${ trigger.<property> }`.
 - Other kinds exist (`ScheduledTriggerBase` for CRON, `WebhookTriggerBase`, or raising events yourself with `ITriggerDispatcher`), but Automate supplies their output itself; reach for them only when a notification trigger can't do the job.
 
 ### Connection validation
@@ -187,7 +187,7 @@ Don't change other packages, the examples, `.github/workflows/`, `.githooks/`, r
 
 ## Adding to an existing connection
 
-- **New action**: add it to `Actions/` with its settings and output, register it in the composer, add tests, and document it in the package README. One action per PR is the norm.
+- **New action**: add it to `Actions/` with its settings and output (Automate discovers it from its `[Action]` attribute), add tests, and document it in the package README. One action per PR is the norm.
 - **New trigger**: same, in `Triggers/`.
 - Keep existing aliases, namespaces and public types stable. They're used by people's saved automations and code.
 
@@ -206,5 +206,5 @@ This skill is a living document. Add new conventions and lessons learned here (o
 
 - Front-end packages pin Playwright to the version Google Sheets uses (`"overrides": { "playwright": "1.61.0", "playwright-core": "1.61.0" }` in `Client/package.json`), so every `Client/` shares one downloaded browser.
 - In a package with a `Client/`, `Client/public/` is copied unchanged into `wwwroot/` by Vite, so `umbraco-package.json` and `icons/` live there and the manifest adds one `bundle` extension for whatever Vite builds (`Client/src/manifests.ts`). Hand-written editors without a build step go straight in `umbraco-package.json` (DevTo).
-- Automate also discovers `[ConnectionType]` and `[Action]` classes on its own: Skoda's composer registers neither, and both still appear. Register them explicitly in the composer anyway, so a reader can see everything the package adds in one place.
+- Automate discovers `[ConnectionType]`, `[Action]` and `[Trigger]` classes on its own (checked in the Demo site: with the Kitchen Sink's registrations removed, its trigger, actions and connection type all still appear). So composers register services only; registering the types as well is redundant.
 - .NET accepts any well-formed culture name (e.g. `xx-YY`), so `CultureInfo.GetCultureInfo` only throws for malformed input. Don't rely on it to reject unknown cultures.

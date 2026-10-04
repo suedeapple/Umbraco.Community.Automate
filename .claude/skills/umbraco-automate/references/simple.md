@@ -317,16 +317,12 @@ public sealed class SendMessageAction(ActionInfrastructure infrastructure, IHttp
 
 ## Composer
 
-`Composers/ExampleComposer.cs`. Umbraco finds composers on its own, so a site only installs the package.
+`Composers/ExampleComposer.cs`. Registers the package's services. Umbraco finds composers on its own, and Automate finds the connection type and actions from their attributes, so a site only installs the package.
 
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Automate.Core.Actions;
-using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Community.Automate.Example.Actions;
-using Umbraco.Community.Automate.Example.Connections;
 
 namespace Umbraco.Community.Automate.Example.Composers;
 
@@ -336,12 +332,8 @@ public class ExampleComposer : IComposer
     {
         builder.Services.AddHttpClient();
 
-        builder.WithCollectionBuilder<ConnectionTypeCollectionBuilder>()
-            .Add<ExampleConnectionType>();
-
-        builder.WithCollectionBuilder<ActionCollectionBuilder>()
-            .Add<SendMessageAction>();
-
+        // No connection type, action or trigger registration: Automate discovers classes with
+        // [ConnectionType], [Action] and [Trigger] attributes on its own. Only services go here.
         // No configuration registration: the API key reference lives under Automate's shared
         // Umbraco:Automate:Secrets section, which it resolves out of the box.
     }

@@ -1,15 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Automate.Core.Actions;
-using Umbraco.Automate.Core.Connections;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Community.Automate.WeatherApi.Actions;
-using Umbraco.Community.Automate.WeatherApi.Connections;
 
 namespace Umbraco.Community.Automate.WeatherApi.Composers;
 
 /// <summary>
-/// Registers the WeatherAPI.com connection type and actions with Umbraco Automate.
+/// Registers the package's services. Umbraco finds this composer on its own, and Automate finds
+/// the connection type, actions and triggers from their attributes, so sites only install the package.
 /// </summary>
 public class WeatherApiComposer : IComposer
 {
@@ -17,12 +14,7 @@ public class WeatherApiComposer : IComposer
     {
         builder.Services.AddHttpClient();
 
-        builder.WithCollectionBuilder<ConnectionTypeCollectionBuilder>()
-            .Add<WeatherApiConnectionType>();
-
-        builder.WithCollectionBuilder<ActionCollectionBuilder>()
-            .Add<GetCurrentWeatherAction>()
-            .Add<GetTodaysWeatherAction>();
-
+        // No connection type, action or trigger registration: Automate discovers classes with
+        // [ConnectionType], [Action] and [Trigger] attributes on its own. Only services go here.
     }
 }

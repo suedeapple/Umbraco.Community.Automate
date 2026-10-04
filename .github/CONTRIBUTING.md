@@ -83,7 +83,7 @@ Every package uses the same folder names, so you always know where to look. The 
 | `Actions/` | One class per action, plus its settings and output classes |
 | `Triggers/` | One class per trigger, plus its settings and output classes. The Kitchen Sink example shows one. |
 | `Connections/` | The connection type and its connection settings (and their validator) |
-| `Composers/` | The `IComposer` that registers everything, plus any `IUmbracoBuilder` extensions |
+| `Composers/` | The `IComposer` that registers the package's services (HTTP and API clients), plus any `IUmbracoBuilder` extensions. Connection types, actions and triggers aren't registered here: Automate discovers them from their attributes. |
 | `Api/` | The C# client for the external service: HTTP client, error mapping, exceptions |
 | `Models/` | Request and response models for the external API, at the package root (not inside `Api/`) |
 | `Configuration/` | `<Area>Configuration` with the configuration paths, default references and fixed service values such as the API base URL (one place to change them), plus any options classes bound from `appsettings.json` and their validators |
