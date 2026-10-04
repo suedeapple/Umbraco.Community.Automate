@@ -50,7 +50,7 @@ In production, use environment variables instead: `Umbraco__Automate__Secrets__S
 
 ## Actions
 
-All actions are in the **Skoda** group and act on the vehicle set on the connection.
+All actions are in the **Vehicles** group and act on the vehicle set on the connection.
 
 | Action | Settings |
 |---|---|

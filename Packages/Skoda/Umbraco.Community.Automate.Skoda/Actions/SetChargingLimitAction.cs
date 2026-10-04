@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
 [Action(
     "community.skoda.setChargingLimit",
     "Set Charging Limit",
-    Group = "Skoda",
+    Group = "Vehicles",
     Icon = "icon-automate-skoda",
     ConnectionTypeAlias = "community.skoda")]
 public sealed class SetChargingLimitAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<SetChargingLimitSettings, VehicleCommandOutput>(infrastructure)

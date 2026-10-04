@@ -8,7 +8,7 @@ namespace Umbraco.Community.Automate.Skoda.Actions;
 [Action(
     "community.skoda.updateChargingProfile",
     "Update Charging Profile",
-    Group = "Skoda",
+    Group = "Vehicles",
     Icon = "icon-automate-skoda",
     ConnectionTypeAlias = "community.skoda")]
 public sealed class UpdateChargingProfileAction(ActionInfrastructure infrastructure, ISkodaClient client) : ActionBase<UpdateChargingProfileSettings, VehicleCommandOutput>(infrastructure)
