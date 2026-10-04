@@ -13,7 +13,7 @@
     package (tools/test-umbraco-compat.sh), and also runs the 17 build on 18, which is what an
     Umbraco 18 site actually does. The 18 build is never packed.
 
-    The Demo site runs on 18 (see its .csproj), so running it also runs the 17 builds on 18.
+    The Demo site runs on 17, the main version people build for. -p:UmbracoMajor=18 runs it on 18.
   -->
   <PropertyGroup>
     <UmbracoMajor Condition="'$(UmbracoMajor)' == ''">17</UmbracoMajor>

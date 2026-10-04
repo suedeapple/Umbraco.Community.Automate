@@ -218,7 +218,7 @@ Playwright starts the Demo site itself with `AUTOMATE_E2E_MODE=1`. If you alread
 
 ### Umbraco version compatibility
 
-Every package ships one build for Umbraco 17 and 18. It's compiled against the lowest supported versions and published with ranges that stop short of 19; both sets of versions live in the root `Directory.Packages.props`, switched by `-p:UmbracoMajor=18`. The Demo site runs on 18, so running it also runs the packages' 17 builds on 18. To run it on 17 instead, use `dotnet run --project Umbraco.Community.Automate.Demo -p:UmbracoMajor=17` with a fresh database (see [Resetting the site](#resetting-the-site)): Umbraco upgrades a database but can't downgrade one.
+Every package ships one build for Umbraco 17 and 18. It's compiled against the lowest supported versions and published with ranges that stop short of 19; both sets of versions live in the root `Directory.Packages.props`, switched by `-p:UmbracoMajor=18`. The Demo site runs on 17, the main version people build for. To try it on 18, run `dotnet run --project Umbraco.Community.Automate.Demo -p:UmbracoMajor=18`; that runs the packages' 17 builds on 18, as an Umbraco 18 site would. Umbraco upgrades the database but can't downgrade it, so reset the site (see [Resetting the site](#resetting-the-site)) before going back to 17.
 
 CI checks every package on both: it tests against 17 and 18, runs the 17 build on 18, and checks every Umbraco API the 17 build calls still exists in 18. To run the same check yourself (it needs bash, so on Windows use Git Bash or WSL):
 
