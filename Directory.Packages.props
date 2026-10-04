@@ -33,6 +33,10 @@
     <PackageVersion Include="Umbraco.Automate" Version="17.5.0" />
     <PackageVersion Include="Umbraco.Cms" Version="17.7.0" />
     <PackageVersion Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.7.0" />
+    <!-- Demo site only: imports its sample workspace and automations. uSync.Automate has no
+         Umbraco 18 release yet, so the Demo only uses them on 17. -->
+    <PackageVersion Include="uSync" Version="17.4.3" />
+    <PackageVersion Include="uSync.Automate" Version="17.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(UmbracoMajor)' == '18'">

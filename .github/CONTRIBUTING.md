@@ -121,7 +121,15 @@ Then open <https://localhost:44343/umbraco> and log in:
 | Email | `admin@example.com` |
 | Password | `password1234` |
 
-The connections are under the **Automation** section in the top navigation. The site also creates an **Automate API User** on startup: a workspace's **Service Account Key** only accepts API users, so pick that one when you create a workspace. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
+The connections are under the **Automation** section in the top navigation. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
+
+The site sets itself up on startup, adding only what's missing (`Setup/DemoSetup.cs`):
+
+- an **Automate API User**, for workspaces to run as (a workspace's **Service Account Key** only accepts API users);
+- **one connection per package**, named after the package and pre-filled with its configuration references, so it uses the placeholders in `appsettings.Development.json` or your own values in `appsettings.Local.json`. A new package gets one automatically;
+- a **Demo workspace with sample automations**, imported with [uSync](https://jumoo.co.uk/uSync) from `Umbraco.Community.Automate.Demo/uSync/` into a database that has no workspaces yet. *Send a test message* (click **Run**) and *Branch on an outcome* (save a dictionary item under **Translation**) work without any signup; *Notify me when a page is published* needs your Pushover keys before you publish it.
+
+To change the samples, edit them in the backoffice: uSync writes Automate changes back to `uSync/` as you save, so commit those files. It only handles Automate's workspaces and automations, never connections or other Umbraco settings. uSync.Automate has no Umbraco 18 release yet, so the samples are only imported when the site runs on 17.
 
 In Visual Studio or Rider, set `Umbraco.Community.Automate.Demo` as the startup project and choose the `Umbraco.Web.UI` launch profile.
 

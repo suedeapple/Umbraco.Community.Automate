@@ -90,7 +90,7 @@ Or open `Umbraco.Community.Automate.Demo.slnx` in Visual Studio, Rider or VS Cod
 
 Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. The **Automation** section is in the top navigation: connections are under **Settings → Connections**, and automations under **Automations**.
 
-Every package boots with placeholder credentials, so you can create connections and build automations straight away. The Simple and Kitchen Sink examples work end to end. To try a package against the real service, copy `Umbraco.Community.Automate.Demo/appsettings.Local.example.json` to `appsettings.Local.json` (git-ignored, so it can't be committed), fill in the values for that package, and restart the site. The package's README explains where to get them. [Running the Demo site](.github/CONTRIBUTING.md#running-the-demo-site) in CONTRIBUTING covers user secrets, resetting the site and the end-to-end tests.
+The site sets itself up: every package has a connection ready, using placeholder credentials, and a Demo workspace has sample automations, two of which work end to end without any signup (open *Send a test message* and click **Run**). To try a package against the real service, copy `Umbraco.Community.Automate.Demo/appsettings.Local.example.json` to `appsettings.Local.json` (git-ignored, so it can't be committed), fill in the values for that package, and restart the site. The package's README explains where to get them. [Running the Demo site](.github/CONTRIBUTING.md#running-the-demo-site) in CONTRIBUTING covers user secrets, resetting the site and the end-to-end tests.
 
 ## Contributing
 
