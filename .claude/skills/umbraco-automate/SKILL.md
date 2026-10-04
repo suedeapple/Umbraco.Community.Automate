@@ -26,9 +26,9 @@ Most community connections are simple: an API key and an action or two. Build th
 
 | | **Simple** (most packages) | **Full** (only what's needed from it) |
 |---|---|---|
-| Use when | an API key (or token) and actions that each make one call | a trigger, outcomes, several actions sharing request and error handling, a custom icon, or a custom field editor |
+| Use when | an API key (or token) and actions that each make one call | a trigger, outcomes, several actions sharing request and error handling, or a custom field editor |
 | Folders | `Actions/`, `Composers/`, `Configuration/`, `Connections/` | any of the standard folders below, including `Api/`, `Models/`, `Triggers/`, `Client/`, `wwwroot/` |
-| Icon | a built-in Umbraco icon, no files | built-in, or custom files in `umbraco-package.json` + `icons/` |
+| Icon | either: the vendor's logo for a commercial service, otherwise a built-in Umbraco icon (see [Icons](#icons)) | the same |
 | Reference code | `Packages/_Development/Simple/` | `Packages/_Development/KitchenSink/` |
 | Every file, ready to copy | [references/simple.md](references/simple.md) | [references/full.md](references/full.md) |
 
@@ -78,7 +78,7 @@ Work through these in order and tick them off. For a package with no connection,
 4. **Connection type and settings** in `Connections/`, with credential fields defaulting to those references.
 5. **Actions** in `Actions/`, each with its settings (and output, if it returns data). Full: an `Api/` client shared by the actions, outcomes, and **triggers** in `Triggers/`.
 6. **Composer** in `Composers/`: register the package's **services** only (HTTP clients, an API client). Don't register the connection type, actions or triggers: Automate discovers them from their `[ConnectionType]`, `[Action]` and `[Trigger]` attributes. Icons and configuration references need no registration either.
-7. **Icons**: either a built-in Umbraco icon (e.g. `icon-partly-cloudy`, no files needed) or a custom one, always registered the same way: `wwwroot/umbraco-package.json` lists `icons/icons.js`, which lists one `icons/<area>.icon.js` per icon (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from [full.md](references/full.md#tests).
+7. **Icons**: the vendor's logo for a commercial service, found on the web, and a built-in Umbraco icon (e.g. `icon-link`, no files needed) for everything else; see [Icons](#icons). A logo is registered with `wwwroot/umbraco-package.json`, which lists `icons/icons.js`, which lists `icons/<area>.icon.js` (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from [full.md](references/full.md#tests).
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions. Every package supports Umbraco 17 and 18 from one build: Umbraco and Automate packages are listed there twice, as ranges for each major (`-p:UmbracoMajor=18` switches), so a new one goes in both groups.
 9. **Wire it in**: add both projects to `Umbraco.Community.Automate.Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
 10. **Demo configuration**: add **every** configuration key the package reads (each credential reference, any variables, OAuth provider settings) to the Demo site, in two files, under the same paths as `<Area>Configuration`:
@@ -101,8 +101,25 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 - Set `ConnectionTypeAlias` on every action to the connection type alias, so the action only offers matching connections.
 - Write the alias, name, group and icon directly on each `[ConnectionType]`, `[Action]` and `[Trigger]` attribute, as Umbraco Automate's own step types do. Don't gather them into an `<Area>Constants` class: the attribute is where a reader looks for them.
 - Use a shared `Group` so related connections sit together in the pickers, picking from the ones already in use before inventing one: **Social Networks** (Mastodon, DevTo), **Productivity** (Google Sheets), **Notifications** (Pushover), **Weather** (WeatherApi), **Vehicles** (Skoda). Name a new group after the kind of service, never the service itself, so the next similar package can join it. The group is only a display heading, not stored in automations, so it can change later.
-- Use the same icon on the connection type, its actions and triggers. A built-in Umbraco icon is fine; name custom icons `icon-automate-<area>`.
+- Use the same icon on the connection type, its actions and triggers (see [Icons](#icons)).
 - Register backoffice extensions (icons, editors, modals) in a static `umbraco-package.json`, which Umbraco discovers under `App_Plugins/` by itself. Don't use an `IPackageManifestReader` or list icons in `Client/src/`: one pattern everywhere means a contributor adding an icon only ever touches the same three files.
+
+### Icons
+Choose the icon by what the package talks to:
+
+- **A commercial vendor or named service** (Pushover, Google Sheets, Mastodon, a car maker's API): use the vendor's logo, so editors recognise the service in the pickers. Most contributors won't have the SVG to hand, so search the web for it yourself rather than asking them for a file:
+  1. The vendor's brand, press or media kit (search for "<vendor> brand assets" or "<vendor> press kit"). It has the official artwork and colours, and says how the logo may be used.
+  2. Otherwise [Simple Icons](https://simpleicons.org), which has a single-colour 24×24 SVG for thousands of brands at `https://cdn.jsdelivr.net/npm/simple-icons/icons/<slug>.svg`. Its files are CC0, but the logos are still the vendors' trademarks, so check the brand guidelines it links to.
+
+  Download the SVG rather than redrawing or tracing it, and note its source URL in a comment at the top of the `.icon.js` file (as Mastodon's does). Tell the user where it came from, and that it's the vendor's trademark, used only to identify the service. If there's no usable SVG (only a PNG, or the guidelines forbid this use), use a built-in icon instead and say why.
+- **Everything else**: utility packages, and actions or triggers with no vendor behind them (Test Connection, an Umbraco-side trigger, a text formatter, the httpbin examples). Use a built-in Umbraco icon, such as `icon-link`, `icon-paper-plane`, `icon-message` or `icon-calendar`, from the backoffice icon picker. It needs no files and nothing to maintain.
+
+Preparing a logo:
+- Name it `icon-automate-<area>`, and register it as in [full.md](references/full.md#icons-and-umbraco-packagejson). A logo only adds those icon files, a `wwwroot/` and the Razor SDK; it doesn't make a package Full.
+- Strip anything the backoffice doesn't need: `<title>`, `<script>`, editor metadata (Inkscape, Figma or Sketch attributes) and comments.
+- Prefix every `id` inside the SVG (gradients, clip paths) with the area name, because icons are inlined into the backoffice page and another icon's identical id can hijack it.
+- A single-colour SVG (Simple Icons has no `fill`) needs `fill="currentColor"` on the `<svg>`, so it follows the backoffice theme instead of showing black on a dark background. Keep a full-colour vendor logo in its own colours.
+- Add the icon test from [full.md](references/full.md#tests): a wrong path or name just shows a blank icon.
 
 ### Settings fields
 Pick the right editor for every setting rather than leaving everything a text box: **read [references/fields.md](references/fields.md) whenever you write a settings class.** It lists Umbraco's editors, their `EditorConfig`, the C# type each binds to, and examples. In short:

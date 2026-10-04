@@ -679,7 +679,7 @@ public class ExampleComposer : IComposer
 
 ## Icons and umbraco-package.json
 
-Worth having when no built-in Umbraco icon fits. Every package registers a custom icon the same way, with hand-written files and no C#: Umbraco discovers `umbraco-package.json` under `App_Plugins/` on its own.
+Used for a commercial vendor's logo, found on the web (see Icons in SKILL.md for where to look and how to prepare the SVG); utility packages use a built-in Umbraco icon instead. Every package registers a custom icon the same way, with hand-written files and no C#: Umbraco discovers `umbraco-package.json` under `App_Plugins/` on its own.
 
 ```
 Client/public/              or wwwroot/ in a package without a Client/ (then committed as-is)

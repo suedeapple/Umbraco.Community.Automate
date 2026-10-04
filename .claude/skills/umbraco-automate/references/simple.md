@@ -4,7 +4,7 @@ Every file for the most common package: one connection with an API key, and one 
 
 Replace `Example` / `example` with the area name (PascalCase / camelCase / lowercase as shown) and adjust the calls to the service. If the real code in `Packages/_Development/Simple/` disagrees with this file, the real code wins.
 
-Outgrow it when the package needs a trigger, outcomes, several actions sharing request and error handling, a custom icon or a backoffice editor: then follow [full.md](full.md), which builds on the same files.
+Outgrow it when the package needs a trigger, outcomes, several actions sharing request and error handling, or a backoffice editor: then follow [full.md](full.md), which builds on the same files.
 
 ## Contents
 
@@ -47,7 +47,7 @@ Packages/Example/
     Umbraco.Community.Automate.Example.Tests.csproj
 ```
 
-No `Api/`, `Models/`, `Client/` or `wwwroot/`: the connection type and the action each make their one HTTP call directly, and the icon is a built-in Umbraco one.
+No `Api/`, `Models/`, `Client/` or `wwwroot/`: the connection type and the action each make their one HTTP call directly, and the icon is a built-in Umbraco one, because httpbin is a utility rather than a vendor. A package for a commercial service adds the vendor's logo (see Icons in SKILL.md).
 
 ## Package project
 
@@ -206,7 +206,7 @@ public sealed class ExampleConnectionType(ConnectionTypeInfrastructure infrastru
 }
 ```
 
-Pick the icon from Umbraco's built-in set (`icon-paper-plane`, `icon-message`, `icon-chat`, `icon-partly-cloudy`...) and use the same one on the action. For a custom icon, add the files in [full.md](full.md#icons-and-umbraco-packagejson).
+For a utility with no vendor, pick the icon from Umbraco's built-in set (`icon-paper-plane`, `icon-message`, `icon-chat`, `icon-partly-cloudy`...). For a commercial service, use the vendor's logo, found on the web (see Icons in SKILL.md), with the files in [full.md](full.md#icons-and-umbraco-packagejson). Either way, use the same icon on the action.
 
 ## Action, settings and output
 

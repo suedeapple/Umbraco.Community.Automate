@@ -37,8 +37,8 @@ Ask, in one round:
 Ask, in one round:
 
 1. **Authentication**, only if the service offers a real choice (e.g. "Page access token (Recommended): simplest, one token in configuration" vs "OAuth sign-in: users connect their own account from the backoffice"). If there's only one way, state it and don't ask.
-2. **Shape**: "Simple (Recommended)" vs "Full", with the reason from your answers so far. Recommend Simple unless the choices need something from the Full column in SKILL.md: a trigger, outcomes, several actions sharing request and error handling, a custom icon or a custom editor. If Full, ask which of those parts they want rather than adding all of them.
-3. **Icon**: a built-in Umbraco icon (Recommended for a first version; suggest one that fits, e.g. `icon-share`) or a custom one (the service's logo as SVG, which they'll need the rights to use).
+2. **Shape**: "Simple (Recommended)" vs "Full", with the reason from your answers so far. Recommend Simple unless the choices need something from the Full column in SKILL.md: a trigger, outcomes, several actions sharing request and error handling, or a custom editor. If Full, ask which of those parts they want rather than adding all of them.
+3. **Icon**: don't ask; it follows from the service (see Icons in SKILL.md). For a commercial vendor, search the web for its logo as an SVG (its brand kit first, then Simple Icons) and say in the summary where you found it. For a utility package with no vendor, pick a built-in Umbraco icon that fits, e.g. `icon-link`. Only ask if there's no usable SVG: offer a built-in icon (Recommended) or a logo file they provide.
 
 ## Step 3: Names
 
