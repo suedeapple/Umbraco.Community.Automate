@@ -82,6 +82,25 @@ Choices such as the charge mode or temperature unit are picked from a list. The 
 
 The command actions output the `vin` they acted on.
 
+## Troubleshooting
+
+| The step fails with | What to do |
+|---|---|
+| *The API key reference '...' could not be resolved* | The connection points at a configuration key that isn't there. Add the key (see [step 2](#2-store-the-key-in-configuration)), or enter it on the connection. |
+| *The Škoda connection has no API key* / *has no VIN* | Edit the connection and fill in the missing value. |
+| An authentication error (401 or 403) | The API key is wrong or has been revoked. Generate a new one in the MyŠkoda app. |
+| A validation error (404 or another 4xx) | Check the VIN belongs to the account the API key came from, and that the vehicle supports the command (e.g. auxiliary heating). |
+| Rate limiting (429) | The API key's request quota is used up. Automate retries the step after a wait; if it keeps happening, run the automation less often. |
+| The Škoda API is unavailable, or the request timed out | Usually temporary: Automate retries the step according to its error behaviour. |
+
+Commands are sent to the car, which can take a while to act on them; a successful step means the Škoda API accepted the command, not that the car has finished it. Use **Get Vehicle Status** in a later step to check.
+
+## Compatibility
+
+| Package version | Umbraco Automate | Umbraco CMS |
+|---|---|---|
+| 1.x | 17.x | 17.4 or later |
+
 ## Links
 
 - [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Skoda/Umbraco.Community.Automate.Skoda)

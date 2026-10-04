@@ -1,32 +1,8 @@
-# Umbraco Community Automate Google Sheets
+# Umbraco.Community.Automate.GoogleSheets
 
-Google Sheets connection and actions for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate).
+A Google Sheets connection and actions for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate): add, find, update and delete rows, read and clear ranges, and create spreadsheets and tabs, all from an automation.
 
-## Overview
-
-Umbraco.Community.Automate.GoogleSheets is a provider package that adds Google Sheets connectivity to Umbraco Automate. It contributes a Google Sheets connection type (authenticated via OAuth) and ten actions covering the spreadsheet lifecycle — creating spreadsheets and sheet tabs, appending/finding/updating/deleting/upserting rows, and reading or clearing ranges — so an automation can manage spreadsheet data end-to-end without leaving the workflow builder.
-
-## Key Features
-
-- **Google Sheets connection type** — OAuth-based connection managed in the backoffice, powered by [Umbraco.Automate.OpenIddict](https://www.nuget.org/packages/Umbraco.Automate.OpenIddict)
-- **Row actions** — locate and mutate individual rows by column value:
-  - **Append Row** — append a row of values to a sheet
-  - **Find Row** — search a column for a matching value; `found`/`notFound` outcomes, with configurable match mode (Exact/Contains/StartsWith/EndsWith) and case sensitivity
-  - **Update Row** — find a row and overwrite its column values; `updated`/`notFound` outcomes
-  - **Delete Row** — find a row and delete it, shifting subsequent rows up; `deleted`/`notFound` outcomes
-  - **Append or Update Row** — upsert: updates the row if a key column value already exists, otherwise appends a new row; `updated`/`appended` outcomes
-
-  Find Row, Update Row, Delete Row, and Append or Update Row all skip the header row by default (a "First row is a header" toggle, on by default) — a lookup value that happens to equal a header label won't match or mutate it. Turn the toggle off for headerless sheets.
-- **Range actions** — read or clear a sheet without a row lookup:
-  - **Get Rows** — read every row from a tab or a specific A1 range, optionally separating the header row from the data rows
-  - **Get Cell Value** — read a single cell by A1 notation (e.g. `A1`, `B5`)
-  - **Clear Range** — clear values from a tab or a specific A1 range, preserving formatting
-- **Structural actions** — manage spreadsheets and tabs themselves:
-  - **Create Google Spreadsheet** — create a new spreadsheet, optionally with named sheet tabs
-  - **Create Sheet Tab** — add a new tab to an existing spreadsheet
-- **Column list editor** — a repeatable column-value editor with an "Insert binding" picker per row, so values can reference earlier steps' outputs
-- **Automatic token management** — OAuth credentials are stored and refreshed transparently
-- **Setup status warning** — the connection editor warns and disables "Authenticate" if the provider's client ID/secret haven't been configured yet, instead of failing in the OAuth popup
+The connection signs in to a Google account with OAuth, and its tokens are stored and refreshed automatically. Actions take a spreadsheet's URL or ID, and column values can use `${ bindings }` from the trigger or earlier steps, picked with a column-list editor in the backoffice.
 
 ## Installation
 
@@ -34,9 +10,24 @@ Umbraco.Community.Automate.GoogleSheets is a provider package that adds Google S
 dotnet add package Umbraco.Community.Automate.GoogleSheets
 ```
 
-## Configuration
+No further setup required in code. The composer registers itself automatically.
 
-Create an OAuth 2.0 Client ID in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (enable the **Google Sheets API** for the project first), then configure its credentials via `appsettings.json`:
+## Setup
+
+Google needs an OAuth client for your site before anyone can connect. This is done once per site, in the Google Cloud Console.
+
+### 1. Create a Google Cloud OAuth client
+
+1. In the [Google Cloud Console](https://console.cloud.google.com/), create a project (or pick an existing one).
+2. Under **APIs & Services → Library**, enable the **Google Sheets API**.
+3. Under **APIs & Services → OAuth consent screen**, set up the consent screen. While it's in **Testing** mode, only the Google accounts listed under **Test users** can sign in, so add every account that will connect.
+4. Under **APIs & Services → Credentials**, choose **Create credentials → OAuth client ID**, with application type **Web application**.
+5. Under **Authorized redirect URIs**, add your site's callback URL, exactly: `https://your-site/umbraco/automate/oauth/callback/googlesheets`. Add one for each environment (e.g. `https://localhost:44343/umbraco/automate/oauth/callback/googlesheets` for local development).
+6. Copy the **Client ID** and **Client secret**.
+
+### 2. Store the client in configuration
+
+Add both under `Umbraco:Automate:Providers:GoogleSheets`, which is where Umbraco Automate's OAuth support reads them (locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)):
 
 ```json
 {
@@ -44,8 +35,8 @@ Create an OAuth 2.0 Client ID in the [Google Cloud Console](https://console.clou
     "Automate": {
       "Providers": {
         "GoogleSheets": {
-          "ClientId": "your-google-oauth-client-id",
-          "ClientSecret": "your-google-oauth-client-secret"
+          "ClientId": "your-client-id.apps.googleusercontent.com",
+          "ClientSecret": "your-client-secret"
         }
       }
     }
@@ -53,24 +44,80 @@ Create an OAuth 2.0 Client ID in the [Google Cloud Console](https://console.clou
 }
 ```
 
-Keep the client secret out of source control — use environment variables, user secrets, or a key vault to inject it at deployment time.
+In production, use environment variables instead: `Umbraco__Automate__Providers__GoogleSheets__ClientId` and `Umbraco__Automate__Providers__GoogleSheets__ClientSecret`. The site reads them at startup, so restart it after changing them. If they're missing, the site logs a warning and the connection editor says the provider isn't configured instead of opening Google's sign-in.
 
-The OAuth callback URI follows the convention `{your-site}/umbraco/automate/oauth/callback/googlesheets` — add it to your OAuth client's **Authorized redirect URIs** in the Google Cloud Console.
+### 3. Create the connection
 
-The provider is registered as `GoogleSheets` rather than the generic `Google`, following the OpenIddict [multiple-instances-of-the-same-provider](https://documentation.openiddict.com/integrations/web-providers#register-multiple-instances-of-the-same-provider) pattern. This means a future Google Drive or Google Docs package can register its own OpenIddict client (with its own unique provider name and redirect URI) without colliding with this one.
+1. Go to **Automation → Settings → Connections** and create a new **Google Sheets** connection.
+2. Click **Authenticate** and sign in with the Google account the automations should act as. That account needs access to the spreadsheets you'll use.
 
-Once configured, create a Google Sheets connection in a workspace from the backoffice and authorize it via the OAuth popup. Any of this package's actions can then reference that connection — paste the sheet's URL or ID (and, where relevant, the tab name) into the action's settings, along with whatever the action needs: column values to write, a column/value to search or match on, an A1 range, or a new spreadsheet/tab title.
+The provider is registered as `GoogleSheets` rather than the generic `Google`, following OpenIddict's [multiple instances of the same provider](https://documentation.openiddict.com/integrations/web-providers#register-multiple-instances-of-the-same-provider) pattern, so a future Google Drive or Docs package can register its own client without colliding with this one.
+
+## Actions
+
+Every action takes a **Spreadsheet** (the URL from your browser's address bar, or just the ID) and, except Create Google Spreadsheet, a **Sheet / tab name**. Values support `${ binding }` expressions.
+
+| Action | Other settings | Outcomes |
+|---|---|---|
+| **Append Row to Google Sheet** | **Column values**: one value per column, in order. | |
+| **Append or Update Row in Google Sheet** | **Key column**, **Column values**, **First row is a header**. Updates the row whose key column matches; otherwise appends. | `updated`, `appended` |
+| **Find Row in Google Sheet** | **Search column**, **Search value**, **Match mode** (Exact, Contains, StartsWith, EndsWith), **Case sensitive**, **First row is a header**. | `found`, `notFound` |
+| **Update Row in Google Sheet** | **Lookup column**, **Lookup value**, **Column values**, **First row is a header**. | `updated`, `notFound` |
+| **Delete Row from Google Sheet** | **Lookup column**, **Lookup value**, **First row is a header**. Later rows shift up. | `deleted`, `notFound` |
+| **Get Rows from Google Sheet** | **Range** (optional, A1 notation; the whole tab if empty), **First row is a header**. | |
+| **Get Cell Value from Google Sheet** | **Cell** (A1 notation, e.g. `B5`). | |
+| **Clear Range in Google Sheet** | **Range** (optional; the whole tab if empty). Keeps formatting. | |
+| **Create Google Spreadsheet** | **Title**, **Sheet tab names** (optional). | |
+| **Create Sheet Tab in Google Spreadsheet** | **Sheet tab title**. | |
+
+**First row is a header** is on by default, so a lookup value that matches a header label never finds or changes the header row. Turn it off for sheets without one.
+
+## Outcomes and outputs
+
+Outcomes let later steps branch, e.g. only send a welcome email when **Append or Update Row** gives `appended`. Outputs are available as `${ steps.<alias>.<field> }`:
+
+| Action | Outputs |
+|---|---|
+| Append Row | `updatedRange`, `updatedRows`, `updatedCells` |
+| Append or Update Row | `rowNumber`, `updatedRange`, `updatedRows`, `updatedCells` |
+| Find Row | `found`, `rowNumber`, `values` |
+| Update Row | `rowNumber`, `updatedRange`, `updatedRows`, `updatedCells` |
+| Delete Row | `deletedRowNumber` |
+| Get Rows | `rows`, `rowCount`, `headers` |
+| Get Cell Value | `value`, `isEmpty` |
+| Clear Range | `clearedRange` |
+| Create Google Spreadsheet | `spreadsheetId`, `spreadsheetUrl` |
+| Create Sheet Tab | `sheetId`, `sheetTitle` |
 
 ## Troubleshooting
 
-If a run fails saying the connected account doesn't have access to the spreadsheet, share the spreadsheet with that specific Google account, or authorize the connection using an account that already has access to it.
+**Signing in**
 
-If a run fails with a message that Google "couldn't find a spreadsheet" at the given URL/ID, double-check the link or ID is correct — that's usually a typo or a stale link. If it looks right, also check the sharing settings: access problems can occasionally surface as this same "not found" error rather than the access-denied one above.
+| Google shows | What to do |
+|---|---|
+| *Error 401: invalid_client* / "The OAuth client was not found" | The Client ID in configuration isn't a real Google OAuth client, or the site is still using a placeholder. Check the value and restart the site. |
+| *Error 400: redirect_uri_mismatch* | Add the exact callback URL from [step 1](#1-create-a-google-cloud-oauth-client) to the client's **Authorized redirect URIs**. Google's error page shows the `redirect_uri` the site sent; it must match character for character. |
+| *Access blocked: … has not completed the Google verification process* | The consent screen is in Testing mode: add the account under **Test users**. |
 
-If a run fails saying the sheet/tab name doesn't match, first verify the tab name in your spreadsheet matches exactly — including capitalisation. If the tab name is right, the connected account may not have permission to access the spreadsheet; this error can surface for cross-domain access (e.g. a personal Google account trying to append to a Google Workspace spreadsheet it hasn't been granted access to).
+**Running actions**
 
-If a run fails saying Google is rate-limiting requests, this isn't an error with your setup — the [Sheets API has a fixed request quota](https://developers.google.com/workspace/sheets/api/limits), and the run will need to be retried after a short wait.
+| The step fails with | What to do |
+|---|---|
+| The connected account doesn't have access to the spreadsheet | Share the spreadsheet with that Google account, or authenticate the connection with an account that has access. |
+| Google couldn't find a spreadsheet at that URL or ID | Check the link or ID for a typo. If it's right, check the sharing too: access problems can sometimes show as "not found". |
+| The sheet/tab name doesn't match | Check the tab name matches exactly, including capitals. If it does, the account may not have access, which can surface this way for cross-domain access (a personal account and a Google Workspace spreadsheet). |
+| Google is rate-limiting requests | The [Sheets API has a request quota](https://developers.google.com/workspace/sheets/api/limits). Automate retries the step after a wait. |
 
-## License
+**Rows added twice.** Google Sheets has no way to recognise a repeated request, so if a step times out after Google has already written the row, Automate's retry appends it again. Where duplicates matter, use **Append or Update Row** with a key column: a retry then updates the same row.
 
-MIT — see [LICENSE](https://github.com/umbraco-community/Umbraco.Community.Automate/blob/main/LICENSE) for details.
+## Compatibility
+
+| Package version | Umbraco Automate | Umbraco CMS |
+|---|---|---|
+| 1.x | 17.x | 17.4 or later |
+
+## Links
+
+- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets)
+- [Report an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues)
+- [Google Sheets API documentation](https://developers.google.com/workspace/sheets/api)

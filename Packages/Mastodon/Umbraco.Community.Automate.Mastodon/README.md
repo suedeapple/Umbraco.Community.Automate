@@ -76,9 +76,9 @@ Add the **Send Mastodon Post** action to any automation and select your Mastodon
 
 > **Note:** Most Mastodon instances limit posts to 500 characters (links count as 23 characters, and spoiler text counts toward the limit). Posts over the instance's limit are rejected by the Mastodon API and the action fails.
 
-## Migration from 1.x to 2.x
+## Migrating from OC.Automate.Mastodon
 
-Version 2.x is a **breaking change**. If you're upgrading from 1.x, you must update your configuration:
+This package replaces `OC.Automate.Mastodon` 1.x. The move to 2.x is a **breaking change**: you must update your package reference, configuration and connections:
 
 ### Package ID
 This package was previously published as `OC.Automate.Mastodon` and now ships from the

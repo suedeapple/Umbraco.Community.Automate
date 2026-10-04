@@ -191,10 +191,16 @@ public class DevToConvertersComposer : IComposer
 
 DEV needs absolute URLs for the canonical link, links and images. By default the action uses the absolute URL Umbraco generates for the content, which works when the site has a domain assigned (**Culture and Hostnames**) or `Umbraco:CMS:WebRouting:UmbracoApplicationUrl` is set. Otherwise, set **Site URL** on the step, e.g. to `$Umbraco:Automate:Variables:DevTo:SiteUrl`.
 
-## Errors and retries
+## Troubleshooting
 
 API failures are classified so Automate can decide what to do: rate limiting (429), timeouts and DEV being unavailable (5xx) are transient and retried according to the step's error behaviour; an invalid API key, a rejected article (422) or missing settings fail straight away with the DEV error message.
 
 ## Compatibility
 
 One build of the package supports Umbraco 17 and 18. It's compiled against 17 and every change is tested on both, including running the 17 build on 18 and checking every Umbraco API it calls still exists there. Umbraco 19 isn't supported until it has been tested.
+
+## Links
+
+- [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/DevTo/Umbraco.Community.Automate.DevTo)
+- [Report an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues)
+- [DEV API documentation](https://developers.forem.com/api/v1)
