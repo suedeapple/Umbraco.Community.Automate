@@ -59,9 +59,10 @@ git push origin main
 
 ```
 Packages/                                     one folder per package
-  _Examples/                                  reference packages for the skill (built and tested, never published)
-    Simple/                                   an API key and one action
-    KitchenSink/                              every convention, including a trigger and a front end
+  _Development/                               for building and testing packages (built and tested, never published)
+    Simple/                                   reference example: an API key and one action
+    KitchenSink/                              reference example: every convention, including a trigger and a front end
+    TestConnection/                           a Test Connection action, used by the Demo site's test pages
   <Area>/                                     e.g. Mastodon
     Umbraco.Community.Automate.<Area>/        the package (what ships to NuGet)
     Umbraco.Community.Automate.<Area>.Tests/  xUnit tests for the package
@@ -69,10 +70,10 @@ Umbraco.Community.Automate.Demo/              the Demo site: a throwaway Umbraco
 .github/                                      CI and release workflows, this guide, design notes
 .githooks/                                    gitleaks pre-commit and pre-push hooks
 Directory.Packages.props                      central NuGet versions for every project
-Umbraco.Community.Automate.Demo.slnx          the solution: every package, the examples and the Demo site
+Umbraco.Community.Automate.Demo.slnx          the solution: every package, _Development and the Demo site
 ```
 
-Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Packages/_Examples/` holds two reference packages, mainly for the skill to build from and not for use in a real site, laid out the same way, one level deeper (the underscore keeps them at the top of the list): **Simple**, an API key and one action, and **KitchenSink**, which uses every folder below, including a trigger and a front end. Neither has a release tag prefix and both are marked not packable, so they're never published.
+Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Packages/_Development/` holds what helps people build and test packages, laid out the same way, one level deeper (the underscore keeps it at the top of the list): two reference examples, mainly for the skill to build from, **Simple** (an API key and one action) and **KitchenSink** (every folder below, including a trigger and a front end); and **TestConnection**, an action that runs a connection's **Test connection** check from an automation, which the Demo site's test pages use. None of them is for use in a real site: none has a release tag prefix, and all are marked not packable, so they're never published.
 
 ### Inside a package
 
@@ -107,7 +108,7 @@ cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci
 npm run build
 cd ../../../..
-cd Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
+cd Packages/_Development/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm run build
 cd ../../../../..
 
@@ -127,7 +128,7 @@ The site sets itself up on startup, adding only what's missing (`Setup/DemoSetup
 
 - an **Automate API User**, for workspaces to run as (a workspace's **Service Account Key** only accepts API users);
 - **one connection per package**, named after the package and pre-filled with its configuration references, so it uses the placeholders in `appsettings.Development.json` or your own values in `appsettings.Local.json`. A new package gets one automatically;
-- a **Demo workspace**, and an **Automate tests** page in **Content** with **a page per connection**, imported with [uSync](https://jumoo.co.uk/uSync) from `Umbraco.Community.Automate.Demo/uSync/` into a database that has no workspaces yet. Each page has its own document type and a *Test: …* automation that starts when that page is published. It runs the connection's **Test connection** check (with the Demo-only **Test Connection** action in `Setup/TestConnectionAction.cs`), then an **If** step branches on its `connected` output to show the result on screen: a green message when it works, or a red one with the reason when it doesn't. To try a package, publish its page (each page says so, from the shared *Automate test instructions* composition); to try its actions, add them after the *Connection works* step.
+- a **Demo workspace**, and an **Automate tests** page in **Content** with **a page per connection**, imported with [uSync](https://jumoo.co.uk/uSync) from `Umbraco.Community.Automate.Demo/uSync/` into a database that has no workspaces yet. Each page has its own document type and a *Test: …* automation that starts when that page is published. It runs the connection's **Test connection** check (with the **Test Connection** action from `Packages/_Development/TestConnection/`), then an **If** step branches on its `connected` output to show the result on screen: a green message when it works, or a red one with the reason when it doesn't. To try a package, publish its page (each page says so, from the shared *Automate test instructions* composition); to try its actions, add them after the *Connection works* step.
 
 To change the *Test:* automations, edit them in the backoffice: uSync writes Automate changes back to `uSync/` as you save, so commit those files. It doesn't write document types or pages on save, so testing never changes files; to export changes to those, set `uSync:Settings:ExportOnSave` to `All` in your `appsettings.Local.json` while you make them, and commit only the files you meant to change. uSync never handles connections. uSync.Automate has no Umbraco 18 release yet, so all of this is only imported when the site runs on 17.
 
@@ -256,7 +257,7 @@ git push --force-with-lease
 
 **We recommend building every new package, and migrating every existing one, with the `umbraco-automate` skill** for [Claude Code](https://claude.com/claude-code) ([`.claude/skills/umbraco-automate/`](../.claude/skills/umbraco-automate/SKILL.md)). It builds every package the same way, so the structure, naming, configuration and tests stay consistent across the repo, and reviews can focus on what the package does rather than where things go. It loads automatically when you work in this repo. Ask "Using the Umbraco Automate skill, create me a package for <service>" and it researches the service, then walks you through the choices (what the package does, how it connects, names, settings) before building it. It can also migrate a package from its own repository into this one, or bring an existing package up to the current conventions. A migrated package can adopt the community naming (recommended) or keep its own package ID, namespaces and aliases for compatibility with existing users; everything else follows the conventions either way. For anything else Automate-related ("Using the Umbraco Automate skill, add a trigger to Mastodon"), it follows the layout and conventions here. The checklist below is the same process by hand.
 
-1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from the [Simple example](../Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md) for an API key and an action, or the [Kitchen Sink](../Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md) when you need a trigger, outcomes or a front end; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
+1. **Create the projects.** Add `Packages/<Area>/Umbraco.Community.Automate.<Area>/` and `Packages/<Area>/Umbraco.Community.Automate.<Area>.Tests/`. Start from the [Simple example](../Packages/_Development/Simple/Umbraco.Community.Automate.Examples.Simple/README.md) for an API key and an action, or the [Kitchen Sink](../Packages/_Development/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md) when you need a trigger, outcomes or a front end; delete what you don't need, and give your copy a `MinVerTagPrefix` and remove `IsPackable=false`. Among the real connections, WeatherApi is the simplest; Google Sheets shows OAuth.
 2. **Use the standard folders** from [Inside a package](#inside-a-package): `Composers/`, plus `Actions/`, `Triggers/` and `Connections/` for whichever of those the package adds, and `Api/`, `Configuration/`, `Client/` and `wwwroot/` when you need them.
 3. **Add a `Directory.Build.props`** modelled on an existing package's, with your own `MinVerTagPrefix` (e.g. `newconnection-v`). This file is also what makes CI pick up the package.
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
@@ -294,7 +295,7 @@ A pull request that adds or changes a package should only change that package. P
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 
-It shouldn't change other packages, the examples, the CI and release workflows (`.github/workflows/`), `.githooks/`, the root `.editorconfig` or `.gitattributes`, the skill in `.claude/`, or the version of a library other packages already use. If one of those really is necessary (a shared library needs an upgrade, CI can't build your package), open an issue or a separate pull request for it and explain why, so it can be reviewed on its own. `CODEOWNERS` asks the owners of anything outside your package to review changes to it. CI also adds a warning to a pull request that changes more than one package or anything in `.github/workflows/`; it doesn't fail the build, but reviewers will ask why.
+It shouldn't change other packages, anything in `Packages/_Development/`, the CI and release workflows (`.github/workflows/`), `.githooks/`, the root `.editorconfig` or `.gitattributes`, the skill in `.claude/`, or the version of a library other packages already use. If one of those really is necessary (a shared library needs an upgrade, CI can't build your package), open an issue or a separate pull request for it and explain why, so it can be reviewed on its own. `CODEOWNERS` asks the owners of anything outside your package to review changes to it. CI also adds a warning to a pull request that changes more than one package or anything in `.github/workflows/`; it doesn't fail the build, but reviewers will ask why.
 
 ## Preventing secret leaks
 

@@ -1,10 +1,10 @@
 # Full connection: everything a package can have
 
-Every file for a fully featured package, the shape of `Packages/_Examples/KitchenSink/`: a connection with a shared API client, an action with an output, an action with outcomes, a trigger, a custom icon, a backoffice field editor, and tests for all of it.
+Every file for a fully featured package, the shape of `Packages/_Development/KitchenSink/`: a connection with a shared API client, an action with an output, an action with outcomes, a trigger, a custom icon, a backoffice field editor, and tests for all of it.
 
 Most packages need far less. Start from [simple.md](simple.md) (an API key and an action) unless the package needs something here, then take only the sections you need: each one says when it's worth having. Folders you don't need don't exist.
 
-Replace `Example` / `example` with the area name (PascalCase / camelCase / lowercase as shown) and adjust to the service. If the real code in `Packages/_Examples/KitchenSink/` disagrees with this file, the real code wins.
+Replace `Example` / `example` with the area name (PascalCase / camelCase / lowercase as shown) and adjust to the service. If the real code in `Packages/_Development/KitchenSink/` disagrees with this file, the real code wins.
 
 ## Contents
 

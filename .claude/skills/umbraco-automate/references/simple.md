@@ -1,8 +1,8 @@
 # Simple connection: an API key and an action
 
-Every file for the most common package: one connection with an API key, and one action that calls the service. It's `Packages/_Examples/Simple/` set up as a real, releasable package. Most new connections start here, and you add more actions to it the same way.
+Every file for the most common package: one connection with an API key, and one action that calls the service. It's `Packages/_Development/Simple/` set up as a real, releasable package. Most new connections start here, and you add more actions to it the same way.
 
-Replace `Example` / `example` with the area name (PascalCase / camelCase / lowercase as shown) and adjust the calls to the service. If the real code in `Packages/_Examples/Simple/` disagrees with this file, the real code wins.
+Replace `Example` / `example` with the area name (PascalCase / camelCase / lowercase as shown) and adjust the calls to the service. If the real code in `Packages/_Development/Simple/` disagrees with this file, the real code wins.
 
 Outgrow it when the package needs a trigger, outcomes, several actions sharing request and error handling, a custom icon or a backoffice editor: then follow [full.md](full.md), which builds on the same files.
 

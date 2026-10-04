@@ -6,7 +6,7 @@ Umbraco Automate adds an **Automation** section to the Umbraco backoffice, where
 
 - **The `umbraco-automate` skill** for [Claude Code](https://claude.com/claude-code), which builds new packages and migrates existing ones to the repo's conventions.
 - **[Packages](#packages)** to use as they are, or to learn from.
-- **[Two reference examples](#examples)** that the skill builds from: one simple, one with everything.
+- **[Two reference examples](#examples-and-development-tools)** that the skill builds from (one simple, one with everything), and a Test Connection action for checking connections.
 - **[A Demo site](#running-the-demo-site)** with every package installed, to try them in a real backoffice.
 - **CI and releases** that pick up a new package from its folder, with no workflow to edit.
 
@@ -46,7 +46,7 @@ We recommend moving to the community naming (`Umbraco.Community.Automate.<Area>`
 
 For smaller jobs, ask in the same way: "Using the Umbraco Automate skill, add a trigger to Mastodon". The skill follows the same conventions.
 
-Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-new-package) in CONTRIBUTING has the same process as a checklist, and the [examples](#examples) show what a finished package looks like.
+Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-new-package) in CONTRIBUTING has the same process as a checklist, and the [examples](#examples-and-development-tools) show what a finished package looks like.
 
 ## Packages
 
@@ -63,12 +63,15 @@ Every package supports Umbraco 17 and 18 (with Umbraco Automate 17 and 18) from 
 
 To use a package before it's on NuGet, see [Using a package before it's released](.github/CONTRIBUTING.md#using-a-package-before-its-released).
 
-### Examples
+### Examples and development tools
 
-`Packages/_Examples/` holds two small reference packages. They're mainly there for the skill, which builds new packages from them, and they're also useful to read when you're building by hand. **They aren't for use in a real site**: they only talk to [httpbin.org](https://httpbin.org), a test service that echoes requests back, and they're never published. They do work in the Demo site with no signup, and CI builds and tests them so they always match the current conventions.
+`Packages/_Development/` holds what helps you build and test packages. **None of it is for use in a real site**, and none of it is published, but CI builds and tests it so it always matches the current conventions.
 
-- [**Simple**](Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): an API key and one action, the shape most packages need.
-- [**Kitchen Sink**](Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
+- [**Simple**](Packages/_Development/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): a reference example with an API key and one action, the shape most packages need. The skill builds new packages from it.
+- [**Kitchen Sink**](Packages/_Development/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): a reference example with every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
+- [**Test Connection**](Packages/_Development/TestConnection/Umbraco.Community.Automate.TestConnection/README.md): an action that runs a connection's **Test connection** check from an automation. The Demo site's test pages use it.
+
+Both examples only talk to [httpbin.org](https://httpbin.org), a test service that echoes requests back, so they work in the Demo site with no signup.
 
 ## Running the Demo site
 
@@ -79,7 +82,7 @@ To use a package before it's on NuGet, see [Using a package before it's released
 cd Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client
 npm ci && npm run build
 cd ../../../..
-cd Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
+cd Packages/_Development/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/Client
 npm ci && npm run build
 cd ../../../../..
 

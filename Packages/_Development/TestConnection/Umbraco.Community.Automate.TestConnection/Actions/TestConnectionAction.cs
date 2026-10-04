@@ -1,18 +1,16 @@
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
-using Umbraco.Automate.Core.Settings;
 
-namespace Umbraco.Community.Automate.Demo.Setup;
+namespace Umbraco.Community.Automate.TestConnection.Actions;
 
 /// <summary>
-/// Demo only: runs a connection's own Test connection check from an automation, so each
-/// "Test: ..." automation can tell the editor whether its connection works. Always succeeds, with
-/// <see cref="TestConnectionOutput.Connected"/> for an If step to branch on, because a failed check
-/// is the answer the editor asked for, not an error.
+/// Runs a connection's own Test connection check from an automation, so an automation can tell
+/// the editor whether a connection works. Always succeeds, with <see cref="TestConnectionOutput.Connected"/>
+/// for an If step to branch on, because a failed check is the answer asked for, not an error.
 /// </summary>
-[Action("demo.testConnection", "Test Connection",
+[Action("community.testConnection", "Test Connection",
     Description = "Runs a connection's Test connection check. Branch on its connected output with an If step.",
-    Group = "Demo",
+    Group = "Development",
     Icon = "icon-link")]
 public sealed class TestConnectionAction(ActionInfrastructure infrastructure, IConnectionService connectionService)
     : ActionBase<TestConnectionSettings, TestConnectionOutput>(infrastructure)
@@ -35,19 +33,4 @@ public sealed class TestConnectionAction(ActionInfrastructure infrastructure, IC
             Message = result.Message ?? result.Status.ToString(),
         });
     }
-}
-
-public sealed class TestConnectionSettings
-{
-    [Field(Label = "Connection", Description = "The alias of the connection to test, e.g. pushover. Find it under Automation → Settings → Connections.", SortOrder = 10)]
-    public string ConnectionAlias { get; set; } = string.Empty;
-}
-
-public sealed class TestConnectionOutput
-{
-    /// <summary>Whether the connection's check passed.</summary>
-    public bool Connected { get; init; }
-
-    /// <summary>What the connection's check reported, e.g. "Connected as @name" or why it failed.</summary>
-    public string Message { get; init; } = string.Empty;
 }

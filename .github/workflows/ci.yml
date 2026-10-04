@@ -35,8 +35,8 @@ jobs:
           set -euo pipefail
           CHANGED=$(git diff --name-only '${{ github.event.pull_request.base.sha }}'...HEAD)
 
-          # Packages/<Area>/..., or Packages/_Examples/<Name>/... for the examples.
-          PACKAGES=$(grep -oE '^Packages/(_Examples/)?[^/]+/' <<< "$CHANGED" | sort -u || true)
+          # Packages/<Area>/..., or Packages/_Development/<Name>/... for the examples and tools.
+          PACKAGES=$(grep -oE '^Packages/(_Development/)?[^/]+/' <<< "$CHANGED" | sort -u || true)
           COUNT=$(grep -c . <<< "$PACKAGES" || true)
           if [ "$COUNT" -gt 1 ]; then
             echo "::warning title=More than one package::This PR changes $COUNT packages ($(tr '\n' ' ' <<< "$PACKAGES")). Package PRs should change one package; split it up unless this is a repo-wide change."
@@ -54,7 +54,7 @@ jobs:
           # A package is any directory with its own Directory.Build.props — the same marker
           # release.yml already relies on to map a tag back to a package. Packages sit at
           # Packages/<Area>/<Project>/, e.g. Packages/Mastodon/Umbraco.Community.Automate.Mastodon,
-          # and the reference examples one level deeper, e.g. Packages/_Examples/Simple/<Project>.
+          # and the examples and tools one level deeper, e.g. Packages/_Development/Simple/<Project>.
           mapfile -t PROJECT_DIRS < <(
             find . -mindepth 4 -maxdepth 5 -name Directory.Build.props -not -path './.git/*' -not -path '*/node_modules/*' \
               | xargs -r -n1 dirname | sed 's#^\./##' | sort

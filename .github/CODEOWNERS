@@ -14,7 +14,7 @@
 /Packages/WeatherApi/   @suedeapple
 
 # Shared files every package depends on.
-/Packages/_Examples/    @suedeapple @warrenbuckley
+/Packages/_Development/    @suedeapple @warrenbuckley
 /.github/               @suedeapple @warrenbuckley
 /.claude/               @suedeapple @warrenbuckley
 /Directory.Packages.props @suedeapple @warrenbuckley
