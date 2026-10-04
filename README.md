@@ -12,7 +12,7 @@ Umbraco Automate adds an **Automation** section to the Umbraco backoffice, where
 
 ## Building a package with the skill
 
-**We recommend using the skill to create every new package and to migrate every existing one.** It builds them all the same way, so every package has the same structure, naming, configuration and tests, and anyone who knows one package can find their way around the rest.
+**We recommend using the skill to create every new package and to migrate every existing one.** It builds them all the same way, so every package has the same structure, configuration and tests, and anyone who knows one package can find their way around the rest.
 
 ### Install it
 
@@ -38,7 +38,9 @@ To bring in a package you already publish, ask it to:
 
 > Using the Umbraco Automate skill, migrate my package from `<path or repo URL>`.
 
-It reads your code and asks the questions that affect your existing users: whether to keep your package ID and aliases, and how configuration moves. Then it reshapes the package to match the others.
+It reads your code and asks the questions that affect your existing users, then reshapes the package to match the others.
+
+We recommend moving to the community naming (`Umbraco.Community.Automate.<Area>` package ID and namespaces, `community.` aliases), but you can keep your own package ID, namespaces and aliases for compatibility, so your existing users can upgrade without reinstalling or rebuilding their automations. Either way, the package follows the rest of the repo's conventions.
 
 ### Change an existing package
 
