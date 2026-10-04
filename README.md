@@ -28,7 +28,7 @@ Claude Code loads the skill whenever you ask for something Automate-related. You
 
 Ask for the package you want, for example:
 
-> Create me an Automate package for the PokéAPI, with an action that looks up a Pokémon by name.
+> Using the Umbraco Automate skill, create me a package for the PokéAPI, with an action that looks up a Pokémon by name.
 
 The skill researches the service first. Then it walks you through the choices one at a time, recommending an option each time: which actions and triggers, how it connects, the names, and the settings for each action. When you confirm a summary, it builds the package with tests, wires it into the solution and the Demo site, and writes the package's README.
 
@@ -36,13 +36,13 @@ The skill researches the service first. Then it walks you through the choices on
 
 To bring in a package you already publish, ask it to:
 
-> Migrate my package from `<path or repo URL>`.
+> Using the Umbraco Automate skill, migrate my package from `<path or repo URL>`.
 
 It reads your code and asks the questions that affect your existing users: whether to keep your package ID and aliases, and how configuration moves. Then it reshapes the package to match the others.
 
 ### Change an existing package
 
-For smaller jobs, just ask: "add a trigger to Mastodon", "add a setting for the post language to DevTo". The skill follows the same conventions.
+For smaller jobs, ask in the same way: "Using the Umbraco Automate skill, add a trigger to Mastodon". The skill follows the same conventions.
 
 Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-new-package) in CONTRIBUTING has the same process as a checklist, and the [examples](#examples) are there to copy.
 
