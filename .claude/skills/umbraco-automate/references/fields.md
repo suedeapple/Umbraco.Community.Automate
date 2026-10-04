@@ -224,9 +224,16 @@ using System.ComponentModel.DataAnnotations;
 public string Value { get; set; } = string.Empty;
 ```
 
+**Non-nullable text is required, whether or not it has `[Required]`.** Automate adds an implicit `[Required]` to every non-nullable reference-type setting (`string`, a class) except collections, and checks it each time the step runs. `[Required]` rejects empty strings, so an optional setting declared as `public string Range { get; set; } = string.Empty;` fails the step with *The Range field is required* when it's left blank, whatever its description says. Declare optional text as `string?`, and treat null or blank as "not set":
+
+```csharp
+[Field(Label = "Range", Description = "A1 range to read, e.g. A2:D50. Leave blank for the whole sheet.")]
+public string? Range { get; set; }
+```
+
 - Use annotations for rules about one field (required, length, range), with an `ErrorMessage` the user can act on.
 - Keep checks that span fields, or that need the connection, in the action itself, failing fast with a clear message before any API call.
-- Connection settings are checked in the connection type's `ValidateAsync` and the shared validator, not by the middleware.
+- Connection settings get the same checks whenever Automate loads a connection, and `ValidateAsync` runs on **Test connection**. See the warning about connection settings in SKILL.md: an invalid connection can fail other packages' steps.
 
 ## Bindings and editors
 
@@ -252,5 +259,6 @@ For every settings property:
 - [ ] A number? Integer or decimal with `min`/`max`, plus `[Range]`.
 - [ ] A default in the initializer that makes a new step work as it is.
 - [ ] `[Required]` (or a check in the action) for anything the action can't run without.
+- [ ] Optional text is `string?`: a non-nullable `string` is required, even with `= string.Empty`.
 - [ ] Credentials: `IsSensitive = true` and a default configuration reference (see SKILL.md).
 - [ ] Opened in the Demo site: the editor renders, saves, and the action receives the value.
