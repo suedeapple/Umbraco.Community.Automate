@@ -158,7 +158,7 @@ Choose the icon by what the package talks to:
   1. The vendor's brand, press or media kit (search for "<vendor> brand assets" or "<vendor> press kit"). It has the official artwork and colours, and says how the logo may be used.
   2. Otherwise [Simple Icons](https://simpleicons.org), which has a single-colour 24×24 SVG for thousands of brands at `https://cdn.jsdelivr.net/npm/simple-icons/icons/<slug>.svg`. Its files are CC0, but the logos are still the vendors' trademarks, so check the brand guidelines it links to.
 
-  Download the SVG rather than redrawing or tracing it, and note its source URL in a comment at the top of the `.icon.js` file (as Mastodon's does). Tell the user where it came from, and that it's the vendor's trademark, used only to identify the service. If there's no usable SVG (only a PNG, or the guidelines forbid this use), use a built-in icon instead and say why.
+  Prefer the square mark (the symbol on its own) over a wordmark. Icons are drawn in a small square, so a wide logo with the name spelled out shrinks until it's hard to read. If the only SVG is a wordmark, say so when offering it, and offer a built-in icon alongside it. Download the SVG rather than redrawing or tracing it, and note its source URL in a comment at the top of the `.icon.js` file (as Mastodon's does). Tell the user where it came from, and that it's the vendor's trademark, used only to identify the service. If there's no usable SVG (only a PNG, or the guidelines forbid this use), use a built-in icon instead and say why.
 - **Everything else**: utility packages, and actions or triggers with no vendor behind them (Test Connection, an Umbraco-side trigger, a text formatter, the httpbin examples). Use a built-in Umbraco icon, such as `icon-link`, `icon-paper-plane`, `icon-message` or `icon-calendar`, from the backoffice icon picker. It needs no files and nothing to maintain.
 - **The contributor's own icon**: whatever the package, if they have an SVG they'd rather use, use it. Prepare it the same way as a downloaded logo.
 
@@ -166,6 +166,7 @@ Preparing a logo:
 - Name it `icon-automate-<area>`, and register it as in [full.md](references/full.md#icons-and-umbraco-packagejson). A logo only adds those icon files, a `wwwroot/` and the Razor SDK; it doesn't make a package Full.
 - Strip anything the backoffice doesn't need: `<title>`, `<script>`, editor metadata (Inkscape, Figma or Sketch attributes) and comments.
 - Prefix every `id` inside the SVG (gradients, clip paths) with the area name, because icons are inlined into the backoffice page and another icon's identical id can hijack it.
+- Replace any `<style>` block with attributes on the elements (e.g. `.cls-1{fill:#3761a8}` becomes `fill="#3761a8"` on each element with that class), then remove the `class` attributes. Inlined into the page, the styles would apply to every element with those class names, restyling other icons; Illustrator exports (`cls-1`, `cls-2`...) all use the same names. PokeApi's logo is an example.
 - A single-colour SVG (Simple Icons has no `fill`) needs `fill="currentColor"` on the `<svg>`, so it follows the backoffice theme instead of showing black on a dark background. Keep a full-colour vendor logo in its own colours.
 - Add the icon test from [full.md](references/full.md#tests): a wrong path or name just shows a blank icon.
 
