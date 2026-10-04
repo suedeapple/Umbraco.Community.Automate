@@ -38,7 +38,7 @@ public class DemoApiUserHandler(
             new UserCreateModel
             {
                 Kind = UserKind.Api,
-                Name = "Automate (Demo)",
+                Name = "Automate API User",
                 UserName = UserName,
                 Email = UserName,
                 UserGroupKeys = new HashSet<Guid> { Constants.Security.AdminGroupKey },
@@ -46,7 +46,7 @@ public class DemoApiUserHandler(
             approveUser: true);
 
         if (result.Success)
-            logger.LogInformation("Created the {Name} API user for Automate workspaces", "Automate (Demo)");
+            logger.LogInformation("Created the {Name} for Automate workspaces", "Automate API User");
         else
             logger.LogWarning("Couldn't create the Demo's API user for Automate workspaces: {Status}", result.Status);
     }
