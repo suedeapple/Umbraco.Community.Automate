@@ -195,6 +195,14 @@ DEV needs absolute URLs for the canonical link, links and images. By default the
 
 API failures are classified so Automate can decide what to do: rate limiting (429), timeouts and DEV being unavailable (5xx) are transient and retried according to the step's error behaviour; an invalid API key, a rejected article (422) or missing settings fail straight away with the DEV error message.
 
+## Migrating from the 1.0.0 betas
+
+The betas (`1.0.0-beta.1` to `beta.3`) used different aliases and configuration paths. Upgrading needs three changes:
+
+- **Configuration.** Move your values to Umbraco Automate's shared sections: `Umbraco:Community:Automate:DevTo:Secrets:ApiKey` becomes `Umbraco:Automate:Secrets:DevTo:ApiKey`, and anything under `Umbraco:Community:Automate:DevTo:Variables` moves to `Umbraco:Automate:Variables:DevTo` (e.g. `SiteUrl`).
+- **Connections.** The connection type alias is now `community.devto` (was `devto`), so create your DEV connection again as in [Setup](#setup). Its API key comes pre-filled with the new reference.
+- **Automations.** The action alias is now `community.devto.publishContent` (was `devto.publishContent`), so replace the **Publish Content to DEV** step in each automation that uses it.
+
 ## Compatibility
 
 | Package version | Umbraco Automate | Umbraco CMS |
