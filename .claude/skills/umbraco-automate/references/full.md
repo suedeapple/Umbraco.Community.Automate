@@ -1495,7 +1495,7 @@ One or two sentences on what automations can do with it, e.g. "Create a post on 
 
     dotnet add package Umbraco.Community.Automate.Example
 
-No further setup required. The composer registers itself automatically.
+There's nothing to register in code: Umbraco loads the package on its own. Then follow **Setup** below.
 
 ## Setup
 

@@ -18,7 +18,8 @@ body:
         - Pushover
         - Skoda
         - WeatherApi
-        - Examples (Simple / Kitchen Sink)
+        - Development (Simple, Kitchen Sink, Test Connection)
+        - Demo site
         - Repo, CI or docs
         - Other
     validations:

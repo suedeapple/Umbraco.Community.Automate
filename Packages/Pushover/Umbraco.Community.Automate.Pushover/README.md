@@ -14,7 +14,7 @@ Pushover is a simple notification service that delivers real-time alerts to iOS,
 dotnet add package Umbraco.Community.Automate.Pushover
 ```
 
-No further setup required. The composer registers itself automatically.
+There's nothing to register in code: Umbraco loads the package on its own. Then follow **Setup** below.
 
 ## Setup
 
@@ -69,9 +69,9 @@ Create more connections, with different tokens or keys, to send to different Pus
 
 ## Outputs
 
-**Send Pushover Notification** makes these available to later steps as `${ steps.<alias>.<field> }`:
+**Send Pushover Notification** makes these available to later steps as `${ steps.<alias>.<output> }`:
 
-| Field | Description |
+| Output | Description |
 |---|---|
 | `status` | `1` when Pushover accepted the notification |
 | `request` | Pushover's ID for the request, useful when contacting its support |

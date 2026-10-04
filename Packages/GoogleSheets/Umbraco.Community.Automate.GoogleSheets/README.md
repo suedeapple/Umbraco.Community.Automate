@@ -13,7 +13,7 @@ dotnet add package Umbraco.Automate.OpenIddict --version <your Umbraco Automate 
 
 The second line matters: the package works with Umbraco Automate 17 and 18, so on its own NuGet installs the oldest version of Automate's OAuth support it allows, `Umbraco.Automate.OpenIddict` 17.0.0. Installing the version that matches your site's `Umbraco.Automate` (for example 18.1.5 alongside Automate 18.5, the latest of each) keeps the two in step. If they're out of step, backoffice sign-in can fail with "Your session has timed out".
 
-No further setup required in code. The composer registers itself automatically.
+There's nothing to register in code: Umbraco loads the package on its own. Then follow **Setup** below.
 
 ## Setup
 

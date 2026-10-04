@@ -1,8 +1,8 @@
 # Contributing
 
-Thanks for your interest in contributing! This repo holds community-maintained connections for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate). Each one is a NuGet package that adds a connection type and actions for one external service.
+Thanks for your interest in contributing! This repo holds community-maintained packages for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate). Each one is a NuGet package that adds connection types, actions or triggers, usually for one external service.
 
-You can contribute in several ways: report a bug, improve a README, add an action to an existing connection, or build a whole new connection. If you're planning something large, [open an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues) first so we can agree on the approach before you write the code.
+You can contribute in several ways: report a bug, improve a README, add an action to an existing package, or build a whole new package. If you're planning something large, [open an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues) first so we can agree on the approach before you write the code.
 
 ## Contents
 
@@ -25,7 +25,7 @@ You can contribute in several ways: report a bug, improve a README, add an actio
 | [.NET 10 SDK](https://dotnet.microsoft.com/download) | Everything |
 | [gitleaks](https://github.com/gitleaks/gitleaks#installing) | The secret scan that runs before each commit and push (`winget install gitleaks`, `scoop install gitleaks` or `brew install gitleaks`) |
 | A trusted HTTPS dev certificate | The Demo site. Run `dotnet dev-certs https --trust` once per machine. |
-| [Node.js 22.x](https://nodejs.org/) | Only for connections with a backoffice front end (a `Client/` folder), currently Google Sheets |
+| [Node.js 22.x](https://nodejs.org/) | Packages with a backoffice front end (a `Client/` folder), currently Google Sheets and the Kitchen Sink example. The Demo site needs both built. |
 
 Any editor works. Visual Studio, Rider and VS Code (with C# Dev Kit) all open `Umbraco.Community.Automate.Demo.slnx` at the repo root. The Demo site is the only runnable project, so starting the solution (F5) runs it.
 
@@ -93,7 +93,7 @@ Every package uses the same folder names, so you always know where to look. The 
 
 Next to those folders sit `Directory.Build.props` (package metadata and the MinVer tag prefix), `README.md` (shipped inside the NuGet package) and usually a package icon. Folders specific to one connection, such as DevTo's `Articles/` and `Content/`, are fine as well. Namespaces follow the folders, and where a test project groups its tests into folders, it uses the same names.
 
-CI finds packages from this layout. Any folder at `<Category>/<Area>/<Project>/` that contains a `Directory.Build.props` counts as a package. It must have a sibling `.Tests` project, and it gets front-end jobs if `Client/package.json` exists. You don't need to edit any workflow file to add a connection.
+CI finds packages from this layout. Any folder at `Packages/<Area>/<Project>/` (or `Packages/_Development/<Name>/<Project>/`) that contains a `Directory.Build.props` counts as a package. It must have a sibling `.Tests` project, and it gets front-end jobs if `Client/package.json` exists. You don't need to edit any workflow file to add a package.
 
 ## Running the Demo site
 
@@ -122,7 +122,7 @@ Then open <https://localhost:44343/umbraco> and log in:
 | Email | `admin@example.com` |
 | Password | `password1234` |
 
-The connections are under the **Automation** section in the top navigation. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
+The **Automation** section is in the top navigation. Connections are under **Settings → Connections** in that section's tree, and automations are under **Automations**.
 
 The site sets itself up on startup, adding only what's missing (`Setup/DemoSetup.cs`):
 
@@ -156,6 +156,8 @@ dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientId" "<cli
 dotnet user-secrets set "Umbraco:Automate:Providers:GoogleSheets:ClientSecret" "<client-secret>" --project Umbraco.Community.Automate.Demo
 dotnet user-secrets set "Umbraco:Automate:Secrets:Mastodon:AccessToken" "<token>" --project Umbraco.Community.Automate.Demo
 dotnet user-secrets set "Umbraco:Automate:Secrets:DevTo:ApiKey" "<api-key>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:Pushover:ApiToken" "<app-token>" --project Umbraco.Community.Automate.Demo
+dotnet user-secrets set "Umbraco:Automate:Secrets:Pushover:UserKey" "<user-key>" --project Umbraco.Community.Automate.Demo
 dotnet user-secrets set "Umbraco:Automate:Secrets:Skoda:ApiKey" "<api-key>" --project Umbraco.Community.Automate.Demo
 dotnet user-secrets set "Umbraco:Automate:Secrets:WeatherApi:ApiKey" "<api-key>" --project Umbraco.Community.Automate.Demo
 ```
@@ -166,7 +168,7 @@ For Google Sheets, also add `https://localhost:44343/umbraco/automate/oauth/call
 
 ### Resetting the site
 
-Stop the site and delete `Umbraco.Community.Automate.Demo/umbraco/Data/`. On the next run it reinstalls from scratch, with no content, connections or automations.
+Stop the site and delete `Umbraco.Community.Automate.Demo/umbraco/Data/`. On the next run it reinstalls from scratch and sets itself up again: the API user, a connection per package, and (on Umbraco 17) the workspace and test pages. Anything else you created is gone.
 
 ## Building and testing
 
@@ -263,8 +265,8 @@ git push --force-with-lease
 4. **Wire it in.** Add both projects to `Umbraco.Community.Automate.Demo.slnx`, and reference the package from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
 5. **Add package versions to `Directory.Packages.props`.** Projects don't specify versions themselves.
 6. **Write the package `README.md`**: installation, setup, every setting, outcomes and outputs, troubleshooting and compatibility. Add a row for it to the table in the root `README.md`.
-7. **Add a test page for the package to the Demo site:** copy the Pushover files in `Umbraco.Community.Automate.Demo/uSync/v17/` and change the name, alias, icon and every `Key` and step `Id` (a new GUID each): `ContentTypes/automatetestpushover.config` (the page type), `Content/pushover.config` (the page; its `ContentType` is the new type's alias), and `Automate-Automations/testpushover.config` (its trigger's `contentTypes` is the new type's key, its Test Connection step's `connectionAlias` is the package's connection alias, e.g. `community.bluesky` becomes `bluesky`, and its two Notify Editor steps, after the If step, name the package). Then add the new type to the `<Structure>` list in `ContentTypes/automatetests.config`, so it's allowed under *Automate tests*, and the connection alias to `<AllowedConnections>` in `Automate-Workspaces/demo.config` (with a new GUID as its `Key`). Check it on a fresh database (see [Resetting the site](#resetting-the-site)) by publishing the page. Reviewers test the package this way, so it's needed before a pull request. If a package is later removed or renamed, remove or rename its test page files, these two lines and its configuration keys too, so the Demo never refers to a package that doesn't exist.
-8. **Add the package's configuration to the Demo site.** Every key the package reads goes in two files, under the same paths it uses: obviously fake placeholders (`"e2e-test"`) in `Umbraco.Community.Automate.Demo/appsettings.Development.json`, so the site boots and connections resolve, and `your-...` values in `appsettings.Local.example.json`, the template for trying it with real credentials. Never put real values in either file.
+7. **Add the package's configuration to the Demo site.** Every key the package reads goes in two files, under the same paths it uses: obviously fake placeholders (`"e2e-test"`) in `Umbraco.Community.Automate.Demo/appsettings.Development.json`, so the site boots and connections resolve, and `your-...` values in `appsettings.Local.example.json`, the template for trying it with real credentials. Never put real values in either file.
+8. **Add a test page for the package to the Demo site:** copy the Pushover files in `Umbraco.Community.Automate.Demo/uSync/v17/` and change the name, alias, icon and every `Key` and step `Id` (a new GUID each): `ContentTypes/automatetestpushover.config` (the page type), `Content/pushover.config` (the page; its `ContentType` is the new type's alias), and `Automate-Automations/testpushover.config` (its trigger's `contentTypes` is the new type's key, its Test Connection step's `connectionAlias` is the package's connection alias, e.g. `community.bluesky` becomes `bluesky`, and its two Notify Editor steps, after the If step, name the package). Then add the new type to the `<Structure>` list in `ContentTypes/automatetests.config`, so it's allowed under *Automate tests*, and the connection alias to `<AllowedConnections>` in `Automate-Workspaces/demo.config` (with a new GUID as its `Key`). Check it on a fresh database (see [Resetting the site](#resetting-the-site)) by publishing the page. Reviewers test the package this way, so it's needed before a pull request. If a package is later removed or renamed, remove or rename its test page files, these two lines and its configuration keys too, so the Demo never refers to a package that doesn't exist.
 
 Before the first release, follow [Adding a new package to this scheme](#adding-a-new-package-to-this-scheme) below.
 
@@ -292,6 +294,7 @@ A pull request that adds or changes a package should only change that package. P
 - everything under its own `Packages/<Area>/` folder;
 - its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
 - its configuration keys, under its own name, in `Umbraco.Community.Automate.Demo/appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (the template for real values);
+- its test page's three files in `Umbraco.Community.Automate.Demo/uSync/v17/`, its line in `ContentTypes/automatetests.config` and its connection's line in `Automate-Workspaces/demo.config`;
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 
@@ -299,7 +302,7 @@ It shouldn't change other packages, anything in `Packages/_Development/`, the CI
 
 ## Preventing secret leaks
 
-Never put real credentials (OAuth Client IDs/Secrets, API keys, etc.) into a git-tracked file like `appsettings.Development.json` — even locally, even temporarily. Use [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) instead, which stores them outside the repo entirely (see [Using real credentials](#using-real-credentials)). User secrets override the tracked placeholder values at runtime when running the Demo site in Development, and nothing about them ever touches git.
+Never put real credentials (OAuth Client IDs/Secrets, API keys, etc.) into a git-tracked file like `appsettings.Development.json` — even locally, even temporarily. Put them in the git-ignored `appsettings.Local.json` or in [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets), which are stored outside the repo entirely (see [Using real credentials](#using-real-credentials)). Both override the tracked placeholder values when you run the Demo site, and neither can be committed.
 
 ### Git hooks
 
@@ -320,7 +323,7 @@ It points git at the hooks in `.githooks/`, which run [gitleaks](https://github.
 If gitleaks finds something that looks like a secret, your commit or push will fail with output identifying the file and line. To resolve it:
 
 1. Unstage or remove the offending change (`git restore --staged <file>` or edit the file to remove the real value).
-2. If it's a real credential you need locally, set it via `dotnet user-secrets set` instead (see above).
+2. If it's a real credential you need locally, put it in `appsettings.Local.json` or set it with `dotnet user-secrets set` instead (see above).
 3. Re-commit/re-push.
 
 ## Releasing a package

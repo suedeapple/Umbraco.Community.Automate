@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Ideas are welcome whether or not you plan to build them. If you'd like to build it yourself, [CONTRIBUTING](https://github.com/umbraco-community/Umbraco.Community.Automate/blob/main/.github/CONTRIBUTING.md#adding-a-new-package) explains how, and the Simple example is the place to start.
+        Ideas are welcome whether or not you plan to build them. If you'd like to build it yourself, [CONTRIBUTING](https://github.com/umbraco-community/Umbraco.Community.Automate/blob/main/.github/CONTRIBUTING.md#adding-a-new-package) explains how. The quickest way is the `umbraco-automate` skill for Claude Code: ask it "Using the Umbraco Automate skill, create me a package for <service>".
 
   - type: dropdown
     id: kind

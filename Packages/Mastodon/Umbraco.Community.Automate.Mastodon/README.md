@@ -14,7 +14,7 @@ Post statuses to any Mastodon instance as part of an automation workflow — for
 dotnet add package Umbraco.Community.Automate.Mastodon
 ```
 
-No further setup required. The composer registers itself automatically via Umbraco's `IComposer` discovery.
+There's nothing to register in code: Umbraco loads the package on its own. Then follow **Setup** below.
 
 ## Setup
 
@@ -62,11 +62,11 @@ Umbraco__Automate__Secrets__Mastodon__AccessToken=your-access-token-here
 2. **Instance URL** and **Access Token** are already filled in with `$Umbraco:Automate:Variables:Mastodon:InstanceUrl` and `$Umbraco:Automate:Secrets:Mastodon:AccessToken`, references to the values you stored in step 2. Leave them as they are, or replace either with the value itself (e.g. `https://mastodon.social`) to store it on the connection.
 3. Click **Test connection** to verify. If a value is missing from configuration, Umbraco Automate reports which key, e.g. *Configuration key 'Umbraco:Automate:Secrets:Mastodon:AccessToken' not found*.
 
-## Usage
+## Actions
 
-Add the **Send Mastodon Post** action to any automation and select your Mastodon connection. Available fields:
+Add the **Send Mastodon Post** action to any automation and select your Mastodon connection. Its settings:
 
-| Field | Description |
+| Setting | Description |
 |---|---|
 | Content | The post text. Supports `${ binding }` expressions. |
 | Visibility | `public`, `unlisted`, `private`, or `direct`. Defaults to `public`. |
@@ -75,6 +75,21 @@ Add the **Send Mastodon Post** action to any automation and select your Mastodon
 | Spoiler Text | Content warning shown before the post body. |
 
 > **Note:** Most Mastodon instances limit posts to 500 characters (links count as 23 characters, and spoiler text counts toward the limit). Posts over the instance's limit are rejected by the Mastodon API and the action fails.
+
+## Troubleshooting
+
+**"Could not reach {InstanceUrl}"** — check the instance URL is absolute and has no trailing
+slash: `https://mastodon.social`, not `mastodon.social` or `https://mastodon.social/`.
+
+**"Authentication failed"** — the token is invalid, expired, or lacks the `write:statuses`
+scope. Check the application still exists under **Preferences → Development** on your instance
+and regenerate the token if needed.
+
+**"Configuration key '...' not found"** — the field references a key that isn't in configuration.
+Add it (see [step 2](#2-add-your-settings-to-configuration-recommended)), or enter the value directly in the field.
+
+**The action fails but the connection tests fine** — most instances cap posts at 500 characters,
+counting spoiler text and counting each link as 23. Posts over the cap are rejected by the API.
 
 ## Migrating from OC.Automate.Mastodon
 
@@ -92,34 +107,19 @@ dotnet remove package OC.Automate.Mastodon
 dotnet add package Umbraco.Community.Automate.Mastodon
 ```
 
-### Configuration Structure
+### Configuration
 - **Old (1.x)**: `OC:Automate:Mastodon:AccessTokens:connectionName` or `Umbraco:Automate:Providers:OCAutomateMastodon:AccessTokens:connectionName`
 - **New (2.x)**: a `Mastodon` key under Umbraco Automate's shared `Variables` and `Secrets` sections:
   - `Umbraco:Automate:Variables:Mastodon:InstanceUrl` (instance URL)
   - `Umbraco:Automate:Secrets:Mastodon:AccessToken` (access token)
 
-### Connection Setup
+### Connections
 - **Old (1.x)**: Connections required a "Connection Name" field matching an appsettings key
 - **New (2.x)**: Connections have **Instance URL** and **Access Token** fields; each accepts either a literal value or a configuration reference (e.g. `$Umbraco:Automate:Secrets:Mastodon:AccessToken`)
 
-### Steps to migrate:
+### Steps to migrate
 1. Move your access token to `Umbraco:Automate:Secrets:Mastodon:AccessToken` (and optionally the instance URL to `Umbraco:Automate:Variables:Mastodon:InstanceUrl`) in `appsettings.json` or environment variables
 2. Recreate your Mastodon connections in the backoffice (select the **Mastodon** connection type in the **Social Networks** group); both fields come pre-filled with the references above
-
-## Troubleshooting
-
-**"Could not reach {InstanceUrl}"** — check the instance URL is absolute and has no trailing
-slash: `https://mastodon.social`, not `mastodon.social` or `https://mastodon.social/`.
-
-**"Authentication failed"** — the token is invalid, expired, or lacks the `write:statuses`
-scope. Check the application still exists under **Preferences → Development** on your instance
-and regenerate the token if needed.
-
-**"Configuration key '...' not found"** — the field references a key that isn't in configuration.
-Add it (see [step 2](#2-add-your-settings-to-configuration-recommended)), or enter the value directly in the field.
-
-**The action fails but the connection tests fine** — most instances cap posts at 500 characters,
-counting spoiler text and counting each link as 23. Posts over the cap are rejected by the API.
 
 ## Compatibility
 

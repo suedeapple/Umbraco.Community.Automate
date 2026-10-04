@@ -12,7 +12,7 @@ Works with **Umbraco 17 and 18** (and Umbraco Automate 17 and 18).
 dotnet add package Umbraco.Community.Automate.DevTo
 ```
 
-No further setup required. The composer registers itself automatically via Umbraco's `IComposer` discovery.
+There's nothing to register in code: Umbraco loads the package on its own. Then follow **Setup** below.
 
 ## Setup
 
