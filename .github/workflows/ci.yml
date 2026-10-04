@@ -27,6 +27,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      # A nudge for reviewers, never a failure: package PRs should touch one package, and
+      # workflow changes deserve a closer look. Maintainers can ignore it for repo-wide work.
+      - name: Check pull request scope
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          CHANGED=$(git diff --name-only '${{ github.event.pull_request.base.sha }}'...HEAD)
+
+          # Packages/<Area>/..., or Packages/_Examples/<Name>/... for the examples.
+          PACKAGES=$(grep -oE '^Packages/(_Examples/)?[^/]+/' <<< "$CHANGED" | sort -u || true)
+          COUNT=$(grep -c . <<< "$PACKAGES" || true)
+          if [ "$COUNT" -gt 1 ]; then
+            echo "::warning title=More than one package::This PR changes $COUNT packages ($(tr '\n' ' ' <<< "$PACKAGES")). Package PRs should change one package; split it up unless this is a repo-wide change."
+          fi
+
+          if grep -q '^\.github/workflows/' <<< "$CHANGED"; then
+            echo "::warning title=Workflows changed::This PR changes files in .github/workflows/. Package PRs shouldn't need to: CI discovers packages from the folder layout."
+          fi
+
       - name: Discover packages and work out which are affected
         id: discover
         run: |

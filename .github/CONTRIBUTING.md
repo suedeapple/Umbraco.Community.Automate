@@ -266,7 +266,7 @@ A pull request that adds or changes a package should only change that package. P
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 
-It shouldn't change other packages, the examples, the CI and release workflows (`.github/workflows/`), `.githooks/`, the root `.editorconfig` or `.gitattributes`, the skill in `.claude/`, or the version of a library other packages already use. If one of those really is necessary (a shared library needs an upgrade, CI can't build your package), open an issue or a separate pull request for it and explain why, so it can be reviewed on its own. `CODEOWNERS` asks the owners of anything outside your package to review changes to it.
+It shouldn't change other packages, the examples, the CI and release workflows (`.github/workflows/`), `.githooks/`, the root `.editorconfig` or `.gitattributes`, the skill in `.claude/`, or the version of a library other packages already use. If one of those really is necessary (a shared library needs an upgrade, CI can't build your package), open an issue or a separate pull request for it and explain why, so it can be reviewed on its own. `CODEOWNERS` asks the owners of anything outside your package to review changes to it. CI also adds a warning to a pull request that changes more than one package or anything in `.github/workflows/`; it doesn't fail the build, but reviewers will ask why.
 
 ## Preventing secret leaks
 
