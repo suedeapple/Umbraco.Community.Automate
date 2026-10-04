@@ -1,6 +1,8 @@
 # Kitchen Sink example
 
-A reference connection for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate) that shows every convention in this repo in one small, working package: a trigger, outcomes, an API client and a backoffice front end. Copy the parts you need. For the common case of an API key and one action, start from the [Simple example](../../Simple/Umbraco.Community.Automate.Examples.Simple/README.md) instead.
+> **For reference only.** This example shows the skill, and anyone building by hand, what a finished package looks like. It isn't meant to be installed in a real site, and it's never published.
+
+A reference connection for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate) that shows every convention in this repo in one small, working package: a trigger, outcomes, an API client and a backoffice front end. The skill takes the parts a new package needs from here. For the common case of an API key and one action, start from the [Simple example](../../Simple/Umbraco.Community.Automate.Examples.Simple/README.md) instead.
 
 It talks to [httpbin.org](https://httpbin.org), a free service that echoes requests back and accepts any API token, so everything works in the Demo site without signing up for anything. It isn't published to NuGet: CI builds and tests it on every pull request so it can't go stale, but it has no release tag prefix and isn't packable.
 

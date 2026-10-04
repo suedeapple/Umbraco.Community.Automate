@@ -1,6 +1,8 @@
 # Simple example
 
-The smallest useful connection for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate): an API key and one action. Most connections start like this, so copy it when you're adding a new service.
+> **For reference only.** This example shows the skill, and anyone building by hand, what a finished package looks like. It isn't meant to be installed in a real site, and it's never published.
+
+The smallest useful connection for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate): an API key and one action. Most connections start like this, so it's the reference the skill builds new packages from.
 
 It talks to [httpbin.org](https://httpbin.org), a free service that echoes requests back and accepts any API token, so it works in the Demo site without signing up for anything. It isn't published to NuGet: CI builds and tests it on every pull request so it can't go stale, but it has no release tag prefix and isn't packable.
 

@@ -59,7 +59,7 @@ git push origin main
 
 ```
 Packages/                                     one folder per package
-  _Examples/                                  reference packages to copy (built and tested, never published)
+  _Examples/                                  reference packages for the skill (built and tested, never published)
     Simple/                                   an API key and one action
     KitchenSink/                              every convention, including a trigger and a front end
   <Area>/                                     e.g. Mastodon
@@ -72,7 +72,7 @@ Directory.Packages.props                      central NuGet versions for every p
 Umbraco.Community.Automate.Demo.slnx          the solution: every package, the examples and the Demo site
 ```
 
-Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Packages/_Examples/` holds two reference packages laid out the same way, one level deeper (the underscore keeps them at the top of the list): **Simple**, an API key and one action, and **KitchenSink**, which uses every folder below, including a trigger and a front end. Neither has a release tag prefix and both are marked not packable, so they're never published.
+Each NuGet package lives in its own folder under `Packages/`. Most packages add a connection with its actions and triggers, but a package that only adds a trigger or an action, with no connection, is just as welcome and uses the same layout. `Packages/_Examples/` holds two reference packages, mainly for the skill to build from and not for use in a real site, laid out the same way, one level deeper (the underscore keeps them at the top of the list): **Simple**, an API key and one action, and **KitchenSink**, which uses every folder below, including a trigger and a front end. Neither has a release tag prefix and both are marked not packable, so they're never published.
 
 ### Inside a package
 

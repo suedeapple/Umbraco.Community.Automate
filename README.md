@@ -6,7 +6,7 @@ Umbraco Automate adds an **Automation** section to the Umbraco backoffice, where
 
 - **The `umbraco-automate` skill** for [Claude Code](https://claude.com/claude-code), which builds new packages and migrates existing ones to the repo's conventions.
 - **[Packages](#packages)** to use as they are, or to learn from.
-- **[Two examples](#examples)** to copy, one simple and one with everything.
+- **[Two reference examples](#examples)** that the skill builds from: one simple, one with everything.
 - **[A Demo site](#running-the-demo-site)** with every package installed, to try them in a real backoffice.
 - **CI and releases** that pick up a new package from its folder, with no workflow to edit.
 
@@ -46,7 +46,7 @@ We recommend moving to the community naming (`Umbraco.Community.Automate.<Area>`
 
 For smaller jobs, ask in the same way: "Using the Umbraco Automate skill, add a trigger to Mastodon". The skill follows the same conventions.
 
-Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-new-package) in CONTRIBUTING has the same process as a checklist, and the [examples](#examples) are there to copy.
+Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-new-package) in CONTRIBUTING has the same process as a checklist, and the [examples](#examples) show what a finished package looks like.
 
 ## Packages
 
@@ -65,7 +65,7 @@ To use a package before it's on NuGet, see [Using a package before it's released
 
 ### Examples
 
-`Packages/_Examples/` holds two small, working packages to copy when you start a new one by hand, and that the skill builds from. Both talk to [httpbin.org](https://httpbin.org), so they work in the Demo site with no signup. CI builds and tests them, but they're never published.
+`Packages/_Examples/` holds two small reference packages. They're mainly there for the skill, which builds new packages from them, and they're also useful to read when you're building by hand. **They aren't for use in a real site**: they only talk to [httpbin.org](https://httpbin.org), a test service that echoes requests back, and they're never published. They do work in the Demo site with no signup, and CI builds and tests them so they always match the current conventions.
 
 - [**Simple**](Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): an API key and one action, the shape most packages need.
 - [**Kitchen Sink**](Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
