@@ -16,19 +16,26 @@ public sealed class StartAirConditioningAction(ActionInfrastructure infrastructu
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)
     {
         var settings = context.GetSettings<StartAirConditioningSettings>();
-        var connection = context.Connection ?? throw new InvalidOperationException("A Škoda connection is required.");
-        var connectionSettings = connection.GetSettings<SkodaConnectionSettings>();
+        if (SkodaActionErrors.CheckConnection(context, out var connectionSettings) is { } invalid)
+            return invalid;
 
-        var configuration = new StartAirConditioningConfiguration(
-            new TargetTemperature(settings.TargetTemperature, settings.TemperatureUnit),
-            settings.WithoutExternalPower);
+        try
+        {
+            var configuration = new StartAirConditioningConfiguration(
+                new TargetTemperature(settings.TargetTemperature, settings.TemperatureUnit),
+                settings.WithoutExternalPower);
 
-        await client.StartAirConditioningAsync(
-            connectionSettings.ApiKey,
-            connectionSettings.Vin,
-            configuration,
-            cancellationToken);
+            await client.StartAirConditioningAsync(
+                connectionSettings.ApiKey,
+                connectionSettings.Vin,
+                configuration,
+                cancellationToken);
 
-        return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+            return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+        }
+        catch (Exception ex) when (SkodaActionErrors.TryFail(ex, cancellationToken, out var failure))
+        {
+            return failure;
+        }
     }
 }

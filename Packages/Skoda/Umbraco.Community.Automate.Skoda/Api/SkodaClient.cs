@@ -1,5 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
+using Umbraco.Automate.Core.Actions;
 using Umbraco.Community.Automate.Skoda.Models;
 
 namespace Umbraco.Community.Automate.Skoda.Api;
@@ -19,7 +21,7 @@ internal sealed class SkodaClient(HttpClient httpClient) : ISkodaClient
         await EnsureSuccessAsync(response, cancellationToken);
 
         return await response.Content.ReadFromJsonAsync<VehicleResponse>(JsonOptions, cancellationToken)
-            ?? throw new InvalidOperationException("The Škoda API returned an empty vehicle response.");
+            ?? throw new SkodaClientException("The Škoda API returned an empty vehicle response.", HttpStatusCode.OK, null, null);
     }
 
     public Task StartChargingAsync(string apiKey, string vin, CancellationToken cancellationToken = default) =>
@@ -149,4 +151,17 @@ internal sealed class SkodaClient(HttpClient httpClient) : ISkodaClient
             problem,
             rawResponse);
     }
+
+    /// <summary>
+    /// Automate decides whether to retry a step from its category: rate limits and outages are
+    /// temporary; a rejected key, an unknown vehicle or an invalid command needs the user to act.
+    /// </summary>
+    internal static StepRunErrorCategory Classify(HttpStatusCode? statusCode) => (int?)statusCode switch
+    {
+        401 or 403 => StepRunErrorCategory.Authentication,
+        429 => StepRunErrorCategory.RateLimiting,
+        >= 400 and < 500 => StepRunErrorCategory.Validation,
+        >= 500 => StepRunErrorCategory.ServiceUnavailable,
+        _ => StepRunErrorCategory.InvalidResponse,
+    };
 }

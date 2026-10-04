@@ -15,11 +15,18 @@ public sealed class StopAirConditioningAction(ActionInfrastructure infrastructur
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)
     {
         var settings = context.GetSettings<StopAirConditioningSettings>();
-        var connection = context.Connection ?? throw new InvalidOperationException("A Škoda connection is required.");
-        var connectionSettings = connection.GetSettings<SkodaConnectionSettings>();
+        if (SkodaActionErrors.CheckConnection(context, out var connectionSettings) is { } invalid)
+            return invalid;
 
-        await client.StopAirConditioningAsync(connectionSettings.ApiKey, connectionSettings.Vin, cancellationToken);
+        try
+        {
+            await client.StopAirConditioningAsync(connectionSettings.ApiKey, connectionSettings.Vin, cancellationToken);
 
-        return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+            return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+        }
+        catch (Exception ex) when (SkodaActionErrors.TryFail(ex, cancellationToken, out var failure))
+        {
+            return failure;
+        }
     }
 }

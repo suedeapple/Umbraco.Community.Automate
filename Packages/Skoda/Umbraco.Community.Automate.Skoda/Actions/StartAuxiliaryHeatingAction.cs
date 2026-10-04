@@ -16,23 +16,31 @@ public sealed class StartAuxiliaryHeatingAction(ActionInfrastructure infrastruct
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)
     {
         var settings = context.GetSettings<StartAuxiliaryHeatingSettings>();
-        var connection = context.Connection ?? throw new InvalidOperationException("A Škoda connection is required.");
-        var connectionSettings = connection.GetSettings<SkodaConnectionSettings>();
-        if (string.IsNullOrWhiteSpace(settings.Spin))
-            return ActionResult.Failed(new ArgumentException("S-PIN is required."), StepRunErrorCategory.Validation);
+        if (SkodaActionErrors.CheckConnection(context, out var connectionSettings) is { } invalid)
+            return invalid;
 
-        var configuration = new StartAuxiliaryHeatingConfiguration(
-            new TargetTemperature(settings.TargetTemperature, settings.TemperatureUnit),
-            settings.Spin,
-            settings.DurationInSeconds,
-            settings.StartMode);
+        try
+        {
+            if (string.IsNullOrWhiteSpace(settings.Spin))
+                return ActionResult.Failed(new ArgumentException("S-PIN is required."), StepRunErrorCategory.Validation);
 
-        await client.StartAuxiliaryHeatingAsync(
-            connectionSettings.ApiKey,
-            connectionSettings.Vin,
-            configuration,
-            cancellationToken);
+            var configuration = new StartAuxiliaryHeatingConfiguration(
+                new TargetTemperature(settings.TargetTemperature, settings.TemperatureUnit),
+                settings.Spin,
+                settings.DurationInSeconds,
+                settings.StartMode);
 
-        return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+            await client.StartAuxiliaryHeatingAsync(
+                connectionSettings.ApiKey,
+                connectionSettings.Vin,
+                configuration,
+                cancellationToken);
+
+            return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+        }
+        catch (Exception ex) when (SkodaActionErrors.TryFail(ex, cancellationToken, out var failure))
+        {
+            return failure;
+        }
     }
 }

@@ -57,7 +57,7 @@ public class SkodaClientTests
     {
         var sut = CreateSut(HttpStatusCode.OK, "null", _ => { });
 
-        var ex = await Should.ThrowAsync<InvalidOperationException>(
+        var ex = await Should.ThrowAsync<SkodaClientException>(
             () => sut.GetVehicleAsync(ApiKey, Vin, CancellationToken.None));
 
         ex.Message.ShouldBe("The Škoda API returned an empty vehicle response.");

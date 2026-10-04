@@ -16,15 +16,22 @@ public sealed class SetChargeModeAction(ActionInfrastructure infrastructure, ISk
     public override async Task<ActionResult> ExecuteAsync(ActionContext context, CancellationToken cancellationToken)
     {
         var settings = context.GetSettings<SetChargeModeSettings>();
-        var connection = context.Connection ?? throw new InvalidOperationException("A Škoda connection is required.");
-        var connectionSettings = connection.GetSettings<SkodaConnectionSettings>();
+        if (SkodaActionErrors.CheckConnection(context, out var connectionSettings) is { } invalid)
+            return invalid;
 
-        await client.SetChargeModeAsync(
-            connectionSettings.ApiKey,
-            connectionSettings.Vin,
-            settings.ChargeMode,
-            cancellationToken);
+        try
+        {
+            await client.SetChargeModeAsync(
+                connectionSettings.ApiKey,
+                connectionSettings.Vin,
+                settings.ChargeMode,
+                cancellationToken);
 
-        return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+            return Success(new VehicleCommandOutput { Vin = connectionSettings.Vin });
+        }
+        catch (Exception ex) when (SkodaActionErrors.TryFail(ex, cancellationToken, out var failure))
+        {
+            return failure;
+        }
     }
 }
