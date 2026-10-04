@@ -135,7 +135,7 @@ public sealed class AppendOrUpdateRowAction : ActionBase<AppendOrUpdateRowSettin
         }
         catch (Exception ex)
         {
-            return ActionResult.Failed(ex, StepRunErrorCategory.InvalidResponse);
+            return GoogleApiErrorParser.FromException(ex, cancellationToken);
         }
     }
 

@@ -106,7 +106,7 @@ public sealed class UpdateRowAction : ActionBase<UpdateRowSettings, UpdateRowOut
         }
         catch (Exception ex)
         {
-            return ActionResult.Failed(ex, StepRunErrorCategory.InvalidResponse);
+            return GoogleApiErrorParser.FromException(ex, cancellationToken);
         }
     }
 

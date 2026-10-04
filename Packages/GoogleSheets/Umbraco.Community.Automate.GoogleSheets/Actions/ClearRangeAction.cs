@@ -71,7 +71,7 @@ public sealed class ClearRangeAction : ActionBase<ClearRangeSettings, ClearRange
         }
         catch (Exception ex)
         {
-            return ActionResult.Failed(ex, StepRunErrorCategory.InvalidResponse);
+            return GoogleApiErrorParser.FromException(ex, cancellationToken);
         }
     }
 

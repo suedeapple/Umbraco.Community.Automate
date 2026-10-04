@@ -74,7 +74,7 @@ public sealed class GetCellValueAction : ActionBase<GetCellValueSettings, GetCel
         }
         catch (Exception ex)
         {
-            return ActionResult.Failed(ex, StepRunErrorCategory.InvalidResponse);
+            return GoogleApiErrorParser.FromException(ex, cancellationToken);
         }
     }
 }

@@ -83,7 +83,7 @@ public class GoogleApiErrorParserTests
         var (message, category) = GoogleApiErrorParser.Parse(500,
             """{"error":{"code":500,"message":"Internal error.","status":"INTERNAL"}}""");
 
-        category.ShouldBe(StepRunErrorCategory.InvalidResponse);
+        category.ShouldBe(StepRunErrorCategory.ServiceUnavailable);
         message.ShouldContain("500");
         message.ShouldContain("INTERNAL");
     }
@@ -93,7 +93,7 @@ public class GoogleApiErrorParserTests
     {
         var (message, category) = GoogleApiErrorParser.Parse(503, "<html>Service Unavailable</html>");
 
-        category.ShouldBe(StepRunErrorCategory.InvalidResponse);
+        category.ShouldBe(StepRunErrorCategory.ServiceUnavailable);
         message.ShouldContain("503");
         message.ShouldContain("<html>Service Unavailable</html>");
     }
@@ -103,7 +103,25 @@ public class GoogleApiErrorParserTests
     {
         var (message, category) = GoogleApiErrorParser.Parse(500, "{}");
 
-        category.ShouldBe(StepRunErrorCategory.InvalidResponse);
+        category.ShouldBe(StepRunErrorCategory.ServiceUnavailable);
         message.ShouldContain("500");
+    }
+
+    [Theory]
+    [InlineData(401, StepRunErrorCategory.Authentication)]
+    [InlineData(429, StepRunErrorCategory.RateLimiting)]
+    [InlineData(418, StepRunErrorCategory.InvalidResponse)]
+    public void Unrecognised_errors_fall_back_on_the_http_status(int statusCode, StepRunErrorCategory expected)
+        => GoogleApiErrorParser.Parse(statusCode, "{}").Category.ShouldBe(expected);
+
+    [Fact]
+    public void Unreachable_and_timed_out_calls_are_retryable()
+    {
+        GoogleApiErrorParser.FromException(new HttpRequestException("No such host"), CancellationToken.None).ErrorCategory
+            .ShouldBe(StepRunErrorCategory.ServiceUnavailable);
+        GoogleApiErrorParser.FromException(new TaskCanceledException("Timed out"), CancellationToken.None).ErrorCategory
+            .ShouldBe(StepRunErrorCategory.Timeout);
+        GoogleApiErrorParser.FromException(new InvalidOperationException("Odd"), CancellationToken.None).ErrorCategory
+            .ShouldBe(StepRunErrorCategory.InvalidResponse);
     }
 }

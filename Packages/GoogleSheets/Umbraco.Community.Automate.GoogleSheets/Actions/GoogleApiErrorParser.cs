@@ -72,9 +72,28 @@ public static class GoogleApiErrorParser
                 "be retried after a short wait.",
                 StepRunErrorCategory.RateLimiting),
 
-            _ => ($"Google Sheets API error ({statusCode}): {body}", StepRunErrorCategory.InvalidResponse),
+            // Anything else falls back on the HTTP status, so outages and rate limits are still
+            // retried even when Google's error body doesn't say which it is.
+            _ => ($"Google Sheets API error ({statusCode}): {body}", statusCode switch
+            {
+                401 => StepRunErrorCategory.Authentication,
+                429 => StepRunErrorCategory.RateLimiting,
+                >= 500 => StepRunErrorCategory.ServiceUnavailable,
+                _ => StepRunErrorCategory.InvalidResponse,
+            }),
         };
     }
+
+    /// <summary>
+    /// The failure to return when the call to Google threw: unreachable is ServiceUnavailable and a
+    /// timeout is Timeout, both of which Automate retries; anything else is an unexpected response.
+    /// </summary>
+    public static ActionResult FromException(Exception exception, CancellationToken cancellationToken) => exception switch
+    {
+        TaskCanceledException when !cancellationToken.IsCancellationRequested => ActionResult.Failed(exception, StepRunErrorCategory.Timeout),
+        HttpRequestException => ActionResult.Failed(exception, StepRunErrorCategory.ServiceUnavailable),
+        _ => ActionResult.Failed(exception, StepRunErrorCategory.InvalidResponse),
+    };
 
     private static string? TryGetStatus(string body)
     {

@@ -83,7 +83,7 @@ public sealed class CreateSheetAction : ActionBase<CreateSheetSettings, CreateSh
         }
         catch (Exception ex)
         {
-            return ActionResult.Failed(ex, StepRunErrorCategory.InvalidResponse);
+            return GoogleApiErrorParser.FromException(ex, cancellationToken);
         }
     }
 
