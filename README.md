@@ -1,128 +1,76 @@
 # Umbraco.Community.Automate
 
-Community-built packages for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate): connection types, actions and triggers that let your automations talk to services Umbraco doesn't cover out of the box.
+A home for community-built packages for [Umbraco Automate](https://github.com/umbraco/Umbraco.Automate), and a starter kit for building your own.
 
-Umbraco Automate adds an **Automation** section to the Umbraco backoffice where you build workflows: a *trigger* (for example "content published") followed by a series of *actions* (for example "append a row to a Google Sheet", "post to Mastodon"). Each package in this repo adds one service. Install the package, configure its credentials, and its actions show up in the workflow builder.
+Umbraco Automate adds an **Automation** section to the Umbraco backoffice, where you build workflows from a *trigger* (for example "content published") and *actions* (for example "post to Mastodon"). Each package in this repo adds connection types, actions or triggers for one service. The repo gives you everything you need to add another one:
 
-## Quick start
+- **The `umbraco-automate` skill** for [Claude Code](https://claude.com/claude-code), which builds new packages and migrates existing ones to the repo's conventions.
+- **[Packages](#packages)** to use as they are, or to learn from.
+- **[Two examples](#examples)** to copy, one simple and one with everything.
+- **[A Demo site](#running-the-demo-site)** with every package installed, to try them in a real backoffice.
+- **CI and releases** that pick up a new package from its folder, with no workflow to edit.
 
-**Use a package in your site.** Pick one from [Packages](#packages), then:
+## Building a package with the skill
 
-```bash
-dotnet add package Umbraco.Community.Automate.DevTo --prerelease
-```
+**We recommend using the skill to create every new package and to migrate every existing one.** It builds them all the same way, so every package has the same structure, naming, configuration and tests, and anyone who knows one package can find their way around the rest.
 
-Add its credentials to configuration, and create a connection under **Automation → Settings → Connections**. [Getting started](#getting-started) walks through it, and each package's README has the details.
+### Install it
 
-**Try everything locally.** Clone the repo and run the Demo site, a throwaway Umbraco site with every package installed:
+The skill lives in this repo at [`.claude/skills/umbraco-automate/`](.claude/skills/umbraco-automate/SKILL.md), so there's nothing to install apart from Claude Code itself. It's written for this repo's layout, so use it in a clone:
 
-```bash
-git clone https://github.com/umbraco-community/Umbraco.Community.Automate.git
-cd Umbraco.Community.Automate
-dotnet run --project Umbraco.Community.Automate.Demo
-```
+1. Install [Claude Code](https://claude.com/claude-code).
+2. [Fork this repo](https://github.com/umbraco-community/Umbraco.Community.Automate/fork) and clone your fork.
+3. Start Claude Code in the repo's root folder (`claude` in a terminal, or open the folder in VS Code or JetBrains with the Claude Code extension).
 
-Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. See [Trying everything in the Demo site](#trying-everything-in-the-demo-site) for real credentials and front-end builds.
+Claude Code loads the skill whenever you ask for something Automate-related. You can also call it by name with `/umbraco-automate`.
 
-**Build your own package, or bring one in.** The repo includes a [Claude Code](https://claude.com/claude-code) skill, [`umbraco-automate`](.claude/skills/umbraco-automate/SKILL.md), that knows this repo's layout and conventions. **We recommend using it to create every new package and to migrate existing ones**: it builds them all the same way, so every package has the same structure, naming, configuration and tests, and anyone who knows one package can find their way around the rest. Open the repo in Claude Code and ask for what you want, for example:
+### Create a package
+
+Ask for the package you want, for example:
 
 > Create me an Automate package for the PokéAPI, with an action that looks up a Pokémon by name.
 
-It researches the service first, then walks you through the choices one at a time, with a recommended option each time: which actions and triggers, how it connects, the names, and the settings for each action. Once you confirm a summary, it builds the package with tests and wires it into the solution and the Demo site. To bring in a package you already publish, ask it to "migrate my package from `<path or repo URL>`": it reads your code, asks the questions that affect your existing users, then reshapes it to match the others. Not using Claude Code? [CONTRIBUTING](.github/CONTRIBUTING.md#adding-a-new-package) has the same process as a checklist, and the [examples](#examples) are there to copy.
+The skill researches the service first. Then it walks you through the choices one at a time, recommending an option each time: which actions and triggers, how it connects, the names, and the settings for each action. When you confirm a summary, it builds the package with tests, wires it into the solution and the Demo site, and writes the package's README.
+
+### Migrate a package
+
+To bring in a package you already publish, ask it to:
+
+> Migrate my package from `<path or repo URL>`.
+
+It reads your code and asks the questions that affect your existing users: whether to keep your package ID and aliases, and how configuration moves. Then it reshapes the package to match the others.
+
+### Change an existing package
+
+For smaller jobs, just ask: "add a trigger to Mastodon", "add a setting for the post language to DevTo". The skill follows the same conventions.
+
+Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-new-package) in CONTRIBUTING has the same process as a checklist, and the [examples](#examples) are there to copy.
 
 ## Packages
+
+Each package's README explains how to install and set it up, including its configuration, all its settings, and troubleshooting.
 
 | Package | What it does | Status |
 |---|---|---|
 | [DevTo](Packages/DevTo/Umbraco.Community.Automate.DevTo/README.md) | Cross-posts Umbraco content to [DEV Community](https://dev.to). Converts Markdown, Rich Text, Block List and Block Grid to Markdown, and sets the canonical URL to your site. | [![NuGet](https://img.shields.io/nuget/vpre/Umbraco.Community.Automate.DevTo?color=0273B3)](https://www.nuget.org/packages/Umbraco.Community.Automate.DevTo) pre-release |
-| [GoogleSheets](Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/README.md) | Connects to Google Sheets with OAuth. Appends, finds, updates, deletes and upserts rows; reads and clears ranges; creates spreadsheets and tabs. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
-| [Mastodon](Packages/Mastodon/Umbraco.Community.Automate.Mastodon/README.md) | Posts statuses to any Mastodon instance, with visibility, content warnings and an appended URL. Replaces `OC.Automate.Mastodon`. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
-| [Pushover](Packages/Pushover/Umbraco.Community.Automate.Pushover/README.md) | Sends push notifications to phones and desktops through [Pushover](https://pushover.net/), with titles, links, sounds and priorities, including emergency alerts that repeat until acknowledged. Replaces `SA.Automate.Pushover`. | Not yet on NuGet: [build from source](#using-a-package-before-its-on-nuget) |
-| [Skoda](Packages/Skoda/Umbraco.Community.Automate.Skoda/README.md) | Reads a Škoda vehicle's status and controls charging, air conditioning, auxiliary heating and ventilation through the MyŠkoda Public API. | In development, not yet on NuGet |
-| [WeatherApi](Packages/WeatherApi/Umbraco.Community.Automate.WeatherApi/README.md) | Gets the current weather or today's forecast for a location from [WeatherAPI.com](https://www.weatherapi.com/). Replaces `SA.Automate.WeatherApi`. | Not yet on NuGet under this name: [build from source](#using-a-package-before-its-on-nuget) |
+| [GoogleSheets](Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/README.md) | Connects to Google Sheets with OAuth. Appends, finds, updates, deletes and upserts rows; reads and clears ranges; creates spreadsheets and tabs. | Not yet on NuGet |
+| [Mastodon](Packages/Mastodon/Umbraco.Community.Automate.Mastodon/README.md) | Posts statuses to any Mastodon instance, with visibility, content warnings and an appended URL. Replaces `OC.Automate.Mastodon`. | Not yet on NuGet |
+| [Pushover](Packages/Pushover/Umbraco.Community.Automate.Pushover/README.md) | Sends push notifications to phones and desktops through [Pushover](https://pushover.net/), with titles, links, sounds and priorities, including emergency alerts that repeat until acknowledged. Replaces `SA.Automate.Pushover`. | Not yet on NuGet |
+| [Skoda](Packages/Skoda/Umbraco.Community.Automate.Skoda/README.md) | Reads a Škoda vehicle's status and controls charging, air conditioning, auxiliary heating and ventilation through the MyŠkoda Public API. | In development |
+| [WeatherApi](Packages/WeatherApi/Umbraco.Community.Automate.WeatherApi/README.md) | Gets the current weather or today's forecast for a location from [WeatherAPI.com](https://www.weatherapi.com/). Replaces `SA.Automate.WeatherApi`. | Not yet on NuGet under this name |
 
-Each package's README has the full setup guide, all its settings, and troubleshooting.
+To use a package before it's on NuGet, see [Using a package before it's released](.github/CONTRIBUTING.md#using-a-package-before-its-released).
 
 ### Examples
 
-`Packages/_Examples/` holds two small, working reference connections to copy when you start a new one. Both talk to [httpbin.org](https://httpbin.org), so they work in the Demo site with no signup, and both are built and tested by CI but never published.
+`Packages/_Examples/` holds two small, working packages to copy when you start a new one by hand, and that the skill builds from. Both talk to [httpbin.org](https://httpbin.org), so they work in the Demo site with no signup. CI builds and tests them, but they're never published.
 
-- [**Simple**](Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): an API key and one action, the shape most connections start with.
+- [**Simple**](Packages/_Examples/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): an API key and one action, the shape most packages need.
 - [**Kitchen Sink**](Packages/_Examples/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
 
-## Requirements
+## Running the Demo site
 
-- Umbraco CMS 17 (DevTo, Mastodon and WeatherApi also support 18; see each package's *Compatibility* section)
-- [Umbraco Automate](https://www.nuget.org/packages/Umbraco.Automate) 17 installed in the site
-- .NET 10
-
-## Getting started
-
-These steps are the same for every package. The package READMEs fill in the service-specific parts.
-
-### 1. Install the package
-
-```bash
-dotnet add package Umbraco.Community.Automate.DevTo --prerelease
-```
-
-There is nothing to register in `Program.cs`. Each package registers itself through Umbraco's composer discovery.
-
-### 2. Add credentials to configuration
-
-Each package reads its settings from configuration, so secrets stay out of the database and out of source control. Most need just an API key. For example, WeatherApi:
-
-```json
-{
-  "Umbraco": {
-    "Automate": {
-      "Secrets": {
-        "WeatherApi": { "ApiKey": "your-api-key" }
-      }
-    }
-  }
-}
-```
-
-Every connection keeps its values under its own name inside Umbraco Automate's shared `Variables` (non-sensitive) and `Secrets` (sensitive) sections, which Automate reads references from out of the box, so there's nothing to register. Each package's README lists its keys.
-
-Locally, use [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) rather than `appsettings.json`. In production, use environment variables (`Umbraco__Automate__Secrets__WeatherApi__ApiKey=...`) or a key vault. Google Sheets uses OAuth instead: you supply a Client ID and Secret under `Umbraco:Automate:Providers:GoogleSheets`, then sign in from the backoffice.
-
-### 3. Create a connection
-
-In the backoffice, open **Automation → Settings → Connections** and create a connection of the package's type. Credential fields come pre-filled with a reference to configuration, e.g. `$Umbraco:Automate:Secrets:WeatherApi:ApiKey`, so values you stored in step 2 are used without typing anything. Replace a reference with the value itself if you'd rather store it on the connection. Click **Test connection** to check it; if a key is missing from configuration, Umbraco Automate tells you which one (*Configuration key '...' not found*).
-
-### 4. Build an automation
-
-Under **Automation → Automations**, open a workspace and create an automation:
-
-1. Pick a **trigger**, e.g. *Content Published*, limited to your blog post document type.
-2. Add one or more **actions** from the package, e.g. *Send Mastodon Post*, and choose the connection you created.
-3. Use `${ ... }` bindings to pass data between steps, e.g. `${ trigger.contentName }` or `${ steps.getContent.properties.summary }`.
-
-Publish a matching page, then check **Automation → Runs** to see what happened at each step.
-
-### Using a package before it's on NuGet
-
-Until a package is published, reference it from a local clone of this repo:
-
-```bash
-git clone https://github.com/umbraco-community/Umbraco.Community.Automate.git
-dotnet add <your-site>.csproj reference Umbraco.Community.Automate/Packages/Mastodon/Umbraco.Community.Automate.Mastodon/Umbraco.Community.Automate.Mastodon.csproj
-```
-
-Or pack it into a local feed:
-
-```bash
-dotnet pack Packages/Mastodon/Umbraco.Community.Automate.Mastodon -c Release -o ./local-feed
-dotnet add <your-site>.csproj package Umbraco.Community.Automate.Mastodon --source ./local-feed --prerelease
-```
-
-For Google Sheets, build its backoffice front end first (`npm ci && npm run build` in `Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets/Client`). Without that step its column-list editor won't load.
-
-## Trying everything in the Demo site
-
-`Umbraco.Community.Automate.Demo/` is a disposable Umbraco site that references every package. It installs itself into a local SQLite database the first time it runs, so you don't need a database server or any setup screens.
+`Umbraco.Community.Automate.Demo/` is a throwaway Umbraco site that references every package and example. It installs itself into a local SQLite database the first time it runs, so there's no database server or setup screen. You'll need the [.NET 10 SDK](https://dotnet.microsoft.com/download), [Node.js 22](https://nodejs.org/) and a trusted dev certificate (`dotnet dev-certs https --trust`).
 
 ```bash
 # Backoffice front ends are generated, not committed: build them once
@@ -136,13 +84,15 @@ cd ../../../../..
 dotnet run --project Umbraco.Community.Automate.Demo
 ```
 
-Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. The **Automation** section is in the top navigation.
+Or open `Umbraco.Community.Automate.Demo.slnx` in Visual Studio, Rider or VS Code and press F5.
 
-[CONTRIBUTING.md](.github/CONTRIBUTING.md#running-the-demo-site) covers using real credentials, resetting the site, and running the E2E tests against it.
+Open <https://localhost:44343/umbraco> and log in as `admin@example.com` / `password1234`. The **Automation** section is in the top navigation: connections are under **Settings → Connections**, and automations under **Automations**.
+
+Every package boots with placeholder credentials, so you can create connections and build automations straight away. The Simple and Kitchen Sink examples work end to end. To try a package against the real service, copy `Umbraco.Community.Automate.Demo/appsettings.Local.example.json` to `appsettings.Local.json` (git-ignored, so it can't be committed), fill in the values for that package, and restart the site. The package's README explains where to get them. [Running the Demo site](.github/CONTRIBUTING.md#running-the-demo-site) in CONTRIBUTING covers user secrets, resetting the site and the end-to-end tests.
 
 ## Contributing
 
-Bug reports, fixes and new packages are all welcome. [CONTRIBUTING.md](.github/CONTRIBUTING.md) covers the repo layout, building, testing, the Demo site, adding a new package and how releases work.
+Bug reports, fixes and new packages are all welcome. [CONTRIBUTING](.github/CONTRIBUTING.md) covers the repo layout, building and testing, adding a package, and how releases work.
 
 Found a problem, or have an idea for a package? [Open an issue](https://github.com/umbraco-community/Umbraco.Community.Automate/issues/new/choose). For a security problem, please follow [SECURITY.md](.github/SECURITY.md) and report it privately instead.
 

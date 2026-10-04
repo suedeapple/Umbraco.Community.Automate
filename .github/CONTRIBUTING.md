@@ -176,6 +176,23 @@ CI also runs `dotnet pack` on each package. That catches packaging mistakes that
 dotnet pack Packages/GoogleSheets/Umbraco.Community.Automate.GoogleSheets -c Release -o ./pack-check
 ```
 
+### Using a package before it's released
+
+To try a package in your own site before it's on NuGet, reference it from a clone of this repo:
+
+```bash
+dotnet add <your-site>.csproj reference <clone>/Packages/Mastodon/Umbraco.Community.Automate.Mastodon/Umbraco.Community.Automate.Mastodon.csproj
+```
+
+Or pack it into a local feed:
+
+```bash
+dotnet pack Packages/Mastodon/Umbraco.Community.Automate.Mastodon -c Release -o ./local-feed
+dotnet add <your-site>.csproj package Umbraco.Community.Automate.Mastodon --source ./local-feed --prerelease
+```
+
+If the package has a `Client/` folder (Google Sheets), build it first (`npm ci && npm run build` in that folder), or its backoffice editors won't load. Then follow the package's README to set it up.
+
 ### Front-end unit tests
 
 From a connection's `Client/` folder:
