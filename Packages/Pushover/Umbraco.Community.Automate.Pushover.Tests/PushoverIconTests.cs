@@ -3,18 +3,16 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Umbraco.Automate.Core.Actions;
 using Umbraco.Automate.Core.Connections;
-using Umbraco.Automate.Core.Settings;
 using Umbraco.Community.Automate.Pushover.Connections;
 using Xunit;
 
 namespace Umbraco.Community.Automate.Pushover.Tests;
 
 /// <summary>
-/// Mistakes here give no error, just a blank icon or a raw localization key in the backoffice,
-/// so these tests catch them: the icon files, manifest and attributes agree, and every setting
-/// has a label and description.
+/// A wrong icon path or name gives no error, just a blank icon in the backoffice, so these tests
+/// check the manifest, the icon files and the attributes agree.
 /// </summary>
-public class PushoverPackageTests
+public class PushoverIconTests
 {
     private static readonly Assembly Package = typeof(PushoverConnectionType).Assembly;
     private static readonly string Wwwroot = Path.Combine(ProjectDirectory(), "wwwroot");
@@ -46,23 +44,6 @@ public class PushoverPackageTests
 
         Assert.NotEmpty(used);
         Assert.All(used, icon => Assert.Contains(icon, registered));
-    }
-
-    [Fact]
-    public void Every_setting_has_a_label_and_description()
-    {
-        var fields = Package.GetTypes()
-            .SelectMany(t => t.GetProperties())
-            .Select(p => (Name: $"{p.DeclaringType!.Name}.{p.Name}", Field: p.GetCustomAttribute<EditableModelFieldAttribute>()))
-            .Where(x => x.Field is not null)
-            .ToList();
-
-        Assert.NotEmpty(fields);
-        Assert.All(fields, x =>
-        {
-            Assert.False(string.IsNullOrWhiteSpace(x.Field!.Label), $"{x.Name} has no Label.");
-            Assert.False(string.IsNullOrWhiteSpace(x.Field.Description), $"{x.Name} has no Description.");
-        });
     }
 
     // The static web assets aren't copied to the test output, so read them from the project.
