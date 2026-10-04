@@ -135,6 +135,22 @@ Before opening (or writing the description of) a pull request that adds a packag
 - Use the same icon on the connection type, its actions and triggers (see [Icons](#icons)).
 - Register backoffice extensions (icons, editors, modals) in a static `umbraco-package.json`, which Umbraco discovers under `App_Plugins/` by itself. Don't use an `IPackageManifestReader` or list icons in `Client/src/`: one pattern everywhere means a contributor adding an icon only ever touches the same three files.
 
+### Keep names and help text short
+Names and descriptions are shown in narrow pickers, step cards and settings panels, where long text wraps, gets cut off and pushes the settings apart. Say what something does, plainly, and stop: anything longer belongs in the package README.
+
+| Text | Aim for | Example |
+|---|---|---|
+| Connection type, action and trigger names | 2 to 4 words, under about 30 characters: a verb and an object for actions | *Send Notification*, *Append Row*, *Article Published* |
+| Their `Description` | one sentence, under about 100 characters, saying what it does | *Sends a push notification to your devices.* |
+| Field `Label` | 1 to 3 words | *API key*, *Sheet tab*, *Priority* |
+| Field `Description` | one or two short sentences, under about 120 characters: what the value is, its format or an example, and the default | *Column letter used to find an existing row, e.g. A. Leave blank to always add a new row.* |
+| Outcome and output names | a word or two | `created`, `notFound`, `articleUrl` |
+
+- Don't repeat what the UI already shows: the group heading, the connection's icon, or the label in its own description (*API key: The API key for...*).
+- Leave out edge cases, caveats and how-it-works detail; put them in the README's settings table or Troubleshooting section.
+- Add the service's name to an action or trigger name only where it would be unclear without it.
+- If a description needs a third sentence, the setting is probably doing too much, or the detail belongs in the README.
+
 ### Icons
 Choose the icon by what the package talks to:
 
@@ -155,7 +171,7 @@ Preparing a logo:
 
 ### Settings fields
 Pick the right editor for every setting rather than leaving everything a text box: **read [references/fields.md](references/fields.md) whenever you write a settings class.** It lists Umbraco's editors, their `EditorConfig`, the C# type each binds to, and examples. In short:
-- Use `[Field(Label = ..., Description = ..., SortOrder = ...)]` on every setting; the description is the user's only help text, so say what the value is, its range or format, and the default.
+- Use `[Field(Label = ..., Description = ..., SortOrder = ...)]` on every setting; the description is the user's only help text, so say what the value is, its range or format, and the default, briefly (see [Keep names and help text short](#keep-names-and-help-text-short)).
 - **Could the value come from the trigger or an earlier step?** Keep it text with `SupportsBindings = true` (titles, messages, IDs, URLs). Bindings are text, so they can't go in a dropdown, toggle or number input.
 - **One of a fixed set?** `Umb.PropertyEditorUi.Dropdown`, or `RadioButtonList` for two to five options, bound to `string` (or `CheckBoxList` and `List<string>` for several). Use `{ "name": "Friendly label", "value": "STORED_VALUE" }` items when the service's values aren't readable; the stored value can never change once released.
 - **Longer text?** `Umb.PropertyEditorUi.TextArea` with `rows`. **A number?** `Integer` or `Decimal` with `min`/`max`, plus `[Range]`. `bool` gets a toggle and `DateTime` a date picker automatically. Media folders and items use `MediaPicker`; content, media type and member group filters use the type pickers.
