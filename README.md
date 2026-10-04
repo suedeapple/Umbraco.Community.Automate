@@ -50,7 +50,7 @@ Not using Claude Code? [Adding a new package](.github/CONTRIBUTING.md#adding-a-n
 
 ## Packages
 
-Each package's README explains how to install and set it up, including its configuration, all its settings, and troubleshooting.
+Every package supports Umbraco 17 and 18 (with Umbraco Automate 17 and 18) from one build. Each package's README explains how to install and set it up, including its configuration, all its settings, and troubleshooting.
 
 | Package | What it does | Status |
 |---|---|---|

@@ -197,7 +197,11 @@ API failures are classified so Automate can decide what to do: rate limiting (42
 
 ## Compatibility
 
-One build of the package supports Umbraco 17 and 18. It's compiled against 17 and every change is tested on both, including running the 17 build on 18 and checking every Umbraco API it calls still exists there. Umbraco 19 isn't supported until it has been tested.
+| Package version | Umbraco Automate | Umbraco CMS |
+|---|---|---|
+| 1.x | 17.x – 18.x | 17.4 – 18.x |
+
+One build supports both Umbraco 17 and 18: it's compiled against 17, and every change is tested on both, including running the 17 build on 18. Umbraco 19 isn't supported until it has been tested.
 
 ## Links
 

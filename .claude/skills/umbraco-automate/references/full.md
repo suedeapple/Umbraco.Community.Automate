@@ -1527,6 +1527,9 @@ for a missing key, and what to do about each.
 ## Compatibility
 | Package version | Umbraco Automate | Umbraco CMS |
 |---|---|---|
+| 1.x | 17.x – 18.x | 17.4 – 18.x |
+
+One build supports both Umbraco 17 and 18: it's compiled against 17, and every change is tested on both, including running the 17 build on 18. Umbraco 19 isn't supported until it has been tested.
 
 ## Links
 - [Source code](https://github.com/umbraco-community/Umbraco.Community.Automate/tree/main/Packages/Example/Umbraco.Community.Automate.Example)

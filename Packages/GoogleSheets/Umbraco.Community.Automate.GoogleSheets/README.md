@@ -8,7 +8,10 @@ The connection signs in to a Google account with OAuth, and its tokens are store
 
 ```bash
 dotnet add package Umbraco.Community.Automate.GoogleSheets
+dotnet add package Umbraco.Automate.OpenIddict --version <your Umbraco Automate version>
 ```
+
+The second line matters: the package works with Umbraco Automate 17 and 18, so on its own NuGet installs the oldest version of Automate's OAuth support it allows, `Umbraco.Automate.OpenIddict` 17.0.0. Installing the version that matches your site's `Umbraco.Automate` (for example 18.1.5 alongside Automate 18.5, the latest of each) keeps the two in step. If they're out of step, backoffice sign-in can fail with "Your session has timed out".
 
 No further setup required in code. The composer registers itself automatically.
 
@@ -114,7 +117,9 @@ Outcomes let later steps branch, e.g. only send a welcome email when **Append or
 
 | Package version | Umbraco Automate | Umbraco CMS |
 |---|---|---|
-| 1.x | 17.x | 17.4 or later |
+| 1.x | 17.x – 18.x | 17.4 – 18.x |
+
+One build supports both Umbraco 17 and 18: it's compiled against 17, and every change is tested on both, including running the 17 build on 18. Umbraco 19 isn't supported until it has been tested.
 
 ## Links
 

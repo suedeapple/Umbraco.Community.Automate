@@ -216,12 +216,14 @@ npm run test:e2e                   # or test:e2e:ui to watch it run
 
 Playwright starts the Demo site itself with `AUTOMATE_E2E_MODE=1`. If you already have the site running normally, stop it first. Otherwise Playwright reuses that instance, which isn't in E2E mode, and the tests fail.
 
-### Umbraco version compatibility (DevTo)
+### Umbraco version compatibility
 
-The DevTo package ships one build for Umbraco 17 and 18. If you change it, run its compatibility check (it needs bash, so on Windows use Git Bash or WSL):
+Every package ships one build for Umbraco 17 and 18. It's compiled against the lowest supported versions and published with ranges that stop short of 19; both sets of versions live in the root `Directory.Packages.props`, switched by `-p:UmbracoMajor=18`. The Demo site runs on 18, so running it also runs the packages' 17 builds on 18. To run it on 17 instead, use `dotnet run --project Umbraco.Community.Automate.Demo -p:UmbracoMajor=17` with a fresh database (see [Resetting the site](#resetting-the-site)): Umbraco upgrades a database but can't downgrade one.
+
+CI checks every package on both: it tests against 17 and 18, runs the 17 build on 18, and checks every Umbraco API the 17 build calls still exists in 18. To run the same check yourself (it needs bash, so on Windows use Git Bash or WSL):
 
 ```bash
-./Packages/DevTo/test-umbraco-compat.sh
+./tools/test-umbraco-compat.sh Packages/Mastodon/Umbraco.Community.Automate.Mastodon
 ```
 
 ## Making a change
