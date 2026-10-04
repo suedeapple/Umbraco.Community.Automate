@@ -1402,6 +1402,41 @@ public class ExampleIconTests
 }
 ```
 
+`ExampleFieldTests.cs`. Every package has this test: a setting without a `Label` or `Description` doesn't fail anywhere, it just shows a raw `#uaFields_...` localization key in the backoffice.
+
+```csharp
+using System.Reflection;
+using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.Example.Connections;
+using Xunit;
+
+namespace Umbraco.Community.Automate.Example.Tests;
+
+/// <summary>
+/// A setting without a Label or Description shows a raw localization key in the backoffice
+/// (e.g. #uaFields_...Description) instead of failing anywhere, so this test catches it.
+/// </summary>
+public class ExampleFieldTests
+{
+    [Fact]
+    public void Every_setting_has_a_label_and_description()
+    {
+        var fields = typeof(ExampleConnectionType).Assembly.GetTypes()
+            .SelectMany(t => t.GetProperties())
+            .Select(p => (Name: $"{p.DeclaringType!.Name}.{p.Name}", Field: p.GetCustomAttribute<EditableModelFieldAttribute>()))
+            .Where(x => x.Field is not null)
+            .ToList();
+
+        Assert.NotEmpty(fields);
+        Assert.All(fields, x =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(x.Field!.Label), $"{x.Name} has no Label.");
+            Assert.False(string.IsNullOrWhiteSpace(x.Field.Description), $"{x.Name} has no Description.");
+        });
+    }
+}
+```
+
 ## Wiring into the repo
 
 The same for every package, simple or full.

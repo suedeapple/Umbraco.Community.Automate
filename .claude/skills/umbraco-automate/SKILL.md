@@ -149,6 +149,7 @@ Pick the right editor for every setting rather than leaving everything a text bo
 - Instead of a mocking library, write small hand-written fakes: a stub `HttpMessageHandler` that returns canned responses and records requests, behind a tiny `IHttpClientFactory` implementation (see `Fakes/StubHttp.cs` in either reference).
 - To unit test a connection type's `ValidateAsync`, construct it with `new ConnectionTypeInfrastructure(fakeResolver)`, where the fake implements `IEditableModelResolver` with explicit interface members that throw (validation never uses it). Explicit implementation avoids having to repeat the interface's generic constraint.
 - Test each action's success path, each outcome, missing or invalid settings (including an unresolved `$` reference), and how API errors map to categories. Never call the real service.
+- Every package has an `<Area>FieldTests` test checking that each setting has a `Label` and `Description` (see the templates), and a package with custom icons has an icon test. Both catch mistakes the backoffice shows silently.
 - Group tests in the same folders as the package (`Actions/`, `Connections/`, `Api/`).
 - If the connection has a `Client/` front end, add web-test-runner unit tests, and Playwright specs if it needs end-to-end coverage (see Google Sheets).
 

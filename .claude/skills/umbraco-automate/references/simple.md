@@ -537,6 +537,41 @@ public class ExampleConnectionTypeTests
 }
 ```
 
+`ExampleFieldTests.cs`. Every package has this test: a setting without a `Label` or `Description` doesn't fail anywhere, it just shows a raw `#uaFields_...` localization key in the backoffice.
+
+```csharp
+using System.Reflection;
+using Umbraco.Automate.Core.Settings;
+using Umbraco.Community.Automate.Example.Connections;
+using Xunit;
+
+namespace Umbraco.Community.Automate.Example.Tests;
+
+/// <summary>
+/// A setting without a Label or Description shows a raw localization key in the backoffice
+/// (e.g. #uaFields_...Description) instead of failing anywhere, so this test catches it.
+/// </summary>
+public class ExampleFieldTests
+{
+    [Fact]
+    public void Every_setting_has_a_label_and_description()
+    {
+        var fields = typeof(ExampleConnectionType).Assembly.GetTypes()
+            .SelectMany(t => t.GetProperties())
+            .Select(p => (Name: $"{p.DeclaringType!.Name}.{p.Name}", Field: p.GetCustomAttribute<EditableModelFieldAttribute>()))
+            .Where(x => x.Field is not null)
+            .ToList();
+
+        Assert.NotEmpty(fields);
+        Assert.All(fields, x =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(x.Field!.Label), $"{x.Name} has no Label.");
+            Assert.False(string.IsNullOrWhiteSpace(x.Field.Description), $"{x.Name} has no Description.");
+        });
+    }
+}
+```
+
 ## Wiring into the repo
 
 The same for every package; see [full.md](full.md#wiring-into-the-repo) for the solution, Demo site and root README snippets, and the [README skeleton](full.md#readme-skeleton). That includes adding the package's configuration to the Demo site: `Umbraco:Automate:Secrets:Example:ApiKey` with a fake placeholder (`"e2e-test"`) in `Umbraco.Community.Automate.Demo/appsettings.Development.json`, and with a `your-...` value in `appsettings.Local.example.json`, the template for real credentials.
