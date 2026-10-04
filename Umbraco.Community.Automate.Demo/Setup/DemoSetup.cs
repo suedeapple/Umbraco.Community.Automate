@@ -23,7 +23,7 @@ namespace Umbraco.Community.Automate.Demo.Setup;
 /// <list type="number">
 ///   <item>an API user for workspaces to run as (a workspace's Service Account Key only accepts API users);</item>
 ///   <item>one connection per package in the repo, pre-filled with its configuration references;</item>
-///   <item>the Demo workspace, sample automations and test pages in uSync/, imported once these exist
+///   <item>the Demo workspace and test pages in uSync/, imported once these exist
 ///   (Umbraco 17 only, as uSync.Automate has no 18 release yet).</item>
 /// </list>
 /// Each step only adds what's missing, so it never touches anything you've changed.
@@ -46,7 +46,7 @@ public class DemoSetupHandler(
 #endif
     ILogger<DemoSetupHandler> logger) : INotificationAsyncHandler<UmbracoApplicationStartedNotification>
 {
-    /// <summary>Fixed, so the sample workspace in uSync/ can name it as its service account.</summary>
+    /// <summary>Fixed, so the Demo workspace in uSync/ can name it as its service account.</summary>
     public static readonly Guid ApiUserKey = new("4fc20353-4d4f-4798-b936-bcb18008e152");
 
     private const string ApiUserName = "Automate API User";
@@ -63,7 +63,7 @@ public class DemoSetupHandler(
         await EnsureApiUserAsync();
         await EnsureConnectionsAsync(cancellationToken);
 #if USYNC
-        await ImportSamplesAsync(cancellationToken);
+        await ImportTestPagesAsync(cancellationToken);
 #endif
     }
 
@@ -93,7 +93,7 @@ public class DemoSetupHandler(
 
     /// <summary>
     /// One connection for each of the repo's connection types, aliased after the type (e.g.
-    /// community.weatherApi becomes weatherApi) so the sample automations can find it. Its settings
+    /// community.weatherApi becomes weatherApi) so its test automation can find it. Its settings
     /// are the settings class's defaults: the configuration references the package pre-fills, which
     /// resolve to the placeholders in appsettings.Development.json, or your appsettings.Local.json.
     /// </summary>
@@ -133,20 +133,20 @@ public class DemoSetupHandler(
 
 #if USYNC
     /// <summary>
-    /// Imports everything in uSync/ into a database that has no workspaces yet: the Demo workspace,
-    /// its sample automations, and an "Automate tests" page per connection, each with its own
-    /// document type and a "Test: ..." automation that fires when that page is published. Done here
+    /// Imports everything in uSync/ into a database that has no workspaces yet: the Demo workspace
+    /// and an "Automate tests" page per connection, each with its own document type and a
+    /// "Test: ..." automation that tests the connection when that page is published. Done here
     /// rather than with uSync's own ImportOnFirstBoot, because the workspace and automations refer to
     /// the API user and connections above, which have to exist first.
     /// </summary>
-    private async Task ImportSamplesAsync(CancellationToken cancellationToken)
+    private async Task ImportTestPagesAsync(CancellationToken cancellationToken)
     {
         if ((await workspaceService.GetAllWorkspacesAsync(cancellationToken)).Any())
             return;
 
         var result = await syncService.StartupImportAsync(
             syncConfig.GetFolders(), false, new SyncHandlerOptions(), null);
-        logger.LogInformation("Imported the Demo workspace, samples and test pages: {Count} item(s)", result.Count());
+        logger.LogInformation("Imported the Demo workspace and test pages: {Count} item(s)", result.Count());
     }
 #endif
 }
