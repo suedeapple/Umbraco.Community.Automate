@@ -110,7 +110,7 @@ Real credentials never go in a tracked file; they go in `appsettings.Local.json`
 
 Then add the new type to the `<Structure>` list in `ContentTypes/automatetests.config`, so it's allowed under *Automate tests*, and the connection alias to `<AllowedConnections>` in `Automate-Workspaces/demo.config` (with a new GUID as its `Key`), so the Demo workspace's automations can use it. A package with no connection gets a test page whose automation uses one of its own actions or triggers instead of Test Connection, or none if there's nothing to show; say which in the pull request.
 
-**3. Check it.** uSync imports these only into a site with no Automate workspaces yet, so test on a fresh database (stop the site and move `Umbraco.Community.Automate.Demo/umbraco/Data/` aside, as *Resetting the site* in CONTRIBUTING describes), and only on Umbraco 17, since uSync.Automate has no 18 release. Run the site, open *Automate tests*, publish the package's page, and check the message: with placeholders a real service shows the red *test failed* message naming the bad credential, which proves the wiring; with real values in `appsettings.Local.json` it's green.
+**3. Check it.** Restart the Demo site on Umbraco 17 (uSync.Automate has no 18 release). On startup it imports `uSync/` whenever the files have a *Test:* automation the database doesn't, so the new page and automation appear without resetting anything. The import republishes every test page, so each *Test:* automation runs once then; that's expected. Run the site, open *Automate tests*, publish the package's page, and check the message: with placeholders a real service shows the red *test failed* message naming the bad credential, which proves the wiring; with real values in `appsettings.Local.json` it's green.
 
 ### Keep the Demo in step with the packages
 
@@ -122,7 +122,7 @@ The Demo's files must only ever describe packages that exist, with the keys and 
 
 ### Pull requests for a new package
 
-Before opening (or writing the description of) a pull request that adds a package, check the Demo setup is complete: placeholders in `appsettings.Development.json`, the template in `appsettings.Local.example.json`, the three uSync test page files, the `<Structure>` and `<AllowedConnections>` lines, and the page checked on a fresh database. If anything is missing, **flag it to the user before creating the pull request** and offer to do it now; testers rely on it to try the package. Tick the matching boxes in the pull request template, and mention in the description how to test it: *run the Demo, publish Automate tests → <Name>*.
+Before opening (or writing the description of) a pull request that adds a package, check the Demo setup is complete: placeholders in `appsettings.Development.json`, the template in `appsettings.Local.example.json`, the three uSync test page files, the `<Structure>` and `<AllowedConnections>` lines, and the page checked in the Demo site. If anything is missing, **flag it to the user before creating the pull request** and offer to do it now; testers rely on it to try the package. Tick the matching boxes in the pull request template, and mention in the description how to test it: *run the Demo, publish Automate tests → <Name>*.
 
 ## Conventions
 

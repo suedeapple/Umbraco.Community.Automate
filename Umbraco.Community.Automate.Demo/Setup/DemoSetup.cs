@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using System.Xml.Linq;
 using Umbraco.Automate.Core.Connections;
 using Umbraco.Automate.Core.Settings;
 using Umbraco.Cms.Core;
@@ -9,9 +10,10 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Automate.Core.Automations;
 #if USYNC
-using Umbraco.Automate.Core.Workspaces;
 using uSync.BackOffice;
+using uSync.Core;
 using uSync.BackOffice.Configuration;
 using uSync.BackOffice.SyncHandlers.Models;
 #endif
@@ -40,7 +42,8 @@ public class DemoSetupHandler(
     ConnectionTypeCollection connectionTypes,
     IConnectionService connectionService,
 #if USYNC
-    IWorkspaceService workspaceService,
+    IAutomationService automationService,
+    IHostEnvironment hostEnvironment,
     ISyncService syncService,
     ISyncConfigService syncConfig,
 #endif
@@ -170,20 +173,33 @@ public class DemoSetupHandler(
 
 #if USYNC
     /// <summary>
-    /// Imports everything in uSync/ into a database that has no workspaces yet: the Demo workspace
-    /// and an "Automate tests" page per connection, each with its own document type and a
-    /// "Test: ..." automation that tests the connection when that page is published. Done here
+    /// Imports uSync/: the Demo workspace and an "Automate tests" page per connection, each with
+    /// its own document type and a "Test: ..." automation that tests the connection when that page
+    /// is published. It runs when uSync/ has a test automation the database doesn't, which covers a
+    /// new database and a package added since, and otherwise leaves the site alone: an import
+    /// republishes every test page, which would run every test automation on each start. Done here
     /// rather than with uSync's own ImportOnFirstBoot, because the workspace and automations refer to
     /// the API user and connections above, which have to exist first.
     /// </summary>
     private async Task ImportTestPagesAsync(CancellationToken cancellationToken)
     {
-        if ((await workspaceService.GetAllWorkspacesAsync(cancellationToken)).Any())
+        var existing = (await automationService.GetAllAutomationsAsync(cancellationToken))
+            .Select(automation => automation.Alias).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var missing = AutomationAliasesInUSync().Where(alias => !existing.Contains(alias)).ToList();
+        if (missing.Count == 0)
             return;
 
-        var result = await syncService.StartupImportAsync(
-            syncConfig.GetFolders(), false, new SyncHandlerOptions(), null);
-        logger.LogInformation("Imported the Demo workspace and test pages: {Count} item(s)", result.Count());
+        var changes = (await syncService.StartupImportAsync(syncConfig.GetFolders(), false, new SyncHandlerOptions(), null))
+            .Count(action => action.Change != ChangeType.NoChange);
+        logger.LogInformation("Imported the Demo's test pages for {Automations}: {Count} change(s)", string.Join(", ", missing), changes);
     }
+
+    private IEnumerable<string> AutomationAliasesInUSync()
+        => syncConfig.GetFolders()
+            .Select(folder => Path.Combine(hostEnvironment.ContentRootPath, folder.TrimStart('~', '/'), "Automate-Automations"))
+            .Where(Directory.Exists)
+            .SelectMany(folder => Directory.EnumerateFiles(folder, "*.config"))
+            .Select(file => XDocument.Load(file).Root?.Attribute("Alias")?.Value)
+            .OfType<string>();
 #endif
 }
