@@ -107,12 +107,13 @@ You don't need to edit any CI workflow: `ci.yml` discovers packages from the lay
 ### Icons
 Choose the icon by what the package talks to:
 
-- **A commercial vendor or named service** (Pushover, Google Sheets, Mastodon, a car maker's API): use the vendor's logo, so editors recognise the service in the pickers. Most contributors won't have the SVG to hand, so search the web for it yourself rather than asking them for a file:
+- **A commercial vendor or named service** (Pushover, Google Sheets, Mastodon, a car maker's API): use the vendor's logo, so editors recognise the service in the pickers. Most contributors won't have the SVG to hand, so search the web for it yourself, then offer it alongside the choice of their own file (see [new-package.md](references/new-package.md#step-2-how-it-connects-and-how-much-it-needs)):
   1. The vendor's brand, press or media kit (search for "<vendor> brand assets" or "<vendor> press kit"). It has the official artwork and colours, and says how the logo may be used.
   2. Otherwise [Simple Icons](https://simpleicons.org), which has a single-colour 24×24 SVG for thousands of brands at `https://cdn.jsdelivr.net/npm/simple-icons/icons/<slug>.svg`. Its files are CC0, but the logos are still the vendors' trademarks, so check the brand guidelines it links to.
 
   Download the SVG rather than redrawing or tracing it, and note its source URL in a comment at the top of the `.icon.js` file (as Mastodon's does). Tell the user where it came from, and that it's the vendor's trademark, used only to identify the service. If there's no usable SVG (only a PNG, or the guidelines forbid this use), use a built-in icon instead and say why.
 - **Everything else**: utility packages, and actions or triggers with no vendor behind them (Test Connection, an Umbraco-side trigger, a text formatter, the httpbin examples). Use a built-in Umbraco icon, such as `icon-link`, `icon-paper-plane`, `icon-message` or `icon-calendar`, from the backoffice icon picker. It needs no files and nothing to maintain.
+- **The contributor's own icon**: whatever the package, if they have an SVG they'd rather use, use it. Prepare it the same way as a downloaded logo.
 
 Preparing a logo:
 - Name it `icon-automate-<area>`, and register it as in [full.md](references/full.md#icons-and-umbraco-packagejson). A logo only adds those icon files, a `wwwroot/` and the Razor SDK; it doesn't make a package Full.
