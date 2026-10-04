@@ -69,7 +69,7 @@ To use a package before it's on NuGet, see [Using a package before it's released
 
 - [**Simple**](Packages/_Development/Simple/Umbraco.Community.Automate.Examples.Simple/README.md): a reference example with an API key and one action, the shape most packages need. The skill builds new packages from it.
 - [**Kitchen Sink**](Packages/_Development/KitchenSink/Umbraco.Community.Automate.Examples.KitchenSink/README.md): a reference example with every convention in one place: a connection, two actions, a trigger, outcomes, an API client, a backoffice front end and tests.
-- [**Test Connection**](Packages/_Development/TestConnection/Umbraco.Community.Automate.TestConnection/README.md): an action that runs a connection's **Test connection** check from an automation. The Demo site's test pages use it.
+- [**Test Connection**](Packages/_Development/TestConnection/Umbraco.Community.Automate.TestConnection/README.md): a helper action, not a package for real sites. It runs a connection's **Test connection** check from an automation, so you can confirm you've put the right credentials in and that automations using the connection will actually work. The Demo site's test pages use it.
 
 Both examples only talk to [httpbin.org](https://httpbin.org), a test service that echoes requests back, so they work in the Demo site with no signup.
 

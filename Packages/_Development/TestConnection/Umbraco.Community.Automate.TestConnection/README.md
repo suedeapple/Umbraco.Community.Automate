@@ -2,7 +2,7 @@
 
 > **For development only.** The Demo site uses this to test connections. It isn't meant to be installed in a real site, and it's never published.
 
-One action, **Test Connection** (`community.testConnection`), that runs a connection's own **Test connection** check from an automation, the same check as the button under **Automation → Settings → Connections**.
+One action, **Test Connection** (`community.testConnection`), that runs a connection's own **Test connection** check from an automation, the same check as the button under **Automation → Settings → Connections**. It's a helper: use it to check you've put the right credentials in, and that automations using the connection will actually work, before you build them.
 
 | Setting | What it is |
 |---|---|

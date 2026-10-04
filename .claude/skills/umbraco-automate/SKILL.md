@@ -1,6 +1,6 @@
 ---
 name: umbraco-automate
-description: The house rules for building anything for Umbraco Automate in the Umbraco.Community.Automate repo: connections, actions, triggers, outcomes and outputs, API clients, configuration and secrets ($-references in Umbraco:Automate:Secrets/Variables), backoffice front ends (Client/, Vite + Lit), tests (xUnit only), the Demo site, CI and releases. Covers the Packages/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Models, Configuration, Client), community.<area> aliases and project wiring, with Packages/_Development/Simple and Packages/_Development/KitchenSink as the references to copy. Use it whenever someone wants to create or change a package, connection, action or trigger (e.g. "build me an Automate package for Facebook", "add a Slack connection", "add a trigger to Mastodon"), migrate or import an existing Automate package into the repo or bring one up to the current conventions, write tests or a front end for one, wire something into the Demo site, or asks where something goes or how something is done in this repo, even if they don't mention Automate or the skill.
+description: The house rules for building anything for Umbraco Automate in the Umbraco.Community.Automate repo: connections, actions, triggers, outcomes and outputs, API clients, configuration and secrets ($-references in Umbraco:Automate:Secrets/Variables), backoffice front ends (Client/, Vite + Lit), tests (xUnit only), the Demo site, CI and releases. Covers the Packages/<Area>/ layout, standard folder names (Actions, Triggers, Connections, Composers, Api, Models, Configuration, Client), community.<area> aliases and project wiring, with Packages/_Development/Simple and Packages/_Development/KitchenSink as the references to copy. Use it whenever someone wants to create or change a package, connection, action or trigger (e.g. "build me an Automate package for Facebook", "add a Slack connection", "add a trigger to Mastodon"), migrate or import an existing Automate package into the repo or bring one up to the current conventions, write tests or a front end for one, wire something into the Demo site (its configuration and uSync test page), prepare a pull request for a package, remove or rename a package, or asks where something goes or how something is done in this repo, even if they don't mention Automate or the skill.
 ---
 
 # Building for Umbraco Automate
@@ -16,6 +16,8 @@ Work out which kind of request this is, because each has its own process:
 - **A new package** ("build me a package for Facebook", "I want a Slack integration"): don't start coding. Follow [references/new-package.md](references/new-package.md): research the service, then take the user through multiple-choice decisions (what it does, how it connects, shape, names, settings) and build only after they confirm a summary.
 - **Migrating an existing package into this repo**, or **bringing a package here up to the current conventions**: follow [references/migrating.md](references/migrating.md), which reads the source, asks about anything that affects existing users (aliases, configuration, package ID), then reshapes it.
 - **A change to an existing package** (a new action, a fix, a new setting): no interview needed. Follow "Adding to an existing connection" below and the conventions.
+- **Finishing a package for review**: setting it up in the Demo site, or opening a pull request for it. Follow [Demo setup](#demo-setup), including its pull request check.
+- **Removing or renaming a package**: tidy up after it as in [Keep the Demo in step with the packages](#keep-the-demo-in-step-with-the-packages).
 - **A question** about where something goes or how something is done: answer it from this skill and the repo.
 
 When you do need the user to choose, ask multiple-choice questions with a recommended option first (the `AskUserQuestion` tool when available), rather than open questions or silent assumptions.
@@ -81,17 +83,46 @@ Work through these in order and tick them off. For a package with no connection,
 7. **Icons**: the vendor's logo for a commercial service, found on the web, and a built-in Umbraco icon (e.g. `icon-link`, no files needed) for everything else; see [Icons](#icons). A logo is registered with `wwwroot/umbraco-package.json`, which lists `icons/icons.js`, which lists `icons/<area>.icon.js` (in `Client/public/` instead if the package has a `Client/`). No C# is involved; add the icon test from [full.md](references/full.md#tests).
 8. **Package versions** go in the root `Directory.Packages.props` only; `.csproj` files never specify versions. Every package supports Umbraco 17 and 18 from one build: Umbraco and Automate packages are listed there twice, as ranges for each major (`-p:UmbracoMajor=18` switches), so a new one goes in both groups.
 9. **Wire it in**: add both projects to `Umbraco.Community.Automate.Demo.slnx` (in a `/Packages/<Area>/` solution folder) and a `ProjectReference` from `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`. Add the package to the list in `.github/ISSUE_TEMPLATE/bug-report.yml`, and a line for it with its maintainers in `.github/CODEOWNERS`.
-10. **Demo configuration**: add **every** configuration key the package reads (each credential reference, any variables, OAuth provider settings) to the Demo site, in two files, under the same paths as `<Area>Configuration`:
-    - `Umbraco.Community.Automate.Demo/appsettings.Development.json`: obviously fake placeholders (`"e2e-test"`), so the site boots, new connections' references resolve, and CI's end-to-end runs work without real credentials.
-    - `Umbraco.Community.Automate.Demo/appsettings.Local.example.json`: the same keys with `your-...` values, so a contributor copies it to the git-ignored `appsettings.Local.json` and fills in real credentials to try the package live. Use non-empty values: an empty one overrides the placeholder and can stop the site starting.
-    Real credentials never go in either tracked file; they go in `appsettings.Local.json` or user secrets.
-
-    The Demo creates the package's connection by itself. Give it a test page too, so publishing it proves the trigger is wired up: copy the Pushover files in `Umbraco.Community.Automate.Demo/uSync/v17/` and change the name, alias, icon and every `Key` and step `Id` (a new GUID each): `ContentTypes/automatetestpushover.config` (the page type), `Content/pushover.config` (the page; its `ContentType` is the new type's alias), and `Automate-Automations/testpushover.config` (its trigger's `contentTypes` is the new type's key, its Test Connection step's `connectionAlias` is the package's connection alias, e.g. `community.bluesky` becomes `bluesky`, and its two Notify Editor steps, after the If step, name the package). Then add the new type to the `<Structure>` list in `ContentTypes/automatetests.config`, so it's allowed under *Automate tests*.
+10. **Demo setup**: follow [Demo setup](#demo-setup) below. Add the configuration placeholders as soon as the package reads configuration, since the Demo needs them to resolve the connection's references. The test page can wait until the package works, often in a later prompt, but it must be done before the pull request.
 11. **Tests** for every action, outcome and trigger and the connection validation (see Testing). Full with a `Client/`: front-end tests too, and build it (`npm ci && npm run build`) before running the Demo site or packing.
 12. **README.md** in the package (see README), and a row in the root `README.md` connections table.
 13. **Verify**: `dotnet build`, `dotnet test`, `dotnet pack Packages/<Area>/Umbraco.Community.Automate.<Area> -c Release -o ./pack-check`, `tools/test-umbraco-compat.sh Packages/<Area>/Umbraco.Community.Automate.<Area>` (bash; checks Umbraco 17 and 18), then run the Demo site: check the connection type appears under **Automation → Settings → Connections → Create** with its icon and pre-filled references, and that **Test connection** resolves them (put placeholder values in `Umbraco.Community.Automate.Demo/appsettings.Development.json` or user secrets).
 
 You don't need to edit any CI workflow: `ci.yml` discovers packages from the layout, and `release.yml` finds a package from its tag prefix.
+
+When you finish the first build and the Demo setup isn't complete yet, say so at the end of your reply, listing what's left (configuration placeholders, test page), so the user knows it's still to do before a pull request.
+
+## Demo setup
+
+Every package gets a working setup in the Demo site, so a reviewer or tester can run the site, publish one page and see whether the package connects, without reading its code. It's the last part of building a package, often done in a follow-up prompt once the package works, and it's required before a pull request.
+
+**1. Configuration.** Add **every** configuration key the package reads (each credential reference, any variables, OAuth provider settings), under the same paths as `<Area>Configuration`, to:
+- `Umbraco.Community.Automate.Demo/appsettings.Development.json`: obviously fake placeholders (`"e2e-test"`), so the site boots, the Demo's connection resolves its references, and CI's end-to-end runs work without real credentials.
+- `Umbraco.Community.Automate.Demo/appsettings.Local.example.json`: the same keys with `your-...` values, the template contributors copy to `appsettings.Local.json` to try the package live. Use non-empty values: an empty one overrides the placeholder and can stop the site starting.
+- The contributor's own `appsettings.Local.json`, if they have one (it's git-ignored): add the package's keys with the same `your-...` stubs, so they only have to fill them in. Only add missing keys; never change, print or repeat the values already there, which are real credentials.
+
+Real credentials never go in a tracked file; they go in `appsettings.Local.json` or user secrets.
+
+**2. Test page.** The Demo creates the package's connection by itself, aliased after the connection type (`community.bluesky` becomes `bluesky`, `community.examples.simple` becomes `examples-simple`). The test page proves it works: publishing it runs a *Test:* automation that checks the connection and shows a green or red message. Copy the Pushover files in `Umbraco.Community.Automate.Demo/uSync/v17/` and change the name, alias, icon and every `Key` and step `Id` (a new GUID each):
+- `ContentTypes/automatetestpushover.config`: the page type.
+- `Content/pushover.config`: the page; its `ContentType` is the new type's alias.
+- `Automate-Automations/testpushover.config`: its trigger's `contentTypes` is the new type's key, its Test Connection step's `connectionAlias` is the package's connection alias, and its two Notify Editor steps, after the If step, name the package.
+
+Then add the new type to the `<Structure>` list in `ContentTypes/automatetests.config`, so it's allowed under *Automate tests*, and the connection alias to `<AllowedConnections>` in `Automate-Workspaces/demo.config` (with a new GUID as its `Key`), so the Demo workspace's automations can use it. A package with no connection gets a test page whose automation uses one of its own actions or triggers instead of Test Connection, or none if there's nothing to show; say which in the pull request.
+
+**3. Check it.** uSync imports these only into a site with no Automate workspaces yet, so test on a fresh database (stop the site and move `Umbraco.Community.Automate.Demo/umbraco/Data/` aside, as *Resetting the site* in CONTRIBUTING describes), and only on Umbraco 17, since uSync.Automate has no 18 release. Run the site, open *Automate tests*, publish the package's page, and check the message: with placeholders a real service shows the red *test failed* message naming the bad credential, which proves the wiring; with real values in `appsettings.Local.json` it's green.
+
+### Keep the Demo in step with the packages
+
+The Demo's files must only ever describe packages that exist, with the keys and aliases they use now. A stray entry gets committed by accident: configuration for a package that's gone, or a test automation pointing at an alias nobody has.
+
+- **A package's keys, aliases or name change**: update its entries in all three configuration files and its test page files in the same change.
+- **A package is removed, renamed, or abandoned on a branch**: remove its configuration keys from `appsettings.Development.json` and `appsettings.Local.example.json` (and offer to remove them from the contributor's `appsettings.Local.json`), its three uSync files, its `<Structure>` and `<AllowedConnections>` lines, and the rest of its wiring (solution, Demo `ProjectReference`, root README row, `CODEOWNERS`, bug report entry). Removing the uSync files doesn't delete the page or automation from an existing Demo database; say so, and suggest a fresh database.
+- **Before committing**, check both directions: every area under `Umbraco:Automate:Secrets`, `Variables` and `Providers` in the two tracked files, and every `connectionAlias` and `contentTypes` in `uSync/v17/`, belongs to a package that exists; and every package has its keys and test page.
+
+### Pull requests for a new package
+
+Before opening (or writing the description of) a pull request that adds a package, check the Demo setup is complete: placeholders in `appsettings.Development.json`, the template in `appsettings.Local.example.json`, the three uSync test page files, the `<Structure>` and `<AllowedConnections>` lines, and the page checked on a fresh database. If anything is missing, **flag it to the user before creating the pull request** and offer to do it now; testers rely on it to try the package. Tick the matching boxes in the pull request template, and mention in the description how to test it: *run the Demo, publish Automate tests → <Name>*.
 
 ## Conventions
 
@@ -201,7 +232,8 @@ Packages are independent: work on one package must never change how another buil
 - everything under its own `Packages/<Area>/` folder;
 - its two lines in `Umbraco.Community.Automate.Demo.slnx`, and its `ProjectReference` in `Umbraco.Community.Automate.Demo/Umbraco.Community.Automate.Demo.csproj`;
 - its configuration keys, under its own name, in `Umbraco.Community.Automate.Demo/appsettings.Development.json` (placeholders) and `appsettings.Local.example.json` (the template for real values);
-- its test page's three new files in `Umbraco.Community.Automate.Demo/uSync/v17/`, and its line in `ContentTypes/automatetests.config`;
+- its test page's three new files in `Umbraco.Community.Automate.Demo/uSync/v17/`, its line in `ContentTypes/automatetests.config` and its connection's line in `Automate-Workspaces/demo.config`;
+- its stub keys in the contributor's own git-ignored `appsettings.Local.json`;
 - **new** entries in `Directory.Packages.props` for libraries no package uses yet;
 - its row in the root `README.md`, its line in `.github/CODEOWNERS`, its entry in `.github/ISSUE_TEMPLATE/bug-report.yml`, and its `wwwroot/` line in `.gitignore` if it has a `Client/`.
 
